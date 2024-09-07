@@ -13,9 +13,7 @@ func main() {
 
 	port := fmt.Sprintf(":%d", config.ApiAddr)
 
-	fmt.Printf("Rodando API na porta: %s \n", port)
-
-	fmt.Printf("String de conexão: %s", config.StrinConnect)
+	fmt.Printf("Rodando API na porta%s \n", port)
 
 	r := server.Up()
 	log.Fatal(http.ListenAndServe(port, r))

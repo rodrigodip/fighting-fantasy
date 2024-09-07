@@ -4,7 +4,7 @@ A simple single-player RPG based on the classic adventure gamebook _**"The Fores
 
 ## The Forest of Doom
 
-### The Forest of Doom is a single-player [adventure gamebook](https://en.wikipedia.org/wiki/Gamebook#Adventures) written by [Ian Livingstone](https://en.wikipedia.org/wiki/Ian_Livingstone), and illustrated by Malcolm Barter. Originally published by [Puffin Books](https://en.wikipedia.org/wiki/Puffin_Books) in 1983, the title is the third gamebook in the [Fighting Fantasy series](https://en.wikipedia.org/wiki/Fighting_Fantasy), and the first of several to feature the character Yaztromo. It was later republished by **Wizard Books** in 2002.
+The Forest of Doom is a single-player [adventure gamebook](https://en.wikipedia.org/wiki/Gamebook#Adventures) written by [Ian Livingstone](https://en.wikipedia.org/wiki/Ian_Livingstone), and illustrated by Malcolm Barter. Originally published by [Puffin Books](https://en.wikipedia.org/wiki/Puffin_Books) in 1983, the title is the third gamebook in the [Fighting Fantasy series](https://en.wikipedia.org/wiki/Fighting_Fantasy), and the first of several to feature the character Yaztromo. It was later republished by **Wizard Books** in 2002.
 _[see here for more](https://en.wikipedia.org/wiki/The_Forest_of_Doom)_
 
 ## The Project

@@ -32,7 +32,7 @@ var rotaUsuarios = []Rota{
 
 	// UpDate
 	{
-		URI:         "/usuario/{usuarioId}",
+		URI:         "/usuario/{userId}",
 		Metodo:      http.MethodPut,
 		Funcao:      controllers.AtualizarUsuario,
 		RequireAuth: false,
@@ -40,7 +40,7 @@ var rotaUsuarios = []Rota{
 
 	// Delete
 	{
-		URI:         "/usuario/{usuarioId}",
+		URI:         "/usuario/{userId}",
 		Metodo:      http.MethodDelete,
 		Funcao:      controllers.DeleteUsuario,
 		RequireAuth: false,

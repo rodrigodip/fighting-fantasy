@@ -40,19 +40,19 @@ func (repo usuarios) Create(user models.Usuario) (uint64, error) {
 }
 
 // FindAll finds all users on DB
-func (repo usuarios) FindAll(nameNikeFilter string) ([]models.Usuario, error) {
+func (repo usuarios) FindAll(nameNickeFilter string) ([]models.Usuario, error) {
 
-	nameNikeFilter = fmt.Sprintf("%%%s%%", nameNikeFilter)
+	nameNickeFilter = fmt.Sprintf("%%%s%%", nameNickeFilter)
 
 	tuples, err := repo.db.Query(
 		"SELECT id, nome, nick, email, criadoEm FROM usuarios WHERE nome LIKE ? or nick LIKE ?",
-		nameNikeFilter, nameNikeFilter)
+		nameNickeFilter, nameNickeFilter)
 	if err != nil {
 		log.Fatal("Erro recemendo usuarios do BD")
 	}
 	defer tuples.Close()
 
-	var allUsers []models.Usuario
+	var foundUsers []models.Usuario
 
 	for tuples.Next() {
 		var usuario models.Usuario
@@ -65,10 +65,10 @@ func (repo usuarios) FindAll(nameNikeFilter string) ([]models.Usuario, error) {
 			return nil, err
 		}
 
-		allUsers = append(allUsers, usuario)
+		foundUsers = append(foundUsers, usuario)
 	}
 
-	return allUsers, nil
+	return foundUsers, nil
 }
 
 // FindOne finds a user by id
@@ -94,4 +94,40 @@ func (repo usuarios) FindOne(userId uint64) (models.Usuario, error) {
 	}
 
 	return foundUser, nil
+}
+
+// UpDate updates a user by ID
+func (repo usuarios) UpDate(userId uint64, u models.Usuario) error {
+
+	statement, err := repo.db.Prepare(
+		"UPDATE usuarios SET nome = ?, nick = ? , email = ? WHERE id = ?",
+	)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(u.Nome, u.Nick, u.Email, userId); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Delete deletes a user by ID
+func (repo usuarios) Delete(userId uint64) error {
+
+	statement, err := repo.db.Prepare(
+		"DELETE FROM usuarios WHERE id = ?",
+	)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(userId); err != nil {
+		return err
+	}
+
+	return nil
 }

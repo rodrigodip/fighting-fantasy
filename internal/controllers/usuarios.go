@@ -28,7 +28,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = user.Format(); err != nil {
+	if err = user.Format("signUp"); err != nil {
 		responses.Err(w, http.StatusBadRequest, err)
 		return
 	}
@@ -52,7 +52,8 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // BuscarUsuarios requests all users
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
-	nameNikeFilter := strings.ToLower(r.URL.Query().Get("user"))
+
+	nameNickeFilter := strings.ToLower(r.URL.Query().Get("user"))
 
 	db, err := database.Connection()
 	if err != nil {
@@ -61,19 +62,17 @@ func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	// trazer os usuarios do repositorio
 	users := repositories.NewUserRepo(db)
-	allUser, err := users.FindAll(nameNikeFilter)
+	allUser, err := users.FindAll(nameNickeFilter)
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	// escrever o response para response
 	responses.JSON(w, http.StatusOK, allUser)
 }
 
-// BuscarUsuario requestes a user
+// BuscarUsuario requestes a user by ID
 func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	userParams := mux.Vars(r)
@@ -101,12 +100,71 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 	responses.JSON(w, http.StatusOK, foundUser)
 }
 
-// AtualizarUsuario updates a user
+// AtualizarUsuario updates a user by ID
 func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Atualizando Usuário!"))
+
+	useParams := mux.Vars(r)
+
+	ID, err := strconv.ParseUint(useParams["userId"], 10, 64)
+	if err != nil {
+		responses.Err(w, http.StatusBadRequest, err)
+		return
+	}
+
+	bodyRequest, err := io.ReadAll(r.Body)
+	if err != nil {
+		responses.Err(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var newUser models.Usuario
+	if err = json.Unmarshal(bodyRequest, &newUser); err != nil {
+		responses.Err(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = newUser.Format("edit"); err != nil {
+		responses.Err(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connection()
+	if err != nil {
+		responses.Err(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	user := repositories.NewUserRepo(db)
+	if err = user.UpDate(ID, newUser); err != nil {
+		responses.Err(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
 }
 
-// Deletes a user
+// DeleteUsuario deletes a user by ID
 func DeleteUsuario(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Deletendo Usuário!"))
+
+	userParams := mux.Vars(r)
+
+	ID, err := strconv.ParseUint(userParams["userId"], 10, 64)
+	if err != nil {
+		responses.Err(w, http.StatusBadRequest, err)
+	}
+
+	db, err := database.Connection()
+	if err != nil {
+		responses.Err(w, http.StatusInternalServerError, err)
+	}
+	defer db.Close()
+
+	user := repositories.NewUserRepo(db)
+	if err = user.Delete(ID); err != nil {
+		responses.Err(w, http.StatusInternalServerError, err)
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
+
 }

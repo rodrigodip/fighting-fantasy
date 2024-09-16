@@ -34,12 +34,15 @@ func (u *Usuario) validation(step string) error {
 	if u.Nome == "" {
 		return errors.New("campo nome é obrigatório")
 	}
+
 	if u.Nick == "" {
 		return errors.New("campo nick é obrigatório")
 	}
+
 	if u.Email == "" {
 		return errors.New("campo e-mail é obrigatório")
 	}
+
 	if err := checkmail.ValidateFormat(u.Email); err != nil {
 		return errors.New("o e-mail inserido é inválido")
 	}

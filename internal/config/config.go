@@ -15,6 +15,9 @@ var (
 
 	// APIAddr is the API port address
 	ApiAddr = 0
+
+	// SecreteKey to token assign
+	SecreteKey []byte
 )
 
 func LoadEnv() {
@@ -34,4 +37,6 @@ func LoadEnv() {
 		os.Getenv("BD_PW"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecreteKey = []byte(os.Getenv("SECRET_KEY"))
 }

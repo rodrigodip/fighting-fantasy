@@ -1,7 +1,7 @@
 package main
 
 import (
-	"api/internal/database/config"
+	"api/internal/config"
 	"api/internal/server"
 	"fmt"
 	"log"

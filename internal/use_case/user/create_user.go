@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"github.com/rodrigodip/fighting-fantasy/internal/domain"
-	IDgenerator "github.com/rodrigodip/fighting-fantasy/pkg/id_generator"
 )
 
 func (ur *UserRepository) CreateUser(name, email, pass string, age int) (UserDtoCreate, error) {
@@ -16,12 +15,14 @@ func (ur *UserRepository) CreateUser(name, email, pass string, age int) (UserDto
 		return UserDtoCreate{}, err
 	}
 	output := UserDtoCreate{
-		ID:       IDgenerator.NewSimpleID(),
 		Name:     newUser.Name,
 		Email:    newUser.Email,
 		Password: newUser.Password,
 		Age:      newUser.Age,
 	}
-	//TODO:Insert persistence func
+	err = ur.Repository.CreateUser(output.Name, output.Email, output.Password, output.Age)
+	if err != nil {
+		return UserDtoCreate{}, err
+	}
 	return output, nil
 }

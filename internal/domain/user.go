@@ -51,11 +51,25 @@ func (u *User) UserValidation() error {
 // Contains at least 1 digit
 // Contains at least 1 special character (e.g. @#$%^&+=!)
 func ValidatePassword(password string) error {
-	passwordRegex := regexp.MustCompile(
-		`^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$`,
-	)
-	if passwordRegex.MatchString(password) {
-		return nil
+	if len(password) < 8 {
+		return errors.New("Password Validation Error: Must be at least 8 characters long")
 	}
-	return errors.New("Password Validation Error: Wick Password")
+
+	if !regexp.MustCompile(`[a-z]`).MatchString(password) {
+		return errors.New("Password Validation Error: Must contain at least one lowercase letter")
+	}
+
+	if !regexp.MustCompile(`[A-Z]`).MatchString(password) {
+		return errors.New("Password Validation Error: Must contain at least one uppercase letter")
+	}
+
+	if !regexp.MustCompile(`\d`).MatchString(password) {
+		return errors.New("Password Validation Error: Must contain at least one digit")
+	}
+
+	if !regexp.MustCompile(`[@$!%*?&]`).MatchString(password) {
+		return errors.New("Password Validation Error: Must contain at least one special character (@$!%*?&)")
+	}
+	return nil
+	//return errors.New("Password Validation Error: Wick Password")
 }

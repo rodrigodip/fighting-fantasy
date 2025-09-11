@@ -6,6 +6,6 @@ type UserRepository struct {
 	Repository domain.UserRepository
 }
 
-func NewUserRopository(repository domain.UserRepository) *UserRepository {
+func NewUserRepository(repository domain.UserRepository) *UserRepository {
 	return &UserRepository{Repository: repository}
 }

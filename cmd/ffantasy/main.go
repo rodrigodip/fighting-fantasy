@@ -18,10 +18,15 @@ func main() {
 			err.Error())
 		return
 	}
+	defer func() {
+		if err := db.Client().Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}()
 	database := repository.NewUserRepository(db)
-	service := usecase.NewUserRopository(database)
+	service := usecase.NewUserRepository(database)
 
-	output, err := service.CreateUser("roberta", "roberta@gmail.com", "Pipa@121982", 42)
+	output, err := service.CreateUser("roberta", "roberta@gmail.com", "Pipa@121982")
 	if err != nil {
 		log.Fatal(err)
 	}

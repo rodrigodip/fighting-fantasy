@@ -1,21 +1,30 @@
 package repository
 
-import "go.mongodb.org/mongo-driver/v2/mongo"
+import (
+	"time"
 
-// const (
-//
-//	MONGODB_USER_DB = "MONGODB_USER_DB"
-//
-// )
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+)
+
+type Profile struct {
+	Age    int    `bson:"age"`
+	Gender string `bson:"gender"`
+}
 type UserEntity struct {
-	Name     string `bson:"name,omitempty"`
-	Email    string `bson:"email,omitempty"`
-	Password string `bson:"password,omitempty"`
-	Age      int    `bson:"age,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	UserID    string             `bson:"userId"`
+	Name      string             `bson:"name"`
+	Email     string             `bson:"email"`
+	Password  string
+	Status    string    `bson:"status"`
+	CreatedAt time.Time `bson:"createdAt"`
+	Profile   Profile   `bson:"profile"`
+	Roles     []string  `bson:"roles"`
 }
 
 type UserRepository interface {
-	CreateUser(name, email, pass string, age int) error
+	CreateUser(id, name, email, pass string, role []string) error
 	//GetUser(id string)(User, error)
 	//GetUserByEmailAndPass(email, password string) (User, error)
 	//UpdateUser(id, name, email string, age int)(User, error)

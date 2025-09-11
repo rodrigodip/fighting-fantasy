@@ -5,18 +5,15 @@ import (
 	"fmt"
 )
 
-func (ur *userRepository) CreateUser(name, email, pass string, age int) error {
+func (ur *userRepository) CreateUser(id, name, email, pass string, role []string) error {
 	newUser := UserEntity{
+		UserID:   id,
 		Name:     name,
 		Email:    email,
 		Password: pass,
-		Age:      age,
+		Roles:    role,
 	}
-	//	defer func() {
-	//		if err := client.Disconnect(context.TODO()); err != nil {
-	//			panic(err)
-	//		}
-	//	}()
+
 	coll := ur.dbConnection.Collection("user")
 	result, err := coll.InsertOne(context.TODO(), newUser)
 	if err != nil {

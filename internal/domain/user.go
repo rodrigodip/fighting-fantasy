@@ -7,12 +7,19 @@ import (
 	"regexp"
 )
 
+type Profile struct {
+	Age    int
+	Gender string
+}
+
 type User struct {
-	ID       string
+	UserID   string
 	Name     string
-	Age      int
 	Email    string
 	Password string
+	Status   string
+	Profile  Profile
+	Roles    []string
 }
 
 func NewUserDomain() *User {
@@ -21,14 +28,14 @@ func NewUserDomain() *User {
 
 func (u *User) UserValidation() error {
 	if u.Name == "" {
-		return errors.New("Name Validation Error: requested")
+		return errors.New("Name Validation Error: Requested")
 	}
 	if len(u.Name) < 3 {
 		return errors.New("Name Validation Error: Must have more than 3 digits")
 	}
 
 	if u.Email == "" {
-		return errors.New("E-mail Validation Error: requested")
+		return errors.New("E-mail Validation Error: Requested")
 	}
 
 	if err := checkmail.ValidateFormat(u.Email); err != nil {
@@ -36,10 +43,13 @@ func (u *User) UserValidation() error {
 	}
 
 	if u.Password == "" {
-		return errors.New("campo senha é obrigatório")
+		return errors.New("Password Validation Error: Requested")
 	}
 	if err := ValidatePassword(u.Password); err != nil {
 		return err
+	}
+	if len(u.Roles) < 1 {
+		return errors.New("Roles Validation Error: Requested")
 	}
 	return nil
 }

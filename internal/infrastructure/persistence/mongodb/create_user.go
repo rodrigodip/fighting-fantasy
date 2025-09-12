@@ -1,23 +1,21 @@
-package repository
+package mongodb
 
 import (
 	"context"
 	"fmt"
 )
 
-func (ur *userRepository) CreateUser(id, name, email, pass string, role []string) error {
-	newUser := UserEntity{
+func (ur *userMongoRepo) RegisterUser(id, name, email, pass string, role []string) error {
+	newUser := UserMongoEntity{
 		UserID:   id,
 		Name:     name,
 		Email:    email,
 		Password: pass,
 		Roles:    role,
 	}
-
-	coll := ur.dbConnection.Collection("user")
-	result, err := coll.InsertOne(context.TODO(), newUser)
+	result, err := ur.coll.InsertOne(context.TODO(), newUser)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("repository.CreateUser(): %v", err)
 	}
 	// Prints the ID of the inserted document
 	fmt.Printf("Document inserted with ID: %s\n", result.InsertedID)

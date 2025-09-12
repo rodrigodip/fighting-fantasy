@@ -1,4 +1,4 @@
-package usecase
+package userapp
 
 type UserDtoCreate struct {
 	UserID   string   `json:"userId"`

@@ -1,4 +1,4 @@
-package mongodb
+package mongoconfig
 
 import (
 	"context"
@@ -18,9 +18,10 @@ func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
 
 	client, err := mongo.Connect(options.Client().ApplyURI(uri))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	//This block creates User Collection's constraints (index)
+
+	//TODO: REFACTOR: This block creates User Collection's constraints (index)
 	userColl := client.Database("ffantasy-db").Collection("user")
 	indexModel := mongo.IndexModel{
 		Keys:    bson.D{{Key: "email", Value: 1}},
@@ -31,9 +32,10 @@ func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
 		return nil, err
 	}
 
+	//TODO: REFACTOR
 	if err := client.Ping(ctx, nil); err != nil {
 		return nil, err
 	}
-	//NOTE:"ffantasy-cluster" must be a SECRETE
+	//NOTE:"ffantasy-db" must be a SECRETE
 	return client.Database("ffantasy-db"), nil
 }

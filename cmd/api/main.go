@@ -8,12 +8,13 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/config"
+	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/http/gin"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
 )
 
 func main() {
-	db, err := mongoconfig.NewMongoDBConnection(context.Background())
+	db, err := config.NewMongoDBConnection(context.Background())
 	if err != nil {
 		log.Fatalf("Error trying to connect to database, error=%s \n", err.Error())
 		return
@@ -31,8 +32,10 @@ func main() {
 	userHandler := userhandler.NewUserHandler(userUsecase)
 
 	//TODO: REFACTOR: Implement a router
-	r := gin.Default()
-	r.POST("users/", userHandler.CreateUser)
-
-	r.Run(":8080")
+	router := gin.Default()
+	routes.InitUserGroup(&router.RouterGroup, userHandler)
+	err = router.Run(":8080")
+	if err != nil {
+		log.Fatal(err)
+	}
 }

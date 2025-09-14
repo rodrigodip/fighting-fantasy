@@ -5,12 +5,12 @@ import (
 	"fmt"
 )
 
-func (ur *userMongoRepo) RegisterUser(id, name, email, pass string, role []string) error {
+func (ur *userMongoRepo) RegisterUser(id, name, email string, password []byte, role []string) error {
 	newUser := UserMongoEntity{
 		UserID:   id,
 		Name:     name,
 		Email:    email,
-		Password: pass,
+		Password: password,
 		Roles:    role,
 	}
 	result, err := ur.coll.InsertOne(context.TODO(), newUser)

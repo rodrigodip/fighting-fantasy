@@ -9,7 +9,7 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/config"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/http/gin"
-	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb"
+	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
 )
 
@@ -19,19 +19,13 @@ func main() {
 		log.Fatalf("Error trying to connect to database, error=%s \n", err.Error())
 		return
 	}
-	defer func() {
-		if err := db.Client().Disconnect(context.TODO()); err != nil {
-			log.Fatalf("Error trying to disconnect from database, error=%s \n", err.Error())
-			return
-		}
-	}()
+
 	//TODO: REFACTOR: Implement a dependency initialization func
 	userRepo := mongodb.NewUserRepository(db.Collection("user"))
 	userService := user.NewUserService(userRepo)
 	userUsecase := userapp.NewUserUseCase(userService)
 	userHandler := userhandler.NewUserHandler(userUsecase)
 
-	//TODO: REFACTOR: Implement a router
 	router := gin.Default()
 	routes.InitUserGroup(&router.RouterGroup, userHandler)
 	err = router.Run(":8080")

@@ -9,7 +9,7 @@ type User struct {
 	UserID   string
 	Name     string
 	Email    string
-	Password string
+	Password []byte
 	Status   string
 	Profile  Profile
 	Roles    []string

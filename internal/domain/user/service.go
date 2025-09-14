@@ -6,7 +6,8 @@ import (
 	"regexp"
 
 	"github.com/badoux/checkmail"
-	IDgenerator "github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
+	"github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
+	"github.com/rodrigodip/fighting-fantasy/internal/pkg/password"
 )
 
 type Service struct {
@@ -39,11 +40,15 @@ func (s *Service) CreateUser(name, email, password string) (*User, error) {
 	if err := validatePassword(password); err != nil {
 		return &User{}, err
 	}
+	encodedPassword, err := security.EncodePw(password)
+	if err != nil {
+		return &User{}, err
+	}
 	newUser := &User{
 		UserID:   IDgenerator.NewSimpleID(),
 		Name:     name,
 		Email:    email,
-		Password: password,
+		Password: encodedPassword,
 		Roles:    []string{"user"},
 	}
 	if err := s.service.RegisterUser(

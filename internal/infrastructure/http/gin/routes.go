@@ -2,12 +2,12 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	userhandler "github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
+	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
 )
 
 func InitUserGroup(r *gin.RouterGroup, app userhandler.UserHandlerRepo) {
 
-	r.POST("/createTask", app.RegisterUser)
+	r.POST("/users", app.RegisterUser)
 	// r.GET("/allTasks", app.GetTasks)
 	// r.GET("/taskById/:id", app.GetTask)
 	// r.PUT("/updateTask/:id", app.UpdateTask)

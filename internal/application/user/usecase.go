@@ -9,3 +9,7 @@ type UserUseCase struct {
 func NewUserUseCase(service *user.Service) *UserUseCase {
 	return &UserUseCase{UserService: service}
 }
+
+func (uc *UserUseCase) CreateUser(name, email, password string) (*user.User, error) {
+	return uc.UserService.CreateUser(name, email, password)
+}

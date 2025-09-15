@@ -17,7 +17,16 @@ type Service struct {
 func NewUserService(r Repository) *Service {
 	return &Service{service: r}
 }
-
+func (s Service) GetEmail(email string) (*User, error) {
+	if err := checkmail.ValidateFormat(email); err != nil {
+		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
+	}
+	foudUser, err := s.service.FindByEmail(email)
+	if err != nil {
+		return &User{}, err
+	}
+	return foudUser, nil
+}
 func (s *Service) CreateUser(name, email, password string) (*User, error) {
 	if name == "" {
 		return &User{}, errors.New("Name Validation Error: Requested")

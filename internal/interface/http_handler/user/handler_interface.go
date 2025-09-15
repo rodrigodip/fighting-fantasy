@@ -9,6 +9,7 @@ import (
 
 type UserHandlerRepo interface {
 	RegisterUser(c *gin.Context)
+	FindByEmail(c *gin.Context)
 	// GetTasks(c *gin.Context)
 	// GetTask(c *gin.Context)
 	// DeleteTask(c *gin.Context)
@@ -23,7 +24,24 @@ type UserHandler struct {
 func NewUserHandler(uc *userapp.UserUseCase) *UserHandler {
 	return &UserHandler{usecase: uc}
 }
-
+func (uh *UserHandler) FindByEmail(c *gin.Context) {
+	var req UserLoginRequest
+	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+		return
+	}
+	foundUser, err := uh.usecase.GetEmail(req.Email)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"Error": err.Error()})
+	}
+	output := UserCreateResponse{
+		UserID: foundUser.UserID,
+		Name:   foundUser.Name,
+		Email:  foundUser.Email,
+		Roles:  foundUser.Roles,
+	}
+	c.JSON(http.StatusOK, output)
+}
 func (uh *UserHandler) RegisterUser(c *gin.Context) {
 	var req UserCreateRequest
 	if err := c.ShouldBindBodyWithJSON(&req); err != nil {

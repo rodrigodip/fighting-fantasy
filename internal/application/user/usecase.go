@@ -13,3 +13,6 @@ func NewUserUseCase(service *user.Service) *UserUseCase {
 func (uc *UserUseCase) CreateUser(name, email, password string) (*user.User, error) {
 	return uc.UserService.CreateUser(name, email, password)
 }
+func (uc *UserUseCase) GetEmail(email string) (*user.User, error) {
+	return uc.UserService.GetEmail(email)
+}

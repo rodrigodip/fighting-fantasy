@@ -8,6 +8,7 @@ import (
 func InitUserGroup(r *gin.RouterGroup, app userhandler.UserHandlerRepo) {
 
 	r.POST("/users", app.RegisterUser)
+	r.GET("/findbyemail/:email", app.FindByEmail)
 	// r.GET("/allTasks", app.GetTasks)
 	// r.GET("/taskById/:id", app.GetTask)
 	// r.PUT("/updateTask/:id", app.UpdateTask)

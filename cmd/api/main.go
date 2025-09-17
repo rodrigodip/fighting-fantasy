@@ -5,18 +5,27 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/auth"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
+	"github.com/rodrigodip/fighting-fantasy/internal/domain/auth"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/config"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/http/gin"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
+	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/auth"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	cfg := config.LoadConfig()
+
 	db, err := config.NewMongoDBConnection(context.Background())
 	if err != nil {
 		log.Fatalf("Error trying to connect to database, error=%s \n", err.Error())
@@ -29,15 +38,19 @@ func main() {
 	userUsecase := userapp.NewUserUseCase(userService)
 	userHandler := userhandler.NewUserHandler(userUsecase)
 
-	//TODO: REFACTOR: Create a Config func to load SECRETS
-	jwtService := security.NewJWTService("Cjy+8nlgKa7FJUsR8pEX0eV0l/Nu6pI0yYBaaXYgL0uE3cczRHpOqkAeqT9vPbGf", "ffantasy-app")
+	jwtService := security.NewJWTService(cfg.JWTSecret, cfg.JWTIssuer)
 	authUsecase := authapp.NewAuthUseCase(userRepo, userService, jwtService)
 	authHandler := authhandler.NewAuthHandler(authUsecase)
 
 	router := gin.Default()
 	routes.InitUserGroup(&router.RouterGroup, userHandler)
 	routes.InitAuthGroup(&router.RouterGroup, authHandler)
-	err = router.Run(":8080")
+
+	router.GET("/admin", interfaces.AuthMiddleware(cfg.JWTSecret, auth.RoleAdmin), func(c *gin.Context) {
+		c.JSON(200, gin.H{"msg": "Welcome Admin"})
+	})
+
+	err = router.Run(cfg.HTTPPort)
 	if err != nil {
 		log.Fatal(err)
 	}

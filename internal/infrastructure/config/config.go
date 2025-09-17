@@ -10,8 +10,33 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+type Config struct {
+	MongoURI  string
+	DBName    string
+	JWTSecret string
+	JWTIssuer string
+	HTTPPort  string
+}
+
+func LoadConfig() *Config {
+	return &Config{
+		MongoURI:  os.Getenv("MONGO_URI"),
+		DBName:    os.Getenv("MONGO_DB"),
+		JWTSecret: os.Getenv("JWT_SECRET"),
+		JWTIssuer: os.Getenv("JWT_ISSUER"),
+		HTTPPort:  getEnv("HTTP_PORT", "8080"),
+	}
+}
+
+func getEnv(key, fallback string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return fallback
+}
 func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
-	uri := os.Getenv("MONGODB_URI")
+	uri := LoadConfig().MongoURI
+	dbName := LoadConfig().DBName
 	if uri == "" {
 		log.Fatal("Set your 'MONGODB_URI' environment variable.")
 	}
@@ -22,7 +47,7 @@ func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
 	}
 
 	//TODO: REFACTOR: This block creates User Collection's constraints (index)
-	userColl := client.Database("ffantasy-db").Collection("user")
+	userColl := client.Database(dbName).Collection("user")
 	indexModel := mongo.IndexModel{
 		Keys:    bson.D{{Key: "email", Value: 1}},
 		Options: options.Index().SetUnique(true),
@@ -32,10 +57,8 @@ func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
 		return nil, err
 	}
 
-	//TODO: REFACTOR
 	if err := client.Ping(ctx, nil); err != nil {
 		return nil, err
 	}
-	//NOTE:"ffantasy-db" must be a SECRETE
-	return client.Database("ffantasy-db"), nil
+	return client.Database(dbName), nil
 }

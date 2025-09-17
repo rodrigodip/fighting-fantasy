@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/badoux/checkmail"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
-	"github.com/rodrigodip/fighting-fantasy/internal/pkg/password"
+	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
 
 type Service struct {
@@ -18,13 +17,14 @@ func NewUserService(r Repository) *Service {
 	return &Service{service: r}
 }
 func (s Service) GetEmail(email string) (*User, error) {
-	if err := checkmail.ValidateFormat(email); err != nil {
+	if err := security.EmailService(email); err != nil {
 		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
 	}
 	foudUser, err := s.service.FindByEmail(email)
 	if err != nil {
 		return &User{}, err
 	}
+
 	return foudUser, nil
 }
 func (s *Service) CreateUser(name, email, password string) (*User, error) {
@@ -39,7 +39,7 @@ func (s *Service) CreateUser(name, email, password string) (*User, error) {
 		return &User{}, errors.New("E-mail Validation Error: Requested")
 	}
 
-	if err := checkmail.ValidateFormat(email); err != nil {
+	if err := security.EmailService(email); err != nil {
 		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
 	}
 

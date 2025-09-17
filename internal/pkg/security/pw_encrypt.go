@@ -8,6 +8,6 @@ func EncodePw(password string) ([]byte, error) {
 }
 
 // Verify compares a hash password with a string password
-func VerifyPw(pwHash, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(pwHash), []byte(password))
+func CheckPasswordHash(pwHash []byte, password string) error {
+	return bcrypt.CompareHashAndPassword(pwHash, []byte(password))
 }

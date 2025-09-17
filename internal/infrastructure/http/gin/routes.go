@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	authhandler "github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/auth"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
 )
 
@@ -18,4 +19,7 @@ func InitUserGroup(r *gin.RouterGroup, app userhandler.UserHandlerRepo) {
 	//TODO: Swagger Doc
 	//docs.SwaggerInfo.BasePath = "/"
 	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+}
+func InitAuthGroup(r *gin.RouterGroup, app authhandler.AuthHandlerRepo) {
+	r.POST("/login", app.Login)
 }

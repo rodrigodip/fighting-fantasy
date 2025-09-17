@@ -58,7 +58,7 @@ func (s *Service) CreateUser(name, email, password string) (*User, error) {
 		Name:     name,
 		Email:    email,
 		Password: encodedPassword,
-		Roles:    []string{"user"},
+		Roles:    []string{"USER"},
 	}
 	if err := s.service.RegisterUser(
 		newUser.UserID,

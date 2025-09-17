@@ -14,8 +14,7 @@ type UserCreateResponse struct {
 	Email  string   `json:"email,omitempty"`
 	Roles  []string `json:"roles,omitempty"`
 }
-
-type UserLoginRequest struct {
+type UserFindByEmailRequest struct {
 	UserID string `json:"userId,omitempty"`
 	Email  string `json:"email,omitempty"`
 }

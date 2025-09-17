@@ -25,7 +25,7 @@ func NewUserHandler(uc *userapp.UserUseCase) *UserHandler {
 	return &UserHandler{usecase: uc}
 }
 func (uh *UserHandler) FindByEmail(c *gin.Context) {
-	var req UserLoginRequest
+	var req UserFindByEmailRequest
 	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return

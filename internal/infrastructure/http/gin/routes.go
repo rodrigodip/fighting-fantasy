@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	authhandler "github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/auth"
+	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/auth"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
 )
 

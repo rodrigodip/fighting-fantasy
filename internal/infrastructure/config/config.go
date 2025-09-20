@@ -16,6 +16,12 @@ type Config struct {
 	JWTSecret string
 	JWTIssuer string
 	HTTPPort  string
+
+	SMTPHost     string
+	SMTPPort     string
+	SMTPUsername string
+	SMTPPassword string
+	SMTPFrom     string
 }
 
 func LoadConfig() *Config {
@@ -25,6 +31,12 @@ func LoadConfig() *Config {
 		JWTSecret: os.Getenv("JWT_SECRET"),
 		JWTIssuer: os.Getenv("JWT_ISSUER"),
 		HTTPPort:  getEnv("HTTP_PORT", "8080"),
+
+		SMTPHost:     os.Getenv("SMTP_HOST"),
+		SMTPPort:     os.Getenv("SMTP_PORT"),
+		SMTPUsername: os.Getenv("SMTP_USERNAME"),
+		SMTPPassword: os.Getenv("SMTP_PASSWORD"),
+		SMTPFrom:     os.Getenv("SMTP_FROM"),
 	}
 }
 

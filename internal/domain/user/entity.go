@@ -12,5 +12,5 @@ type User struct {
 	Password []byte
 	Status   string
 	Profile  Profile
-	Roles    []string
+	Role     string
 }

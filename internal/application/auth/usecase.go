@@ -31,5 +31,5 @@ func (uc *AuthUseCase) Login(email, password string) (string, error) {
 		return "", errors.New("Login: invalid credentials")
 	}
 
-	return uc.jwtService.GenerateToken(foundUser.UserID, foundUser.Roles[0])
+	return uc.jwtService.GenerateToken(foundUser.UserID, foundUser.Role)
 }

@@ -16,13 +16,14 @@ func (ur *userMongoRepo) FindByEmail(email string) (*user.User, error) {
 	}
 	return &foundUser, nil
 }
-func (ur *userMongoRepo) RegisterUser(id, name, email string, password []byte, role []string) error {
+func (ur *userMongoRepo) RegisterUser(id, name, email string, password []byte, role, status string) error {
 	newUser := UserMongoEntity{
 		UserID:   id,
 		Name:     name,
 		Email:    email,
 		Password: password,
-		Roles:    role,
+		Role:     role,
+		Status:   status,
 	}
 	result, err := ur.coll.InsertOne(context.TODO(), newUser)
 	if err != nil {

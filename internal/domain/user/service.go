@@ -58,14 +58,16 @@ func (s *Service) CreateUser(name, email, password string) (*User, error) {
 		Name:     name,
 		Email:    email,
 		Password: encodedPassword,
-		Roles:    []string{"USER"},
+		Role:     "USER",
+		Status:   "UNVERIFIED",
 	}
 	if err := s.service.RegisterUser(
 		newUser.UserID,
 		newUser.Name,
 		newUser.Email,
 		newUser.Password,
-		newUser.Roles); err != nil {
+		newUser.Role,
+		newUser.Status); err != nil {
 		return &User{}, err
 	}
 	return newUser, nil
@@ -81,7 +83,6 @@ func validatePassword(password string) error {
 	if len(password) < 8 {
 		return errors.New("Password Validation Error: Must be at least 8 characters long")
 	}
-
 	if !regexp.MustCompile(`[a-z]`).MatchString(password) {
 		return errors.New("Password Validation Error: Must contain at least one lowercase letter")
 	}

@@ -38,7 +38,7 @@ func (uh *UserHandler) FindByEmail(c *gin.Context) {
 		UserID: foundUser.UserID,
 		Name:   foundUser.Name,
 		Email:  foundUser.Email,
-		Roles:  foundUser.Roles,
+		Role:   foundUser.Role,
 	}
 	c.JSON(http.StatusOK, output)
 }
@@ -59,7 +59,7 @@ func (uh *UserHandler) RegisterUser(c *gin.Context) {
 		UserID: newUser.UserID,
 		Name:   newUser.Name,
 		Email:  newUser.Email,
-		Roles:  newUser.Roles,
+		Role:   newUser.Role,
 	}
 	c.JSON(http.StatusCreated, output)
 }

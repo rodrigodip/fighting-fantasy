@@ -16,7 +16,7 @@ type UserMongoEntity struct {
 	Status    string    `bson:"status"`
 	CreatedAt time.Time `bson:"createdAt"`
 	Profile   Profile   `bson:"profile"`
-	Role      string    `bson:"roles"`
+	Role      string    `bson:"role"`
 }
 type Profile struct {
 	Age    int    `bson:"age"`

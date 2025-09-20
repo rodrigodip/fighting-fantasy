@@ -13,7 +13,6 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/config"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/http/gin"
-	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/notification"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/auth"
@@ -50,13 +49,12 @@ func main() {
 	//TODO: DELETE: This is a protected test route for email
 	router.GET("/testemail", interfaces.AuthMiddleware(cfg.JWTSecret, auth.RoleAdmin), func(c *gin.Context) {
 		c.JSON(200, gin.H{"msg": "Welcome Admin"})
-		err := notification.SendEmail()
+		err := security.SendEmail()
 		if err != nil {
 			log.Fatalf("Email error: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"Error": "Email Error"})
 		}
 	})
-
 	err = router.Run(cfg.HTTPPort)
 	if err != nil {
 		log.Fatal(err)

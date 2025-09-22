@@ -5,7 +5,8 @@ import (
 	"log"
 	"os"
 
-	"go.mongodb.org/mongo-driver/v2/bson"
+	//"go.mongodb.org/mongo-driver/v2/bson"
+	mongodb "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -46,29 +47,22 @@ func getEnv(key, fallback string) string {
 	}
 	return fallback
 }
+
 func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
 	uri := LoadConfig().MongoURI
 	dbName := LoadConfig().DBName
 	if uri == "" {
 		log.Fatal("Set your 'MONGODB_URI' environment variable.")
 	}
-
 	client, err := mongo.Connect(options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, err
 	}
-
-	//TODO: REFACTOR: This block creates User Collection's constraints (index)
-	userColl := client.Database(dbName).Collection("user")
-	indexModel := mongo.IndexModel{
-		Keys:    bson.D{{Key: "email", Value: 1}},
-		Options: options.Index().SetUnique(true),
-	}
-	_, err = userColl.Indexes().CreateOne(ctx, indexModel)
-	if err != nil {
+	//Collection's constraints (index)
+	if err := mongodb.CreateUserIndexes(ctx, dbName, client); err != nil {
 		return nil, err
 	}
-
+	//Ping DB
 	if err := client.Ping(ctx, nil); err != nil {
 		return nil, err
 	}

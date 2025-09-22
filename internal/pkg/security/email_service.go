@@ -12,13 +12,13 @@ func EmailService(email string) error {
 	return err
 }
 
-func SendEmail() error { // Mailpit server details
+func SendEmail(name, email, token string) error { // Mailpit server details
 	smtpHost := "localhost"
 	smtpPort := 1025 // Default Mailpit SMTP port
 
 	// Sender and recipient data
-	from := "from@example.com"
-	to := []string{"recipient@example.com"}
+	from := "verify@fightingfansasy.com"
+	to := []string{email}
 
 	contentType := "text/html"
 
@@ -69,10 +69,10 @@ func SendEmail() error { // Mailpit server details
 				<h1>{{.Subject}}</h1>
 			</div>
 			<div class="content">
-				<p>Hello,</p>
+				<p>Hello {{.User}},</p>
 				<p>{{.Body}}</p>
 				<p>Thank you for using our service!</p>
-				<a href="https://globo.com" class="button">Learn More</a>
+				<a href={{.Link}} class="button">BEGIN YOUR ADVENTURE</a>
 			</div>
 			<div class="footer">
 				<p>© 2025 Your Company. All rights reserved.</p>
@@ -81,13 +81,15 @@ func SendEmail() error { // Mailpit server details
 		</body>
 		</html>
 		`
-
-	// Replace template placeholders with actual content
-	htmlContent := strings.Replace(templateHTML, "{{.Subject}}", "Subject test", -1)
-	htmlContent = strings.Replace(htmlContent, "{{.Body}}", "Content Test Rod!", -1)
+	//TODO: REFACTOR: Learn and use package Template
+	verifyLink := fmt.Sprintf("http://localhost:8080/verify?token=%s", token)
+	htmlContent := strings.Replace(templateHTML, "{{.Subject}}", "Your Journey Awaits!", -1)
+	htmlContent = strings.Replace(htmlContent, "{{.User}}", name, -2)
+	htmlContent = strings.Replace(htmlContent, "{{.Link}}", verifyLink, -1)
+	htmlContent = strings.Replace(htmlContent, "{{.Body}}", "Welcome, adventurer! Before you can embark on your quest through the world of Fighting Fantasy, you must first verify your email address.", -1)
 
 	// Email message
-	subject := "Contest Teste"
+	subject := "Your Journey Awaits! Please Verify Your Email."
 	message := []byte(fmt.Sprintf("From: %s\r\n"+
 		"To: %s\r\n"+
 		"Subject: %s\r\n"+

@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"fmt"
+	"os"
 	"regexp"
 
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
@@ -53,8 +54,9 @@ func (s *Service) CreateUser(name, email, password string) (*User, error) {
 	if err != nil {
 		return &User{}, err
 	}
+	generator := IDgenerator.NewTimestampIDGenerator()
 	newUser := &User{
-		UserID:   IDgenerator.NewSimpleID(),
+		UserID:   generator.NewID(),
 		Name:     name,
 		Email:    email,
 		Password: encodedPassword,
@@ -70,6 +72,7 @@ func (s *Service) CreateUser(name, email, password string) (*User, error) {
 		newUser.Status); err != nil {
 		return &User{}, err
 	}
+	sendVerifyEmail(newUser.UserID, newUser.Name, newUser.Email)
 	return newUser, nil
 }
 
@@ -98,5 +101,17 @@ func validatePassword(password string) error {
 	if !regexp.MustCompile(`[@$!%*?&]`).MatchString(password) {
 		return errors.New("Password Validation Error: Must contain at least one special character (@$!%*?&)")
 	}
+	return nil
+}
+func sendVerifyEmail(userID, name, email string) error {
+	role := "USER"
+	secret := os.Getenv("JWT_SECRET")
+	issuer := os.Getenv("JWT_ISSUER")
+	service := security.NewJWTService(secret, issuer)
+	token, err := service.GenerateToken(userID, role)
+	if err != nil {
+		return errors.New("Error generating email validation Token")
+	}
+	security.SendEmail(name, email, token)
 	return nil
 }

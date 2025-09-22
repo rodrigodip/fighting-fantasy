@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -14,7 +13,6 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/config"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/http/gin"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
-	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/auth"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
@@ -40,21 +38,15 @@ func main() {
 	userHandler := userhandler.NewUserHandler(userUsecase)
 
 	jwtService := security.NewJWTService(cfg.JWTSecret, cfg.JWTIssuer)
-	authUsecase := authapp.NewAuthUseCase(userRepo, userService, jwtService)
+	authService := auth.NewAuthService(userRepo, userService, jwtService)
+	authUsecase := authapp.NewAuthUseCase(authService)
 	authHandler := authhandler.NewAuthHandler(authUsecase)
 
 	router := gin.Default()
 	routes.InitUserGroup(&router.RouterGroup, userHandler)
 	routes.InitAuthGroup(&router.RouterGroup, authHandler)
-	//TODO: DELETE: This is a protected test route for email
-	router.GET("/testemail", interfaces.AuthMiddleware(cfg.JWTSecret, auth.RoleAdmin), func(c *gin.Context) {
-		c.JSON(200, gin.H{"msg": "Welcome Admin"})
-		err := security.SendEmail()
-		if err != nil {
-			log.Fatalf("Email error: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"Error": "Email Error"})
-		}
-	})
+	//TODO: DELETE: This is a protected route for email verification
+	//	router.GET("/verify", interfaces.AuthMiddleware(cfg.JWTSecret, auth.RoleUser), authHandler.VerifyEmail)
 	err = router.Run(cfg.HTTPPort)
 	if err != nil {
 		log.Fatal(err)

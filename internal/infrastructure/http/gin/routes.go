@@ -22,4 +22,5 @@ func InitUserGroup(r *gin.RouterGroup, app userhandler.UserHandlerRepo) {
 }
 func InitAuthGroup(r *gin.RouterGroup, app authhandler.AuthHandlerRepo) {
 	r.POST("/login", app.Login)
+	r.GET("/verify", app.VerifyEmail)
 }

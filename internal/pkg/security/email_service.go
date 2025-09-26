@@ -12,7 +12,7 @@ func EmailService(email string) error {
 	return err
 }
 
-func SendEmail(name, email, token string) error { // Mailpit server details
+func SendEmail(name, email, token string) error {
 	smtpHost := "localhost"
 	smtpPort := 1025 // Default Mailpit SMTP port
 
@@ -98,6 +98,7 @@ func SendEmail(name, email, token string) error { // Mailpit server details
 		"\r\n"+
 		"%s\r\n", from, to[0], subject, contentType, htmlContent))
 
+	//NOTE:
 	// Send the email without authentication
 	// Mailpit doesn't require authentication for local development
 	err := smtp.SendMail(

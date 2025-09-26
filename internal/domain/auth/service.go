@@ -1,9 +1,6 @@
 package auth
 
 import (
-	"errors"
-	"fmt"
-
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
@@ -21,28 +18,26 @@ func NewAuthService(ur user.Repository, us *user.Service, j *security.JWTService
 
 func (uc *Service) Login(email, password string) (string, error) {
 	if err := security.EmailService(email); err != nil {
-		return "", fmt.Errorf("E-mail Validation Error: %v", err)
+		return "", InvalidCredentials("SRV-0001")
 	}
 
 	foundUser, err := uc.userRepository.FindByEmail(email)
 	if err != nil || foundUser == nil {
-		return "", errors.New("Login: invalid credentials")
+		return "", InvalidCredentials("SRV-0010")
 	}
 
 	if foundUser.Status != "VERIFIED" {
-		return "", errors.New("Login: email not verified")
+		return "", NotVerified("SRV-0100")
 	}
-
 	if err := security.CheckPasswordHash(foundUser.Password, password); err != nil {
-		return "", errors.New("Login: invalid credentials")
+		return "", InvalidCredentials("SRV-1000")
 	}
-
 	return uc.jwtService.GenerateToken(foundUser.UserID, foundUser.Role)
 }
 func (uc *Service) VerifyEmail(token string) error {
 	t, err := uc.jwtService.ValidateToken(token)
 	if err != nil || !t.Valid {
-		return errors.New("invalid token")
+		return InvalidToken("SRV-1010")
 	}
 
 	claims := t.Claims.(jwt.MapClaims)
@@ -50,7 +45,7 @@ func (uc *Service) VerifyEmail(token string) error {
 
 	foundUser, err := uc.userRepository.FindById(userID)
 	if err != nil || foundUser == nil {
-		return errors.New("user not found")
+		return NotFound("SRV-1001")
 	}
 	if err = uc.userRepository.SetVerified(userID); err != nil {
 		return err
@@ -58,4 +53,3 @@ func (uc *Service) VerifyEmail(token string) error {
 
 	return nil
 }
-

@@ -5,8 +5,7 @@ import (
 	"log"
 	"os"
 
-	//"go.mongodb.org/mongo-driver/v2/bson"
-	mongodb "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
+	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )

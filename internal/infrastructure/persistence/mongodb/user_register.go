@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (ur *userMongoRepo) RegisterUser(id, name, email string, password []byte, role, status string) error {
+func (ur *mongoRepo) RegisterUser(id, name, email string, password []byte, role, status string) error {
 	newUser := UserMongoEntity{
 		UserID:   id,
 		Name:     name,
@@ -16,7 +16,7 @@ func (ur *userMongoRepo) RegisterUser(id, name, email string, password []byte, r
 	}
 	result, err := ur.coll.InsertOne(context.TODO(), newUser)
 	if err != nil {
-		return fmt.Errorf("repository.CreateUser(): %v", err)
+		return fmt.Errorf("Repository: %v", err)
 	}
 	// Prints the ID of the inserted document
 	fmt.Printf("Document inserted with ID: %s\n", result.InsertedID)

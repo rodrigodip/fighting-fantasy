@@ -29,6 +29,7 @@ func main() {
 	router := gin.Default()
 	routes.InitUserGroup(&router.RouterGroup, di.User)
 	routes.InitAuthGroup(&router.RouterGroup, di.Auth)
+	routes.InitHeroGroup(&router.RouterGroup, di.Hero)
 	//TODO: DELETE: This is a protected route for email verification
 	//	router.GET("/verify", interfaces.AuthMiddleware(cfg.JWTSecret, auth.RoleUser), authHandler.VerifyEmail)
 	err = router.Run(cfg.HTTPPort)

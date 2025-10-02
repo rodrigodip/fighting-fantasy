@@ -25,9 +25,13 @@ func (hh *HeroHandler) RegisterHero(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"JSON_ParseError": err.Error()})
 		return
 	}
-	newHero, err := hh.usecase.CreateHero(req.UserID, req.HeroName)
+	newHero, err := hh.usecase.CreateHero(req.UserID, req.HeroName, req.Potion)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"Handler: %v": err})
+		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"userId": newHero.UserID, "hero_name": newHero.HeroName})
+	c.JSON(http.StatusCreated, gin.H{
+		"userId":    newHero.UserID,
+		"hero_name": newHero.HeroName,
+	})
 }

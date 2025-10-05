@@ -14,18 +14,21 @@ func NewHeroService(r Repository) *Service {
 }
 
 // ValidateHero enforces hero business rules
-func (s *Service) ValidateHero(h Hero) error {
-	if h.UserID == "" {
-		return errors.New("ValidadeHero: invalid userID")
+func (s *Service) ValidateInput(userID, heroName, potion string) error {
+	if userID == "" {
+		return errors.New("ValidadeHero: userID is Required")
 	}
-	if h.HeroName == "" {
-		return errors.New("ValidadeHero: heroName Required")
+	if heroName == "" {
+		return errors.New("ValidadeHero: heroName is Required")
 	}
-	if len(h.HeroName) < 3 {
+	if len(heroName) < 3 {
 		return errors.New("ValidadeHero: heroName must have more than 3 digits")
 	}
-	if (h.Potions.Dexterity || h.Potions.Fortune || h.Potions.Strength) == false {
-		return errors.New("ValidadeHero: bad potion name: 'dexterity' || 'strength' || 'fortune' ")
+	if len(heroName) > 20 {
+		return errors.New("ValidadeHero: heroName must have less than 20 digits")
+	}
+	if potion == "" {
+		return errors.New("ValidadeHero: potion is Required")
 	}
 	return nil
 }
@@ -38,42 +41,19 @@ func (s *Service) Save(h Hero) error {
 	return nil
 }
 
-// Those are types to build the hero
-type (
-	HeroBuilder interface {
-		SetName(name string) HeroBuilder
-		SetID(id string) HeroBuilder
-		SelectPotion(potion string) HeroBuilder
-		Build() Hero
-	}
-	ConcreteHeroBuilder struct {
-		hero Hero
-	}
-)
-
-func (b *ConcreteHeroBuilder) SetName(name string) HeroBuilder {
-	b.hero.HeroName = name
-	return b
-}
-func (b *ConcreteHeroBuilder) SetID(id string) HeroBuilder {
-	b.hero.UserID = id
-	return b
-}
-func (b *ConcreteHeroBuilder) SelectPotion(potion string) HeroBuilder {
+// SelectPotion attach potion to Hero
+func (s *Service) SelectPotion(hero Hero, potion string) (Hero, error) {
 	switch potion {
 	case "dexterity":
-		b.hero.Potions.Dexterity = true
-		return b
+		hero.Potions.Dexterity = true
+		return hero, nil
 	case "strength":
-		b.hero.Potions.Strength = true
-		return b
+		hero.Potions.Strength = true
+		return hero, nil
 	case "fortune":
-		b.hero.Potions.Fortune = true
-		return b
+		hero.Potions.Fortune = true
+		return hero, nil
 	default:
-		return b
+		return Hero{}, errors.New("SelectPotion: invalid potion name")
 	}
-}
-func (b *ConcreteHeroBuilder) Build() Hero {
-	return b.hero
 }

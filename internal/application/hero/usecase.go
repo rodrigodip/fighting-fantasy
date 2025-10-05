@@ -16,9 +16,17 @@ func NewHeroUseCase(service *hero.Service) *HeroUseCase {
 
 func (uc *HeroUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, error) {
 
-	builder := &hero.ConcreteHeroBuilder{}
-	newHero := builder.SetID(userID).SetName(heroName).SelectPotion(potion).Build()
-	if err := uc.HeroService.ValidateHero(newHero); err != nil {
+	if err := uc.HeroService.ValidateInput(
+		userID, heroName, potion,
+	); err != nil {
+		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
+	}
+	newHero := hero.Hero{
+		UserID:   userID,
+		HeroName: heroName,
+	}
+	newHero, err := uc.HeroService.SelectPotion(newHero, potion)
+	if err != nil {
 		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
 	}
 	if err := uc.HeroService.Save(newHero); err != nil {

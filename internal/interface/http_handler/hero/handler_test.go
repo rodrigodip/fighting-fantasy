@@ -1,10 +1,10 @@
 package herohandler
 
 import (
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
-	"strings"
+	// "encoding/json"
+	// "net/http"
+	// "net/http/httptest"
+	// "strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -15,12 +15,12 @@ import (
 )
 
 func Test_RegisterHero(t *testing.T) {
-	stubHero := HeroCreateRequest{
-		UserID:   "1234",
-		HeroName: "Hero-test",
-		Potion:   "Dexterity",
-	}
-	heroJson, _ := json.Marshal(stubHero)
+	// stubHero := HeroCreateRequest{
+	// 	UserID:   "1234",
+	// 	HeroName: "Hero-test",
+	// 	Potion:   "Dexterity",
+	// }
+	// heroJson, _ := json.Marshal(stubHero)
 
 	ctrl := gomock.NewController(t)
 	repositoryMock := mocks.NewMockRepository(ctrl)
@@ -28,11 +28,23 @@ func Test_RegisterHero(t *testing.T) {
 	heroUsecase := heroapp.NewHeroUseCase(heroService)
 	heroHandler := NewHeroHandler(heroUsecase)
 
-	r := gin.Default()
+	r := gin.New()
 	r.POST("/heroes", heroHandler.RegisterHero)
 
-	w := httptest.NewRecorder()
-	userJson, _ := json.Marshal(heroJson)
-	req, _ := http.NewRequest("POST", "/user/add", strings.NewReader(string(userJson)))
-	r.ServeHTTP(w, req)
+	// testCase := []struct {
+	// 	name           string
+	// 	id             string
+	// 	setupMocks     func()
+	// 	expectedStatus int
+	// 	expectError    bool
+	// }{
+	// 	{
+	// 		name: "",
+	// 	},
+	// }
+	//
+	// w := httptest.NewRecorder()
+	// userJson, _ := json.Marshal(heroJson)
+	// req, _ := http.NewRequest("POST", "/heroes", strings.NewReader(string(userJson)))
+	// r.ServeHTTP(w, req)
 }

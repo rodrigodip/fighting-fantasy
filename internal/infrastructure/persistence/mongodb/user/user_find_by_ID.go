@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func (ur *mongoRepo) FindById(userId string) (*user.User, error) {
+func (ur *MongoUserRepo) FindById(userId string) (*user.User, error) {
 	var foundUser user.User
 	err := ur.coll.FindOne(context.TODO(), bson.M{"userId": userId}).Decode(&foundUser)
 	if err != nil {

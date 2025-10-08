@@ -40,6 +40,21 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
+// FindByOwner mocks base method.
+func (m *MockRepository) FindByOwner(userID string) (*hero.Hero, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByOwner", userID)
+	ret0, _ := ret[0].(*hero.Hero)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByOwner indicates an expected call of FindByOwner.
+func (mr *MockRepositoryMockRecorder) FindByOwner(userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByOwner", reflect.TypeOf((*MockRepository)(nil).FindByOwner), userID)
+}
+
 // RegisterHero mocks base method.
 func (m *MockRepository) RegisterHero(arg0 hero.Hero) error {
 	m.ctrl.T.Helper()

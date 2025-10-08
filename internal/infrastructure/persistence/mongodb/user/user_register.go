@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (ur *mongoRepo) RegisterUser(id, name, email string, password []byte, role, status string) error {
+func (ur *MongoUserRepo) RegisterUser(id, name, email string, password []byte, role, status string) error {
 	newUser := UserMongoEntity{
 		UserID:   id,
 		Name:     name,

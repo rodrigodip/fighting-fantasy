@@ -3,17 +3,19 @@ package heroapp
 import (
 	"testing"
 
+	//"github.com/go-playground/assert/v2"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
+	heroRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/mocks"
 	"go.uber.org/mock/gomock"
 )
 
 func Test_CreateHero(t *testing.T) {
-
 	ctrl := gomock.NewController(t)
 	repositoryMock := mocks.NewMockRepository(ctrl)
 	heroService := hero.NewHeroService(repositoryMock)
 	heroUsecase := NewHeroUseCase(heroService)
+	defer ctrl.Finish()
 
 	testCases := []struct {
 		testName       string
@@ -99,15 +101,20 @@ func Test_CreateHero(t *testing.T) {
 			}
 		})
 	}
-	t.Run("sucess", func(t *testing.T) {
-		testHero := hero.Hero{
+	t.Run("Sucess_creatin_hero", func(t *testing.T) {
+		newHero := hero.Hero{
 			UserID:   "123",
-			HeroName: "Test",
+			HeroName: "HeroTest",
+			Potions:  hero.Potions{Dexterity: true},
 		}
-		repositoryMock.EXPECT().RegisterHero(testHero).Return(nil)
-		err := heroUsecase.HeroService.Save(testHero)
+		mockRepo := heroRepository.NewMockHeroRepository()
+		err := mockRepo.RegisterHero(&newHero)
 		if err != nil {
-			t.Error(err)
+			t.Errorf("error:%s", err)
 		}
+
+		//retrived, err := mockRepo.FindByOwner("123")
+		// assert.Equal(t, err, "MockUserRepo: Hero not found")
+		// assert.Equal(t, newHero.HeroName, retrived.HeroName)
 	})
 }

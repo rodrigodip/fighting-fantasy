@@ -8,7 +8,8 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/config"
-	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb"
+	heroRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/hero"
+	userRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/auth"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
@@ -25,7 +26,7 @@ type Container struct {
 func NewDependecyContainer(db mongo.Database) *Container {
 	cfg := config.LoadConfig()
 
-	userRepo := mongodb.NewMongoRepository(db.Collection("user"))
+	userRepo := userRepository.NewMongoUserRepository(db.Collection("user"))
 	userService := user.NewUserService(userRepo)
 	userUsecase := userapp.NewUserUseCase(userService)
 	userHandler := userhandler.NewUserHandler(userUsecase)
@@ -35,11 +36,10 @@ func NewDependecyContainer(db mongo.Database) *Container {
 	authUsecase := authapp.NewAuthUseCase(authService)
 	authHandler := authhandler.NewAuthHandler(authUsecase)
 
-	heroRepo := mongodb.NewMongoRepository(db.Collection("hero"))
+	heroRepo := heroRepository.NewMongoHeroRepo(db.Collection("hero"))
 	heroService := hero.NewHeroService(heroRepo)
 	heroUsecase := heroapp.NewHeroUseCase(heroService)
 	heroHandler := herohandler.NewHeroHandler(heroUsecase)
-
 	return &Container{
 		User: userHandler,
 		Auth: authHandler,

@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb"
+	userRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -58,7 +58,7 @@ func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
 		return nil, err
 	}
 	//Collection's constraints (index)
-	if err := mongodb.CreateUserIndexes(ctx, dbName, client); err != nil {
+	if err := userRepository.CreateUserIndexes(ctx, dbName, client); err != nil {
 		return nil, err
 	}
 	//Ping DB

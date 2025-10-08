@@ -1,10 +1,10 @@
 package herohandler
 
 import (
-	// "encoding/json"
-	// "net/http"
-	// "net/http/httptest"
-	// "strings"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -15,12 +15,6 @@ import (
 )
 
 func Test_RegisterHero(t *testing.T) {
-	// stubHero := HeroCreateRequest{
-	// 	UserID:   "1234",
-	// 	HeroName: "Hero-test",
-	// 	Potion:   "Dexterity",
-	// }
-	// heroJson, _ := json.Marshal(stubHero)
 
 	ctrl := gomock.NewController(t)
 	repositoryMock := mocks.NewMockRepository(ctrl)
@@ -31,20 +25,60 @@ func Test_RegisterHero(t *testing.T) {
 	r := gin.New()
 	r.POST("/heroes", heroHandler.RegisterHero)
 
-	// testCase := []struct {
-	// 	name           string
-	// 	id             string
-	// 	setupMocks     func()
-	// 	expectedStatus int
-	// 	expectError    bool
-	// }{
-	// 	{
-	// 		name: "",
-	// 	},
-	// }
-	//
-	// w := httptest.NewRecorder()
-	// userJson, _ := json.Marshal(heroJson)
-	// req, _ := http.NewRequest("POST", "/heroes", strings.NewReader(string(userJson)))
-	// r.ServeHTTP(w, req)
+	testCases := []struct {
+		testName       string
+		hero           HeroCreateRequest
+		expectedReturn string
+		expectedStatus int
+		expectError    bool
+	}{
+		{
+			testName:       "When User is Nil",
+			hero:           HeroCreateRequest{"", "hero Test", "Dexterity"},
+			expectedReturn: "ValidadeHero: userID is Required",
+			expectedStatus: http.StatusBadRequest,
+			expectError:    true,
+		},
+		{
+			testName:       "When HeroName is Nil",
+			hero:           HeroCreateRequest{"123", "", "Dexterity"},
+			expectedReturn: "ValidadeHero: heroName is Required",
+			expectedStatus: http.StatusBadRequest,
+			expectError:    true,
+		},
+		{
+			testName:       "When HeroName has less than 3 digits",
+			hero:           HeroCreateRequest{"", "hero Test", "Dexterity"},
+			expectedReturn: "ValidadeHero: heroName must have more than 3 digits",
+			expectedStatus: http.StatusBadRequest,
+			expectError:    true,
+		},
+		{
+			testName:       "When HeroName has more than 20 digits",
+			hero:           HeroCreateRequest{"", "hero Test", "Dexterity"},
+			expectedReturn: "ValidadeHero: heroName must have less than 20 digits",
+			expectedStatus: http.StatusBadRequest,
+			expectError:    true,
+		},
+		{
+			testName:       "When Potion is Nil",
+			hero:           HeroCreateRequest{"", "hero Test", "Dexterity"},
+			expectedReturn: "ValidadeHero: a potion name is Required",
+			expectedStatus: http.StatusBadRequest,
+			expectError:    true,
+		},
+		{
+			testName:       "SUCESS",
+			hero:           HeroCreateRequest{"", "hero Test", "Dexterity"},
+			expectedReturn: "ValidadeHero: a potion name is Required",
+			expectedStatus: http.StatusBadRequest,
+			expectError:    true,
+		},
+	}
+	for _, tc := range testCases {
+		w := httptest.NewRecorder()
+		userJson, _ := json.Marshal(tc.hero)
+		req, _ := http.NewRequest("POST", "/heroes", strings.NewReader(string(userJson)))
+		r.ServeHTTP(w, req)
+	}
 }

@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type HeroMongoEntity struct {
@@ -41,10 +42,10 @@ type History struct {
 	Choices   []string            `bson:"choices"`
 }
 
-// type heroMongoRepo struct {
-// 	coll *mongo.Collection
-// }
-//
-// func NewHeroRepository(database *mongo.Collection) *heroMongoRepo {
-// 	return &heroMongoRepo{coll: database}
-// }
+type MongoHeroRepo struct {
+	coll *mongo.Collection
+}
+
+func NewMongoHeroRepo(database *mongo.Collection) *MongoHeroRepo {
+	return &MongoHeroRepo{coll: database}
+}

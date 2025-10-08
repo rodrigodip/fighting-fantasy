@@ -7,7 +7,7 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 )
 
-func (hr *mongoRepo) RegisterHero(hero hero.Hero) error {
+func (hr *MongoHeroRepo) RegisterHero(hero hero.Hero) error {
 	newHero := HeroMongoEntity{
 		UserID:      hero.UserID,
 		HeroName:    hero.HeroName,
@@ -33,4 +33,7 @@ func (hr *mongoRepo) RegisterHero(hero hero.Hero) error {
 	}
 	fmt.Printf("Hero created with ID:[%s] to UserID:[%s] \n", result.InsertedID, newHero.UserID)
 	return nil
+}
+func (hr *MongoHeroRepo) FindByOwner(userID string) (*hero.Hero, error) {
+	return &hero.Hero{}, nil
 }

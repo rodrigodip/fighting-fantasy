@@ -28,7 +28,7 @@ func (s *Service) ValidateInput(userID, heroName, potion string) error {
 		return errors.New("ValidadeHero: heroName must have less than 20 digits")
 	}
 	if potion == "" {
-		return errors.New("ValidadeHero: potion is Required")
+		return errors.New("ValidadeHero: a potion name is Required")
 	}
 	return nil
 }

@@ -16,16 +16,15 @@ func NewAuthService(ur user.Repository, us *user.Service, j *security.JWTService
 	return &Service{userRepository: ur, userService: us, jwtService: j}
 }
 
+// TODO: REFACTOR: Aplicar Responsabilidades únicas aos serviços.
 func (uc *Service) Login(email, password string) (string, error) {
 	if err := security.EmailService(email); err != nil {
 		return "", InvalidCredentials("SRV-0001")
 	}
-
 	foundUser, err := uc.userRepository.FindByEmail(email)
 	if err != nil || foundUser == nil {
 		return "", InvalidCredentials("SRV-0010")
 	}
-
 	if foundUser.Status != "VERIFIED" {
 		return "", NotVerified("SRV-0100")
 	}
@@ -35,6 +34,7 @@ func (uc *Service) Login(email, password string) (string, error) {
 	return uc.jwtService.GenerateToken(foundUser.UserID, foundUser.Role)
 }
 func (uc *Service) VerifyEmail(token string) error {
+	//NOTE: JWT na camada de Domínio configura acoplamento? Devo implementar na camada de interface?
 	t, err := uc.jwtService.ValidateToken(token)
 	if err != nil || !t.Valid {
 		return InvalidToken("SRV-1010")

@@ -13,6 +13,7 @@ func (e *AuthErr) Error() string {
 	return fmt.Sprintf("%s: %s", e.Producer, e.Err)
 }
 
+// InvalidCredentials generates a AuthErr type and indicates where the error producer
 func InvalidCredentials(producer string) error {
 	return &AuthErr{
 		Producer: producer,

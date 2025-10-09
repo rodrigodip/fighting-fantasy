@@ -17,6 +17,8 @@ type Service struct {
 func NewUserService(r Repository) *Service {
 	return &Service{service: r}
 }
+
+// TODO: REFACTOR: Aplicar Responsabilidades únicas aos serviços.
 func (s Service) GetEmail(email string) (*User, error) {
 	if err := security.EmailService(email); err != nil {
 		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
@@ -76,12 +78,14 @@ func (s *Service) CreateUser(name, email, password string) (*User, error) {
 	return newUser, nil
 }
 
-// ValidatePassword checks if a password is strong
+//NOTE:
 // At least 8 characters long
 // Contains at least 1 uppercase letter
 // Contains at least 1 lowercase letter
 // Contains at least 1 digit
 // Contains at least 1 special character (e.g. @#$%^&+=!)
+
+// ValidatePassword checks if a password is strong
 func validatePassword(password string) error {
 	if len(password) < 8 {
 		return errors.New("Password Validation Error: Must be at least 8 characters long")

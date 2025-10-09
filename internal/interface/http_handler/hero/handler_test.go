@@ -11,6 +11,7 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/application/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/mocks"
+	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
 
@@ -35,7 +36,7 @@ func Test_RegisterHero(t *testing.T) {
 		{
 			testName:       "When User is Nil",
 			hero:           HeroCreateRequest{"", "hero Test", "Dexterity"},
-			expectedReturn: "ValidadeHero: userID is Required",
+			expectedReturn: "CreateHero: ValidadeHero: heroName is Required",
 			expectedStatus: http.StatusBadRequest,
 			expectError:    true,
 		},
@@ -76,9 +77,16 @@ func Test_RegisterHero(t *testing.T) {
 		},
 	}
 	for _, tc := range testCases {
-		w := httptest.NewRecorder()
-		userJson, _ := json.Marshal(tc.hero)
-		req, _ := http.NewRequest("POST", "/heroes", strings.NewReader(string(userJson)))
-		r.ServeHTTP(w, req)
+		t.Run(tc.testName, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			heroJson, _ := json.Marshal(tc.hero)
+			req, _ := http.NewRequest(
+				"POST",
+				"/heroes",
+				strings.NewReader(string(heroJson)),
+			)
+			r.ServeHTTP(w, req)
+			assert.Equal(t, 400, w.Code)
+		})
 	}
 }

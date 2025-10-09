@@ -10,6 +10,7 @@ func NewUserUseCase(service *user.Service) *UserUseCase {
 	return &UserUseCase{UserService: service}
 }
 
+// TODO: REFACTOR: Use case deve ser responsável por orquestrar os serviços
 func (uc *UserUseCase) CreateUser(name, email, password string) (*user.User, error) {
 	return uc.UserService.CreateUser(name, email, password)
 }

@@ -8,6 +8,7 @@ type AuthUseCase struct {
 	AuthService *auth.Service
 }
 
+// TODO: REFACTOR: Atribuir os UC de Auth ao User
 func NewAuthUseCase(service *auth.Service) *AuthUseCase {
 	return &AuthUseCase{AuthService: service}
 }

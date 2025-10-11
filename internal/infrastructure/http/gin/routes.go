@@ -9,7 +9,7 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
 )
 
-func InitUserGroup(r *gin.RouterGroup, app userhandler.UserHandlerRepo) {
+func InitUserGroup(r *gin.RouterGroup, app *userhandler.UserHandler) {
 	r.POST("/users", app.RegisterUser)
 	r.POST("/login", app.Login)
 	r.GET("/verify", app.VerifyEmail)
@@ -18,6 +18,6 @@ func InitUserGroup(r *gin.RouterGroup, app userhandler.UserHandlerRepo) {
 	//docs.SwaggerInfo.BasePath = "/"
 	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
-func InitHeroGroup(r *gin.RouterGroup, app herohandler.HeroHandlerRepo, cfg config.Config) {
+func InitHeroGroup(r *gin.RouterGroup, app *herohandler.HeroHandler, cfg config.Config) {
 	r.POST("/heroes", interfaces.AuthMiddleware(cfg.JWTSecret, usr.RoleUser), app.RegisterHero)
 }

@@ -1,4 +1,4 @@
-package user
+package usr
 
 import (
 	"errors"
@@ -18,15 +18,31 @@ func NewUserService(r Repository) *Service {
 	return &Service{service: r}
 }
 
-func (s *Service) GetEmail(email string) (*User, error) {
+func (s *Service) GetByEmail(email string) (*User, error) {
 	if err := security.EmailFormatValidation(email); err != nil {
 		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
 	}
 	foudUser, err := s.service.FindByEmail(email)
 	if err != nil {
-		return &User{}, err
+		return &User{}, fmt.Errorf("GetByEmail: %v", err)
+
 	}
 	return foudUser, nil
+}
+func (s *Service) GetById(id string) (*User, error) {
+	foudUser, err := s.service.FindById(id)
+	if err != nil {
+		return &User{}, fmt.Errorf("GetById: %v", err)
+	}
+	return foudUser, nil
+}
+
+// SetVerified Set User email as verified
+func (s *Service) SetVerified(userId string) error {
+	if err := s.service.Update(userId, "Status", "VERIFIED"); err != nil {
+		return fmt.Errorf("SetVerified: %v", err)
+	}
+	return nil
 }
 
 // Save persists a User

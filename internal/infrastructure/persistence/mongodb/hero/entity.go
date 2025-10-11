@@ -5,6 +5,14 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
+type MongoHeroRepo struct {
+	coll *mongo.Collection
+}
+
+func NewMongoHeroRepository(database *mongo.Collection) *MongoHeroRepo {
+	return &MongoHeroRepo{coll: database}
+}
+
 type HeroMongoEntity struct {
 	ID              primitive.ObjectID `bson:"_id,omitempty"`
 	UserID          string             `bson:"userId"`
@@ -40,12 +48,4 @@ type History struct {
 	Lore      int                 `bson:"lore"`
 	Timestamp primitive.Timestamp `bson:"timestamp"`
 	Choices   []string            `bson:"choices"`
-}
-
-type MongoHeroRepo struct {
-	coll *mongo.Collection
-}
-
-func NewMongoHeroRepo(database *mongo.Collection) *MongoHeroRepo {
-	return &MongoHeroRepo{coll: database}
 }

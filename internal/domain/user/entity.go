@@ -1,4 +1,4 @@
-package user
+package usr
 
 type Profile struct {
 	Age    int

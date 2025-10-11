@@ -7,11 +7,11 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func (ur *MongoUserRepo) FindByEmail(email string) (*user.User, error) {
-	var foundUser user.User
+func (ur *MongoUserRepo) FindByEmail(email string) (*usr.User, error) {
+	var foundUser usr.User
 	err := ur.coll.FindOne(context.TODO(), bson.M{"email": email}).Decode(&foundUser)
 	if err != nil {
-		return &user.User{}, fmt.Errorf("repository.CreateUser(): %v", err)
+		return &usr.User{}, fmt.Errorf("repository.CreateUser(): %v", err)
 	}
 	return &foundUser, nil
 }

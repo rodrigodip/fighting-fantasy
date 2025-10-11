@@ -1,15 +1,16 @@
 package interfaces
 
 import (
-	"github.com/rodrigodip/fighting-fantasy/internal/domain/auth"
 	"net/http"
 	"strings"
+
+	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func AuthMiddleware(secret string, requiredRole auth.Role) gin.HandlerFunc {
+func AuthMiddleware(secret string, requiredRole usr.Role) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -32,7 +33,7 @@ func AuthMiddleware(secret string, requiredRole auth.Role) gin.HandlerFunc {
 		claims := token.Claims.(jwt.MapClaims)
 		role := claims["role"].(string)
 
-		if requiredRole == auth.RoleAdmin && !auth.CanAccessAdmin(auth.Role(role)) {
+		if requiredRole == usr.RoleAdmin && !usr.CanAccessAdmin(usr.Role(role)) {
 			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 			c.Abort()
 			return

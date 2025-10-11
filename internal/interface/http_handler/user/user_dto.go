@@ -7,7 +7,10 @@ type UserCreateRequest struct {
 	Password string `json:"password,omitempty"`
 	Role     string `json:"roles,omitempty"`
 }
-
+type AuthLoginRequest struct {
+	Password string `json:"password,omitempty"`
+	Email    string `json:"email,omitempty"`
+}
 type UserCreateResponse struct {
 	UserID string `json:"userId,omitempty"`
 	Name   string `json:"name,omitempty"`

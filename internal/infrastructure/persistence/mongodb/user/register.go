@@ -8,7 +8,7 @@ import (
 )
 
 // RegisterUser persist a User on DB
-func (ur *MongoUserRepo) RegisterUser(u user.User) error {
+func (ur *MongoUserRepo) RegisterUser(u usr.User) error {
 	newUser := UserMongoEntity{
 		UserID:   u.UserID,
 		Name:     u.Name,

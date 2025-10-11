@@ -19,7 +19,7 @@ type UserMongoEntity struct {
 	Name      string             `bson:"name"`
 	Email     string             `bson:"email"`
 	Password  []byte
-	Status    string              `bson:"status"`
+	Status    Status              `bson:"status"`
 	CreatedAt primitive.Timestamp `bson:"createdAt"`
 	Profile   Profile             `bson:"profile"`
 	Role      string              `bson:"role"`
@@ -28,3 +28,14 @@ type Profile struct {
 	Age    int    `bson:"age"`
 	Gender string `bson:"gender"`
 }
+type (
+	Status string
+	Role   string
+)
+
+const (
+	StatusVerified   Status = "VERIFIED"
+	StatusUnverified Status = "UNVERIFIED"
+	RoleUser         Role   = "USER"
+	RoleAdmin        Role   = "ADMIN"
+)

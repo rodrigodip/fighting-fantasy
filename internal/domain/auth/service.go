@@ -18,7 +18,7 @@ func NewAuthService(ur user.Repository, us *user.Service, j *security.JWTService
 
 // TODO: REFACTOR: Aplicar Responsabilidades únicas aos serviços.
 func (uc *Service) Login(email, password string) (string, error) {
-	if err := security.EmailService(email); err != nil {
+	if err := security.EmailFormatValidation(email); err != nil {
 		return "", InvalidCredentials("SRV-0001")
 	}
 	foundUser, err := uc.userRepository.FindByEmail(email)
@@ -50,6 +50,5 @@ func (uc *Service) VerifyEmail(token string) error {
 	if err = uc.userRepository.SetVerified(userID); err != nil {
 		return err
 	}
-
 	return nil
 }

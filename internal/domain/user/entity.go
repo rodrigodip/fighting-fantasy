@@ -10,7 +10,18 @@ type User struct {
 	Name     string
 	Email    string
 	Password []byte
-	Status   string
+	Status   Status
 	Profile  Profile
 	Role     string
 }
+type (
+	Status string
+	Role   string
+)
+
+const (
+	StatusVerified   Status = "VERIFIED"
+	StatusUnverified Status = "UNVERIFIED"
+	RoleUser         Role   = "USER"
+	RoleAdmin        Role   = "ADMIN"
+)

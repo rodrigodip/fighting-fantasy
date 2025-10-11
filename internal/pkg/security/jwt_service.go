@@ -23,6 +23,7 @@ func (j *JWTService) GenerateToken(userID, role string) (string, error) {
 		"exp":     time.Now().Add(24 * time.Hour).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	return token.SignedString([]byte(j.secretKey))
 }
 

@@ -6,7 +6,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
 
@@ -18,64 +18,43 @@ func NewUserService(r Repository) *Service {
 	return &Service{service: r}
 }
 
-// TODO: REFACTOR: Aplicar Responsabilidades únicas aos serviços.
-func (s Service) GetEmail(email string) (*User, error) {
-	if err := security.EmailService(email); err != nil {
+func (s *Service) GetEmail(email string) (*User, error) {
+	if err := security.EmailFormatValidation(email); err != nil {
 		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
 	}
 	foudUser, err := s.service.FindByEmail(email)
 	if err != nil {
 		return &User{}, err
 	}
-
 	return foudUser, nil
 }
-func (s *Service) CreateUser(name, email, password string) (*User, error) {
+
+// Save persists a User
+func (s *Service) Save(u User) error {
+	if err := s.service.RegisterUser(u); err != nil {
+		return fmt.Errorf("Save: %v", err)
+	}
+	return nil
+}
+
+// ValidadeUserInput enforce business rules
+func (s *Service) ValidadeUserInput(name, email, password string) error {
 	if name == "" {
-		return &User{}, errors.New("Name Validation Error: Requested")
+		return errors.New("Name Validation Error: Requested")
 	}
 	if len(name) < 3 {
-		return &User{}, errors.New("Name Validation Error: Must have more than 3 digits")
+		return errors.New("Name Validation Error: Must have more than 3 digits")
 	}
-
 	if email == "" {
-		return &User{}, errors.New("E-mail Validation Error: Requested")
+		return errors.New("E-mail Validation Error: Requested")
 	}
-
-	if err := security.EmailService(email); err != nil {
-		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
+	if err := security.EmailFormatValidation(email); err != nil {
+		return fmt.Errorf("E-mail Validation Error: %v", err)
 	}
-
 	if password == "" {
-		return &User{}, errors.New("Password Validation Error: Requested")
+		return errors.New("Password Validation Error: Requested")
 	}
-	if err := validatePassword(password); err != nil {
-		return &User{}, err
-	}
-	encodedPassword, err := security.EncodePw(password)
-	if err != nil {
-		return &User{}, err
-	}
-	generator := IDgenerator.NewTimestampIDGenerator()
-	newUser := &User{
-		UserID:   generator.NewID(),
-		Name:     name,
-		Email:    email,
-		Password: encodedPassword,
-		Role:     "USER",
-		Status:   "UNVERIFIED",
-	}
-	if err := s.service.RegisterUser(
-		newUser.UserID,
-		newUser.Name,
-		newUser.Email,
-		newUser.Password,
-		newUser.Role,
-		newUser.Status); err != nil {
-		return &User{}, err
-	}
-	sendVerifyEmail(newUser.UserID, newUser.Name, newUser.Email)
-	return newUser, nil
+	return nil
 }
 
 //NOTE:
@@ -85,8 +64,8 @@ func (s *Service) CreateUser(name, email, password string) (*User, error) {
 // Contains at least 1 digit
 // Contains at least 1 special character (e.g. @#$%^&+=!)
 
-// ValidatePassword checks if a password is strong
-func validatePassword(password string) error {
+// ValidatePassword checks if a password rules
+func (s *Service) ValidatePassword(password string) error {
 	if len(password) < 8 {
 		return errors.New("Password Validation Error: Must be at least 8 characters long")
 	}
@@ -107,15 +86,43 @@ func validatePassword(password string) error {
 	}
 	return nil
 }
-func sendVerifyEmail(userID, name, email string) error {
-	role := "USER"
+func (s *Service) GetToken(userID, role string) (string, error) {
 	secret := os.Getenv("JWT_SECRET")
 	issuer := os.Getenv("JWT_ISSUER")
 	service := security.NewJWTService(secret, issuer)
 	token, err := service.GenerateToken(userID, role)
 	if err != nil {
-		return errors.New("Error generating email validation Token")
+		return "", InvalidCredentials("SRV-0001")
+	}
+	return token, nil
+}
+func (s *Service) CheckToken(token string) (*jwt.Token, error) {
+	secret := os.Getenv("JWT_SECRET")
+	issuer := os.Getenv("JWT_ISSUER")
+	service := security.NewJWTService(secret, issuer)
+	t, err := service.ValidateToken(token)
+	if err != nil || !t.Valid {
+		return &jwt.Token{}, InvalidToken("SRV-1010")
+	}
+	return t, nil
+}
+
+// SendVerifyEmail sends a verification link to user registered email
+func (s *Service) SendVerifyEmail(userID, name, email, role string) error {
+	token, err := s.GetToken(userID, role)
+	if err != nil {
+		return fmt.Errorf("SendVerifyEmail: GenerateToken: %v", err)
 	}
 	security.SendEmail(name, email, token)
 	return nil
+}
+
+// IsUserVerified check if User has a verified e-mail
+func (s *Service) IsUserVerified(status Status) bool {
+	return status == StatusVerified
+}
+
+// CanAccessAdmin checks User's role
+func (s *Service) CanAccessAdmin(role Role) bool {
+	return role == RoleAdmin
 }

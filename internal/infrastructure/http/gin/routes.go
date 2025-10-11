@@ -12,7 +12,6 @@ import (
 
 func InitUserGroup(r *gin.RouterGroup, app userhandler.UserHandlerRepo) {
 	r.POST("/users", app.RegisterUser)
-	r.GET("/findbyemail", app.FindByEmail)
 
 	//TODO: Swagger Doc
 	//docs.SwaggerInfo.BasePath = "/"

@@ -3,16 +3,19 @@ package mongodb
 import (
 	"context"
 	"fmt"
+
+	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 )
 
-func (ur *MongoUserRepo) RegisterUser(id, name, email string, password []byte, role, status string) error {
+// RegisterUser persist a User on DB
+func (ur *MongoUserRepo) RegisterUser(u user.User) error {
 	newUser := UserMongoEntity{
-		UserID:   id,
-		Name:     name,
-		Email:    email,
-		Password: password,
-		Role:     role,
-		Status:   status,
+		UserID:   u.UserID,
+		Name:     u.Name,
+		Email:    u.Email,
+		Password: u.Password,
+		Role:     u.Role,
+		Status:   Status(u.Status),
 	}
 	result, err := ur.coll.InsertOne(context.TODO(), newUser)
 	if err != nil {

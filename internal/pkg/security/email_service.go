@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func EmailService(email string) error {
+func EmailFormatValidation(email string) error {
 	err := checkmail.ValidateFormat(email)
 	return err
 }

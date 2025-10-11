@@ -17,7 +17,6 @@ func NewusrUseCase(service *usr.Service) *UserUseCase {
 	return &UserUseCase{UserService: service}
 }
 
-// TODO: REFACTOR: Use case deve ser responsável por orquestrar os serviços
 func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, error) {
 	if err := uc.UserService.ValidadeUserInput(name, email, password); err != nil {
 		return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
@@ -35,8 +34,8 @@ func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, erro
 		Name:     name,
 		Email:    email,
 		Password: encodedPassword,
-		Role:     "USER",
-		Status:   "UNVERIFIED",
+		Role:     string(usr.RoleUser),
+		Status:   usr.StatusUnverified,
 	}
 	if err := uc.UserService.Save(*newUser); err != nil {
 		return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
@@ -85,7 +84,7 @@ func (uc *UserUseCase) VerifyEmail(token string) error {
 		return usr.NotFound("SRV-1001")
 	}
 	if err = uc.UserService.SetVerified(userID); err != nil {
-		return err
+		return fmt.Errorf("VerifyEmail: %v", err)
 	}
 	return nil
 }

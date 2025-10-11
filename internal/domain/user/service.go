@@ -39,7 +39,7 @@ func (s *Service) GetById(id string) (*User, error) {
 
 // SetVerified Set User email as verified
 func (s *Service) SetVerified(userId string) error {
-	if err := s.service.Update(userId, "Status", "VERIFIED"); err != nil {
+	if err := s.service.Update(userId, "status", string(StatusVerified)); err != nil {
 		return fmt.Errorf("SetVerified: %v", err)
 	}
 	return nil
@@ -135,10 +135,5 @@ func (s *Service) SendVerifyEmail(userID, name, email, role string) error {
 
 // IsUserVerified check if User has a verified e-mail
 func (s *Service) IsUserVerified(status Status) bool {
-	return status == StatusVerified
-}
-
-// CanAccessAdmin checks User's role
-func (s *Service) CanAccessAdmin(role Role) bool {
-	return role == RoleAdmin
+	return status == StatusUnverified
 }

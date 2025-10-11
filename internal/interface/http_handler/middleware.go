@@ -33,8 +33,8 @@ func AuthMiddleware(secret string, requiredRole usr.Role) gin.HandlerFunc {
 		claims := token.Claims.(jwt.MapClaims)
 		role := claims["role"].(string)
 
-		if requiredRole == usr.RoleAdmin && !usr.CanAccessAdmin(usr.Role(role)) {
-			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		if requiredRole == usr.RoleAdmin && role != string(usr.RoleAdmin) { //!usr.CanAccessAdmin(usr.Role(role))
+			c.JSON(http.StatusForbidden, gin.H{"error": "Must have admin access"})
 			c.Abort()
 			return
 		}

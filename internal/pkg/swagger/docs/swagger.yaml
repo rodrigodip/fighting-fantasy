@@ -1,0 +1,115 @@
+basePath: /
+definitions:
+  userhandler.UserCreateRequest:
+    properties:
+      email:
+        type: string
+      name:
+        description: UserID   string `json:"userId,omitempty"`
+        type: string
+      password:
+        type: string
+    type: object
+  userhandler.UserCreateResponse:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      roles:
+        type: string
+      userId:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A solo Game-Book RPG
+  title: Figthing Fantasy
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to log in and receive an authentication token.
+      parameters:
+      - description: User login credentials
+        in: body
+        name: AuthLoginRequst
+        required: true
+        schema:
+          $ref: '#/definitions/userhandler.UserCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: Authentication token
+              type: string
+        "403":
+          description: 'Error: Invalid login credentials'
+          schema:
+            type: string
+      summary: User Login
+      tags:
+      - Authentication
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new User account.
+      parameters:
+      - description: User params to create a User
+        in: body
+        name: UserCreateRequest
+        required: true
+        schema:
+          $ref: '#/definitions/userhandler.UserCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userhandler.UserCreateResponse'
+        "400":
+          description: Bad Request
+        "500":
+          description: 'Error: Parsing JSON'
+          schema:
+            type: string
+      summary: Persistes a new user
+      tags:
+      - User
+  /verify:
+    get:
+      consumes:
+      - application/json
+      description: New user that visit verification email link are udated as "verified".
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'success: Account verified'
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Set a User as Verified
+      tags:
+      - User
+schemes:
+- http
+swagger: "2.0"

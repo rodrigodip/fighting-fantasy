@@ -70,7 +70,7 @@ func (uc *UserUseCase) Login(email, password string) (string, error) {
 	return token, nil
 }
 
-// VerifyEmail check if User e-mail was verified
+// VerifyEmail check if User has a verified e-mail
 func (uc *UserUseCase) VerifyEmail(token string) error {
 	t, err := uc.UserService.CheckToken(token)
 	if err != nil {

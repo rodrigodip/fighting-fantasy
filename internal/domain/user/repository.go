@@ -5,8 +5,7 @@ type Repository interface {
 	FindByEmail(email string) (*User, error)
 	FindById(id string) (*User, error)
 	Update(id, field, newData string) error
-	// Login(email, password string) (string, error)
-	// VerifyEmail(token string) error
-	//TODO: ResendVeriyEmail()
 
+	//TODO: ResendVeriyEmail()
+	//FindHero(userID string) (*Hero, error)
 }

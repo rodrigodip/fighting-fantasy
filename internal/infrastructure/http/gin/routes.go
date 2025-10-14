@@ -7,6 +7,9 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
+
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func InitUserGroup(r *gin.RouterGroup, app *userhandler.UserHandler) {
@@ -14,9 +17,8 @@ func InitUserGroup(r *gin.RouterGroup, app *userhandler.UserHandler) {
 	r.POST("/login", app.Login)
 	r.GET("/verify", app.VerifyEmail)
 
-	//TODO: Swagger Doc
 	//docs.SwaggerInfo.BasePath = "/"
-	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
 func InitHeroGroup(r *gin.RouterGroup, app *herohandler.HeroHandler, cfg config.Config) {
 	r.POST("/heroes", interfaces.AuthMiddleware(cfg.JWTSecret, usr.RoleUser), app.RegisterHero)

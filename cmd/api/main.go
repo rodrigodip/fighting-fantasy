@@ -11,6 +11,13 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/http/gin"
 )
 
+// @title Figthing Fantasy
+// @version 1.0
+// @description A solo Game-Book RPG
+// @host localhost:8080
+// @BasePath /
+// @schemes http
+// @license MIT
 func main() {
 	err := godotenv.Load()
 	if err != nil {

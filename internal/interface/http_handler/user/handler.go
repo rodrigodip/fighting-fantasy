@@ -25,10 +25,20 @@ func NewUserHandler(uc *userapp.UserUseCase) *UserHandler {
 }
 
 // RegisterUser persistes a new user
+// @Summary Persistes a new user
+// @Description Create a new User account.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param UserCreateRequest body userhandler.UserCreateRequest true "User params to create a User"
+// @Success 200 {object} userhandler.UserCreateResponse
+// @Failure 400
+// @Failure 500 {string} string "Error: Parsing JSON"
+// @Router /users [post]
 func (uh *UserHandler) RegisterUser(c *gin.Context) {
 	var req UserCreateRequest
 	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"Handler": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"Handler": err.Error()})
 		return
 	}
 	newUser, err := uh.usecase.
@@ -45,11 +55,23 @@ func (uh *UserHandler) RegisterUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, output)
 }
+
+// Login allows a user to log in and obtain an authentication token.
+// @Summary User Login
+// @Description Allows a user to log in and receive an authentication token.
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param AuthLoginRequst body userhandler.UserCreateRequest true "User login credentials"
+// @Success 200
+// @Header 200 {string} Authorization "Authentication token"
+// @Failure 403 {string} string "Error: Invalid login credentials"
+// @Router /login [post]
 func (uh *UserHandler) Login(c *gin.Context) {
 	var req AuthLoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"JSONerror": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"JSONerror": err.Error()})
 		return
 	}
 	token, err := uh.usecase.Login(req.Email, req.Password)
@@ -60,10 +82,22 @@ func (uh *UserHandler) Login(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
+
+// VerifyEmail Set a User as Verified
+// @Summary Set a User as Verified
+// @Description New user that visit verification email link are udated as "verified".
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Success 200 {string} string "success: Account verified"
+// @Failure 400
+// @Failure 500
+// @Router /verify [get]
 func (uh *UserHandler) VerifyEmail(c *gin.Context) {
 	token := c.Query("token")
 	if token == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "missing token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "missing token"})
 		return
 	}
 	err := uh.usecase.VerifyEmail(token)

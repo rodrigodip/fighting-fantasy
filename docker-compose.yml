@@ -1,3 +1,6 @@
+networks:
+  mynet:
+
 services:
     mailpit:
         image: axllent/mailpit
@@ -13,3 +16,30 @@ services:
             MP_DATABASE: /data/mailpit.db
             MP_SMTP_AUTH_ACCEPT_ANY: 1
             MP_SMTP_AUTH_ALLOW_INSECURE: 1
+        networks:
+          - mynet
+
+    app:
+        build:
+          context: .
+          dockerfile: Dockerfile
+        container_name: ffantasy
+        environment:
+          - MONGO_URI=${MONGO_URI}
+          - MONGO_DB=${MONGO_DB}
+          - JWT_SECRET=${JWT_SECRET}
+          - JWT_ISSUER=${JWT_ISSUER}
+          - HTTP_PORT=${HTTP_PORT}
+
+          - SMTP_HOST=${SMTP_HOST}
+          - SMTP_PORT=${SMTP_PORT}
+          - SMTP_USERNAME=${SMTP_USERNAME}
+          - SMTP_PASSWORD=${SMTP_PASSWORD}
+          - SMTP_FROM=${SMTP_FROM}
+        ports:
+          - "8080:8080"
+        networks:
+          - mynet
+
+volumes:
+  data:

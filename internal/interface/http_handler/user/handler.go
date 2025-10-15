@@ -83,17 +83,6 @@ func (uh *UserHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
-// VerifyEmail Set a User as Verified
-// @Summary Set a User as Verified
-// @Description New user that visit verification email link are udated as "verified".
-// @Tags User
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
-// @Success 200 {string} string "success: Account verified"
-// @Failure 400
-// @Failure 500
-// @Router /verify [get]
 func (uh *UserHandler) VerifyEmail(c *gin.Context) {
 	token := c.Query("token")
 	if token == "" {

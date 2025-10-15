@@ -13,7 +13,7 @@ func NewHeroService(r Repository) *Service {
 	return &Service{service: r}
 }
 
-// ValidateHero enforces hero business rules
+// ValidateInput check input for incosistence
 func (s *Service) ValidateInput(userID, heroName, potion string) error {
 	if userID == "" {
 		return errors.New("ValidadeHero: userID is Required")
@@ -41,7 +41,7 @@ func (s *Service) Save(h Hero) error {
 	return nil
 }
 
-// SelectPotion attach potion to Hero
+// SelectPotion attach a potion to Hero
 func (s *Service) SelectPotion(hero Hero, potion string) (Hero, error) {
 	switch potion {
 	case "dexterity":

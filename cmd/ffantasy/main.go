@@ -19,10 +19,7 @@ import (
 // @schemes http
 // @license MIT
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	_ = godotenv.Load()
 	cfg := config.LoadConfig()
 
 	db, err := config.NewMongoDBConnection(context.Background())

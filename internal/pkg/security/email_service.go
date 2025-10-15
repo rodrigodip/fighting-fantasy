@@ -2,9 +2,11 @@ package security
 
 import (
 	"fmt"
-	"github.com/badoux/checkmail"
 	"net/smtp"
+	"os"
 	"strings"
+
+	"github.com/badoux/checkmail"
 )
 
 func EmailFormatValidation(email string) error {
@@ -13,11 +15,11 @@ func EmailFormatValidation(email string) error {
 }
 
 func SendEmail(name, email, token string) error {
-	smtpHost := "localhost"
-	smtpPort := 1025 // Default Mailpit SMTP port
+	smtpHost := os.Getenv("SMTP_HOST")
+	smtpPort := os.Getenv("SMTP_PORT")
 
 	// Sender and recipient data
-	from := "verify@fightingfansasy.com"
+	from := os.Getenv("SMTP_FROM")
 	to := []string{email}
 
 	contentType := "text/html"
@@ -102,7 +104,7 @@ func SendEmail(name, email, token string) error {
 	// Send the email without authentication
 	// Mailpit doesn't require authentication for local development
 	err := smtp.SendMail(
-		fmt.Sprintf("%s:%d", smtpHost, smtpPort),
+		fmt.Sprintf("%s:%s", smtpHost, smtpPort),
 		nil, // No authentication needed for Mailpit
 		from,
 		to,

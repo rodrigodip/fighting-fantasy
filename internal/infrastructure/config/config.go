@@ -65,5 +65,6 @@ func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {
 	if err := client.Ping(ctx, nil); err != nil {
 		return nil, err
 	}
+	log.Print("Visit http://localhost:8080/swagger/index.html for project SWAGGER")
 	return client.Database(dbName), nil
 }

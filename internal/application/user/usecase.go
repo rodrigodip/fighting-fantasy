@@ -48,7 +48,7 @@ func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, erro
 	return newUser, nil
 }
 
-// Login check User account integity to use the system
+// Login check User account integity and returns a tokin
 func (uc *UserUseCase) Login(email, password string) (string, error) {
 	if err := security.EmailFormatValidation(email); err != nil {
 		return "", usr.InvalidCredentials("LOGIN-0001")

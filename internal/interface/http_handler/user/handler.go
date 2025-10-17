@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
-	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
+	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
 )
 
 type UserHandlerRepo interface {
@@ -75,7 +75,7 @@ func (uh *UserHandler) Login(c *gin.Context) {
 		return
 	}
 	token, err := uh.usecase.Login(req.Email, req.Password)
-	var authErr *usr.AuthErr
+	var authErr *authErr.AuthErr
 	if errors.As(err, &authErr) {
 		c.JSON(http.StatusUnauthorized, gin.H{authErr.Producer: authErr.Err})
 		return
@@ -90,7 +90,7 @@ func (uh *UserHandler) VerifyEmail(c *gin.Context) {
 		return
 	}
 	err := uh.usecase.VerifyEmail(token)
-	var authErr *usr.AuthErr
+	var authErr *authErr.AuthErr
 	if errors.As(err, &authErr) {
 		c.JSON(http.StatusBadRequest, gin.H{authErr.Producer: authErr.Err})
 		return

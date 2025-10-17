@@ -7,6 +7,7 @@ import (
 	"regexp"
 
 	"github.com/golang-jwt/jwt/v5"
+	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
 
@@ -108,7 +109,7 @@ func (s *Service) GetToken(userID, role string) (string, error) {
 	service := security.NewJWTService(secret, issuer)
 	token, err := service.GenerateToken(userID, role)
 	if err != nil {
-		return "", InvalidCredentials("SRV-0001")
+		return "", authErr.InvalidCredentials("SRV-0001")
 	}
 	return token, nil
 }
@@ -118,7 +119,7 @@ func (s *Service) CheckToken(token string) (*jwt.Token, error) {
 	service := security.NewJWTService(secret, issuer)
 	t, err := service.ValidateToken(token)
 	if err != nil || !t.Valid {
-		return &jwt.Token{}, InvalidToken("SRV-1010")
+		return &jwt.Token{}, authErr.InvalidToken("SRV-1010")
 	}
 	return t, nil
 }

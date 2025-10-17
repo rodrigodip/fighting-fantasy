@@ -5,6 +5,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
+	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
 	IDgenerator "github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
@@ -51,21 +52,21 @@ func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, erro
 // Login check User account integity and returns a tokin
 func (uc *UserUseCase) Login(email, password string) (string, error) {
 	if err := security.EmailFormatValidation(email); err != nil {
-		return "", usr.InvalidCredentials("LOGIN-0001")
+		return "", authErr.InvalidCredentials("LOGIN-0001")
 	}
 	foundUser, err := uc.UserService.GetByEmail(email)
 	if err != nil || foundUser == nil {
-		return "", usr.NotFound("LOGIN-0010")
+		return "", authErr.NotFound("LOGIN-0010")
 	}
 	if uc.UserService.IsUserVerified(foundUser.Status) {
-		return "", usr.NotVerified("LOGIN-0100")
+		return "", authErr.NotVerified("LOGIN-0100")
 	}
 	if err := security.CheckPasswordHash(foundUser.Password, password); err != nil {
-		return "", usr.InvalidCredentials("LOGIN-1000")
+		return "", authErr.InvalidCredentials("LOGIN-1000")
 	}
 	token, err := uc.UserService.GetToken(foundUser.UserID, foundUser.Role)
 	if err != nil {
-		return "", usr.InvalidToken("LOGIN-1001")
+		return "", authErr.InvalidToken("LOGIN-1001")
 	}
 	return token, nil
 }
@@ -74,14 +75,14 @@ func (uc *UserUseCase) Login(email, password string) (string, error) {
 func (uc *UserUseCase) VerifyEmail(token string) error {
 	t, err := uc.UserService.CheckToken(token)
 	if err != nil {
-		return usr.InvalidToken("SRV-1010")
+		return authErr.InvalidToken("SRV-1010")
 	}
 	claims := t.Claims.(jwt.MapClaims)
 	userID := claims["user_id"].(string)
 
 	foundUser, err := uc.UserService.GetById(userID)
 	if err != nil || foundUser == nil {
-		return usr.NotFound("SRV-1001")
+		return authErr.NotFound("SRV-1001")
 	}
 	if err = uc.UserService.SetVerified(userID); err != nil {
 		return fmt.Errorf("VerifyEmail: %v", err)

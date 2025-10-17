@@ -3,6 +3,11 @@ package hero
 import (
 	"errors"
 	"fmt"
+	"os"
+
+	"github.com/golang-jwt/jwt/v5"
+	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
+	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
 
 type Service struct {
@@ -14,10 +19,7 @@ func NewHeroService(r Repository) *Service {
 }
 
 // ValidateInput check input for incosistence
-func (s *Service) ValidateInput(userID, heroName, potion string) error {
-	if userID == "" {
-		return errors.New("ValidadeHero: userID is Required")
-	}
+func (s *Service) ValidateInput(heroName, potion string) error {
 	if heroName == "" {
 		return errors.New("ValidadeHero: heroName is Required")
 	}
@@ -56,4 +58,14 @@ func (s *Service) SelectPotion(hero Hero, potion string) (Hero, error) {
 	default:
 		return Hero{}, errors.New("SelectPotion: invalid potion name")
 	}
+}
+func (s *Service) CheckToken(token string) (*jwt.Token, error) {
+	secret := os.Getenv("JWT_SECRET")
+	issuer := os.Getenv("JWT_ISSUER")
+	service := security.NewJWTService(secret, issuer)
+	t, err := service.ValidateToken(token)
+	if err != nil || !t.Valid {
+		return &jwt.Token{}, authErr.InvalidToken("SRV-1010")
+	}
+	return t, nil
 }

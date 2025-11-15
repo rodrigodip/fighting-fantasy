@@ -20,8 +20,8 @@ func NewHeroHandler(uc *heroapp.HeroUseCase) *HeroHandler {
 }
 
 func (hh *HeroHandler) RegisterHero(c *gin.Context) {
-	token := c.GetHeader("Authorization")
-	if token == "" {
+	userID, exists := c.Get("userId")
+	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
 		c.Abort()
 		return
@@ -31,7 +31,7 @@ func (hh *HeroHandler) RegisterHero(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"JSON_ParseError": err.Error()})
 		return
 	}
-	newHero, err := hh.usecase.CreateHero(token, req.HeroName, req.Potion)
+	newHero, err := hh.usecase.CreateHero(userID.(string), req.HeroName, req.Potion)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return

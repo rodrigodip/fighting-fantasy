@@ -62,7 +62,7 @@ func (uh *UserHandler) RegisterUser(c *gin.Context) {
 // @Tags Authentication
 // @Accept json
 // @Produce json
-// @Param AuthLoginRequst body userhandler.UserCreateRequest true "User login credentials"
+// @Param AuthLoginRequst body userhandler.AuthLoginRequest true "User login credentials"
 // @Success 200
 // @Header 200 {string} Authorization "Authentication token"
 // @Failure 403 {string} string "Error: Invalid login credentials"

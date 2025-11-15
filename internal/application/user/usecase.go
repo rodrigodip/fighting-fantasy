@@ -78,7 +78,7 @@ func (uc *UserUseCase) VerifyEmail(token string) error {
 		return authErr.InvalidToken("SRV-1010")
 	}
 	claims := t.Claims.(jwt.MapClaims)
-	userID := claims["user_id"].(string)
+	userID := claims["userId"].(string)
 
 	foundUser, err := uc.UserService.GetById(userID)
 	if err != nil || foundUser == nil {

@@ -39,7 +39,15 @@ func AuthMiddleware(secret string, requiredRole usr.Role) gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userId", claims["userId"])
+		// IMPORTANT FIX — correct key is "user_id", not "userId"
+		userID, ok := claims["userId"].(string)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "userId claim missing"})
+			c.Abort()
+			return
+		}
+
+		c.Set("userId", userID)
 		c.Set("role", role)
 		c.Next()
 	}

@@ -28,7 +28,7 @@ func main() {
 		return
 	}
 
-	di := dependecy.NewDependecyContainer(*db)
+	di := dependecy.NewDependecyContainer(*db, cfg.JWTSecret, cfg.JWTIssuer)
 
 	router := gin.Default()
 	routes.InitUserGroup(&router.RouterGroup, di.User)

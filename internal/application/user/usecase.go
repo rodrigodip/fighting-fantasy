@@ -3,7 +3,6 @@ package userapp
 import (
 	"fmt"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
 	IDgenerator "github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
@@ -11,18 +10,20 @@ import (
 )
 
 type UserUseCase struct {
-	UserService *usr.Service
+	service *usr.Service
+	repo    UserRepository
+	auth    Authentication
 }
 
-func NewusrUseCase(service *usr.Service) *UserUseCase {
-	return &UserUseCase{UserService: service}
+func NewusrUseCase(s *usr.Service, r UserRepository, a Authentication) *UserUseCase {
+	return &UserUseCase{service: s, repo: r}
 }
 
 func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, error) {
-	if err := uc.UserService.ValidadeUserInput(name, email, password); err != nil {
+	if err := uc.service.ValidadeUserInput(name, email, password); err != nil {
 		return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
 	}
-	if err := uc.UserService.ValidatePassword(password); err != nil {
+	if err := uc.service.ValidatePassword(password); err != nil {
 		return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
 	}
 	encodedPassword, err := security.EncodePw(password)
@@ -38,14 +39,14 @@ func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, erro
 		Role:     string(usr.RoleUser),
 		Status:   usr.StatusUnverified,
 	}
-	if err := uc.UserService.Save(*newUser); err != nil {
+	if err := uc.repo.RegisterUser(*newUser); err != nil {
 		return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
 	}
-	if err := uc.UserService.SendVerifyEmail(
+	err = uc.auth.SendVerifyEmail(
 		newUser.UserID, newUser.Name, newUser.Email, newUser.Role,
-	); err != nil {
-		return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
-	}
+	) //; err != nil {
+	//	return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
+	//}
 	return newUser, nil
 }
 
@@ -54,17 +55,17 @@ func (uc *UserUseCase) Login(email, password string) (string, error) {
 	if err := security.EmailFormatValidation(email); err != nil {
 		return "", authErr.InvalidCredentials("LOGIN-0001")
 	}
-	foundUser, err := uc.UserService.GetByEmail(email)
+	foundUser, err := uc.repo.FindByEmail(email)
 	if err != nil || foundUser == nil {
 		return "", authErr.NotFound("LOGIN-0010")
 	}
-	if uc.UserService.IsUserVerified(foundUser.Status) {
+	if uc.service.IsUserVerified(foundUser.Status) {
 		return "", authErr.NotVerified("LOGIN-0100")
 	}
 	if err := security.CheckPasswordHash(foundUser.Password, password); err != nil {
 		return "", authErr.InvalidCredentials("LOGIN-1000")
 	}
-	token, err := uc.UserService.GetToken(foundUser.UserID, foundUser.Role)
+	token, err := uc.auth.GenerateToken(foundUser.UserID, foundUser.Role)
 	if err != nil {
 		return "", authErr.InvalidToken("LOGIN-1001")
 	}
@@ -73,18 +74,15 @@ func (uc *UserUseCase) Login(email, password string) (string, error) {
 
 // VerifyEmail check if User has a verified e-mail
 func (uc *UserUseCase) VerifyEmail(token string) error {
-	t, err := uc.UserService.CheckToken(token)
+	userID, err := uc.auth.ValidateToken(token)
 	if err != nil {
 		return authErr.InvalidToken("SRV-1010")
 	}
-	claims := t.Claims.(jwt.MapClaims)
-	userID := claims["user_id"].(string)
-
-	foundUser, err := uc.UserService.GetById(userID)
+	foundUser, err := uc.repo.FindById(userID)
 	if err != nil || foundUser == nil {
 		return authErr.NotFound("SRV-1001")
 	}
-	if err = uc.UserService.SetVerified(userID); err != nil {
+	if err = uc.repo.Update(userID, "status", string(usr.StatusVerified)); err != nil {
 		return fmt.Errorf("VerifyEmail: %v", err)
 	}
 	return nil

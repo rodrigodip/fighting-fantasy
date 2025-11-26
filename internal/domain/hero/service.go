@@ -29,14 +29,6 @@ func (s *Service) ValidateInput(heroName, potion string) error {
 	return nil
 }
 
-// Save saves a hero on DB
-// func (s *Service) Save(h Hero) error {
-// 	if err := s.service.RegisterHero(h); err != nil {
-// 		return fmt.Errorf("Save: %v", err)
-// 	}
-// 	return nil
-// }
-
 // SelectPotion attach a potion to Hero
 func (s *Service) SelectPotion(hero Hero, potion string) (Hero, error) {
 	switch potion {

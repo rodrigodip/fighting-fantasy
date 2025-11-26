@@ -1,7 +1,6 @@
 package security
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -41,13 +40,13 @@ func (j *JWTService) ValidateToken(token string) (string, error) {
 	return userID, nil
 }
 
-func (j *JWTService) SendVerifyEmail(userID, name, email, role string) error {
-	token, err := j.GenerateToken(userID, role)
-	if err != nil {
-		return fmt.Errorf("SendVerifyEmail: GenerateToken: %v", err)
-	}
-	if err := SendEmail(name, email, token); err != nil {
-		return fmt.Errorf("SendVerifyEmail: SendEmail: %v", err)
-	}
-	return nil
-}
+// func (j *JWTService) SendVerifyEmail(userID, name, email, role string) error {
+// token, err := j.GenerateToken(userID, role)
+// if err != nil {
+// 	return fmt.Errorf("SendVerifyEmail: GenerateToken: %v", err)
+// }
+// if err := SendEmail(name, email, token); err != nil {
+// 	return fmt.Errorf("SendVerifyEmail: SendEmail: %v", err)
+// }
+// 	return nil
+// }

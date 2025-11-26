@@ -16,7 +16,7 @@ type UserUseCase struct {
 }
 
 func NewusrUseCase(s *usr.Service, r UserRepository, a Authentication) *UserUseCase {
-	return &UserUseCase{service: s, repo: r}
+	return &UserUseCase{service: s, repo: r, auth: a}
 }
 
 func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, error) {
@@ -42,11 +42,13 @@ func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, erro
 	if err := uc.repo.RegisterUser(*newUser); err != nil {
 		return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
 	}
-	err = uc.auth.SendVerifyEmail(
-		newUser.UserID, newUser.Name, newUser.Email, newUser.Role,
-	) //; err != nil {
-	//	return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
-	//}
+	token, err := uc.auth.GenerateToken(newUser.UserID, newUser.Role)
+	if err != nil {
+		return &usr.User{}, authErr.InvalidToken("LOGIN-1001")
+	}
+	if err := security.SendEmail(newUser.Name, newUser.Email, token); err != nil {
+		return &usr.User{}, fmt.Errorf("CreateUser: %v", err)
+	}
 	return newUser, nil
 }
 

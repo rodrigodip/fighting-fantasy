@@ -3,6 +3,7 @@ package userapp
 import (
 	"fmt"
 
+	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
 	IDgenerator "github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
@@ -88,4 +89,27 @@ func (uc *UserUseCase) VerifyEmail(token string) error {
 		return fmt.Errorf("VerifyEmail: %v", err)
 	}
 	return nil
+}
+func (uc *UserUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, error) {
+	// userID, err := uc.auth.ValidateToken(token)
+	// if err != nil {
+	// 	return &hero.Hero{}, err //authErr.InvalidToken("SRV-1010")
+	// }
+	if err := hero.NewHeroService().ValidateInput(
+		heroName, potion,
+	); err != nil {
+		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
+	}
+	newHero := hero.Hero{
+		UserID:   userID,
+		HeroName: heroName,
+	}
+	newHero, err := hero.NewHeroService().SelectPotion(newHero, potion)
+	if err != nil {
+		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
+	}
+	if err := uc.repo.RegisterHero(newHero); err != nil {
+		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
+	}
+	return &newHero, nil
 }

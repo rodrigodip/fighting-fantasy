@@ -21,3 +21,9 @@ type UserFindByEmailRequest struct {
 	UserID string `json:"userId,omitempty"`
 	Email  string `json:"email,omitempty"`
 }
+
+type HeroCreateRequest struct {
+	UserID   string `json:"userId"`
+	HeroName string `json:"hero_name"`
+	Potion   string `json:"selected_potion"`
+}

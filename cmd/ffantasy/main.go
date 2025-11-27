@@ -31,7 +31,7 @@ func main() {
 	di := dependecy.NewDependecyContainer(*db, cfg.JWTSecret, cfg.JWTIssuer)
 
 	router := gin.Default()
-	routes.InitUserGroup(&router.RouterGroup, di.User)
+	routes.InitUserGroup(&router.RouterGroup, di.User, *cfg)
 	routes.InitHeroGroup(&router.RouterGroup, di.Hero, *cfg)
 
 	err = router.Run(cfg.HTTPPort)

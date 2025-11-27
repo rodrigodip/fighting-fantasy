@@ -5,7 +5,6 @@ import (
 )
 
 type Service struct {
-	service Repository
 }
 
 func NewHeroService() *Service {

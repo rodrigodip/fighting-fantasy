@@ -97,39 +97,3 @@ func (uh *UserHandler) VerifyEmail(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"success": "Account verified"})
 }
-
-func (uh *UserHandler) RegisterHero(c *gin.Context) {
-	userID, exists := c.Get("userId")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
-		c.Abort()
-		return
-	}
-	// token := c.GetHeader("Authorization")
-	// if token == "" {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
-	// 	c.Abort()
-	// 	return
-	// }
-	// t, err := uc.HeroService.CheckToken(token)
-	// if err != nil {
-	// 	return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
-	// }
-	// claims := t.Claims.(jwt.MapClaims)
-	// userID := claims["user_id"].(string)
-
-	var req HeroCreateRequest
-	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"JSON_ParseError": err.Error()})
-		return
-	}
-	newHero, err := uh.usecase.CreateHero(userID.(string), req.HeroName, req.Potion)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusCreated, gin.H{
-		"userId":    newHero.UserID,
-		"hero_name": newHero.HeroName,
-	})
-}

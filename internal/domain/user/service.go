@@ -14,41 +14,6 @@ func NewUserService() *Service {
 	return &Service{}
 }
 
-// func (s *Service) GetByEmail(email string) (*User, error) {
-// 	if err := security.EmailFormatValidation(email); err != nil {
-// 		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
-// 	}
-// 	foudUser, err := s.repository.FindByEmail(email)
-// 	if err != nil {
-// 		return &User{}, fmt.Errorf("GetByEmail: %v", err)
-//
-// 	}
-// 	return foudUser, nil
-// }
-// func (s *Service) GetById(id string) (*User, error) {
-// 	foudUser, err := s.repository.FindById(id)
-// 	if err != nil {
-// 		return &User{}, fmt.Errorf("GetById: %v", err)
-// 	}
-// 	return foudUser, nil
-// }
-
-// SetVerified Set User email as verified
-// func (s *Service) SetVerified(userId string) error {
-// 	if err := s.repository.Update(userId, "status", string(StatusVerified)); err != nil {
-// 		return fmt.Errorf("SetVerified: %v", err)
-// 	}
-// 	return nil
-// }
-
-// Save persists a User
-// func (s *Service) Save(u User) error {
-// 	if err := s.repository.RegisterUser(u); err != nil {
-// 		return fmt.Errorf("Save: %v", err)
-// 	}
-// 	return nil
-// }
-
 // ValidadeUserInput enforce business rules
 func (s *Service) ValidadeUserInput(name, email, password string) error {
 	if name == "" {

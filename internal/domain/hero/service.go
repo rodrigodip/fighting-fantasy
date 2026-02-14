@@ -28,6 +28,14 @@ func (s *Service) ValidateInput(heroName, potion string) error {
 	return nil
 }
 
+// HasHero Check if user has a active hero
+func (s *Service) HasHero(userID string, h Hero) error {
+	if userID == h.UserID {
+		return errors.New("User has a active Hero.")
+	}
+	return nil
+}
+
 // SelectPotion attach a potion to Hero
 func (s *Service) SelectPotion(hero Hero, potion string) (Hero, error) {
 	switch potion {

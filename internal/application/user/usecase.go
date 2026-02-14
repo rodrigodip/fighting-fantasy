@@ -3,7 +3,6 @@ package userapp
 import (
 	"fmt"
 
-	//"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
 	IDgenerator "github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"

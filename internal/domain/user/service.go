@@ -64,37 +64,6 @@ func (s *Service) ValidatePassword(password string) error {
 	return nil
 }
 
-// func (s *Service) GetToken(userID, role string) (string, error) {
-// 	secret := os.Getenv("JWT_SECRET")
-// 	issuer := os.Getenv("JWT_ISSUER")
-// 	repository := security.NewJWTService(secret, issuer)
-// 	token, err := service.GenerateToken(userID, role)
-// 	if err != nil {
-// 		return "", authErr.InvalidCredentials("SRV-0001")
-// 	}
-// 	return token, nil
-// }
-// func (s *Service) CheckToken(token string) (*jwt.Token, error) {
-// 	secret := os.Getenv("JWT_SECRET")
-// 	issuer := os.Getenv("JWT_ISSUER")
-// 	JWTrepository := security.NewJWTService(secret, issuer)
-// 	t, err := JWTservice.ValidateToken(token)
-// 	if err != nil || !t.Valid {
-// 		return &jwt.Token{}, authErr.InvalidToken("SRV-1010")
-// 	}
-// 	return t, nil
-// }
-
-// SendVerifyEmail sends a verification link to user registered email
-// func (s *Service) SendVerifyEmail(userID, name, email, role string) error {
-// 	token, err := s.auth.GenerateToken(userID, role)
-// 	if err != nil {
-// 		return fmt.Errorf("SendVerifyEmail: GenerateToken: %v", err)
-// 	}
-// 	security.SendEmail(name, email, token)
-// 	return nil
-// }
-
 // IsUserVerified check if User has a verified e-mail
 func (s *Service) IsUserVerified(status Status) bool {
 	return status == StatusUnverified

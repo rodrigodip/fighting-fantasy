@@ -1,7 +1,6 @@
 package userapp
 
 import (
-	//"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 )
 
@@ -11,9 +10,8 @@ type UserRepository interface {
 	FindById(id string) (*usr.User, error)
 	Update(id, field, newData string) error
 
-	//RegisterHero(hero hero.Hero) error
-
-	//TODO: ResendVeriyEmail()
+	//TODO:
+	//ResendVeriyEmail()
 	//FindHero(userID string) (*Hero, error)
 }
 

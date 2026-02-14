@@ -2,6 +2,7 @@ package heroapp
 
 import (
 	"fmt"
+
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 )
 
@@ -15,6 +16,10 @@ func NewHeroUseCase(s *hero.Service, r Repository) *HeroUseCase {
 }
 
 func (uc *HeroUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, error) {
+	foundHero, _ := uc.repo.FindByOwner(userID)
+	if err := uc.service.HasHero(userID, *foundHero); err != nil {
+		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
+	}
 	if err := uc.service.ValidateInput(
 		heroName, potion,
 	); err != nil {

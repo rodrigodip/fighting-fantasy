@@ -12,7 +12,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func InitUserGroup(r *gin.RouterGroup, app *userhandler.UserHandler) {
+func InitUserGroup(r *gin.RouterGroup, app *userhandler.UserHandler, cfg config.Config) {
 	r.POST("/users", app.RegisterUser)
 	r.POST("/login", app.Login)
 	r.GET("/verify", app.VerifyEmail)

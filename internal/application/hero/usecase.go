@@ -7,28 +7,33 @@ import (
 )
 
 type HeroUseCase struct {
-	HeroService *hero.Service
+	service *hero.Service
+	repo    Repository
 }
 
-func NewHeroUseCase(service *hero.Service) *HeroUseCase {
-	return &HeroUseCase{HeroService: service}
+func NewHeroUseCase(s *hero.Service, r Repository) *HeroUseCase {
+	return &HeroUseCase{service: s, repo: r}
 }
 
-func (uc *HeroUseCase) CreateHero(userId, heroName, potion string) (*hero.Hero, error) {
-	if err := uc.HeroService.ValidateInput(
+func (uc *HeroUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, error) {
+	foundHero, _ := uc.repo.FindByOwner(userID)
+	if err := uc.service.HasHero(userID, *foundHero); err != nil {
+		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
+	}
+	if err := uc.service.ValidateInput(
 		heroName, potion,
 	); err != nil {
 		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
 	}
 	newHero := hero.Hero{
-		UserID:   userId,
+		UserID:   userID,
 		HeroName: heroName,
 	}
-	newHero, err := uc.HeroService.SelectPotion(newHero, potion)
+	newHero, err := uc.service.SelectPotion(newHero, potion)
 	if err != nil {
 		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
 	}
-	if err := uc.HeroService.Save(newHero); err != nil {
+	if err := uc.repo.RegisterHero(newHero); err != nil {
 		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
 	}
 	return &newHero, nil

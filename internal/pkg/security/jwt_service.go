@@ -27,8 +27,14 @@ func (j *JWTService) GenerateToken(userID, role string) (string, error) {
 	return token.SignedString([]byte(j.secretKey))
 }
 
-func (j *JWTService) ValidateToken(tokenStr string) (*jwt.Token, error) {
-	return jwt.Parse(tokenStr, func(token *jwt.Token) (any, error) {
+func (j *JWTService) ValidateToken(token string) (string, error) {
+	t, err := jwt.Parse(token, func(token *jwt.Token) (any, error) {
 		return []byte(j.secretKey), nil
 	})
+	if err != nil || !t.Valid {
+		return "", err
+	}
+	claims := t.Claims.(jwt.MapClaims)
+	userID := claims["userId"].(string)
+	return userID, nil
 }

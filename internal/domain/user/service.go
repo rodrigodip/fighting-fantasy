@@ -3,55 +3,15 @@ package usr
 import (
 	"errors"
 	"fmt"
-	"os"
 	"regexp"
 
-	"github.com/golang-jwt/jwt/v5"
-	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
 
-type Service struct {
-	service Repository
-}
+type Service struct{}
 
-func NewUserService(r Repository) *Service {
-	return &Service{service: r}
-}
-
-func (s *Service) GetByEmail(email string) (*User, error) {
-	if err := security.EmailFormatValidation(email); err != nil {
-		return &User{}, fmt.Errorf("E-mail Validation Error: %v", err)
-	}
-	foudUser, err := s.service.FindByEmail(email)
-	if err != nil {
-		return &User{}, fmt.Errorf("GetByEmail: %v", err)
-
-	}
-	return foudUser, nil
-}
-func (s *Service) GetById(id string) (*User, error) {
-	foudUser, err := s.service.FindById(id)
-	if err != nil {
-		return &User{}, fmt.Errorf("GetById: %v", err)
-	}
-	return foudUser, nil
-}
-
-// SetVerified Set User email as verified
-func (s *Service) SetVerified(userId string) error {
-	if err := s.service.Update(userId, "status", string(StatusVerified)); err != nil {
-		return fmt.Errorf("SetVerified: %v", err)
-	}
-	return nil
-}
-
-// Save persists a User
-func (s *Service) Save(u User) error {
-	if err := s.service.RegisterUser(u); err != nil {
-		return fmt.Errorf("Save: %v", err)
-	}
-	return nil
+func NewUserService() *Service {
+	return &Service{}
 }
 
 // ValidadeUserInput enforce business rules
@@ -101,36 +61,6 @@ func (s *Service) ValidatePassword(password string) error {
 	if !regexp.MustCompile(`[@$!%*?&]`).MatchString(password) {
 		return errors.New("Password Validation Error: Must contain at least one special character (@$!%*?&)")
 	}
-	return nil
-}
-func (s *Service) GetToken(userID, role string) (string, error) {
-	secret := os.Getenv("JWT_SECRET")
-	issuer := os.Getenv("JWT_ISSUER")
-	service := security.NewJWTService(secret, issuer)
-	token, err := service.GenerateToken(userID, role)
-	if err != nil {
-		return "", authErr.InvalidCredentials("SRV-0001")
-	}
-	return token, nil
-}
-func (s *Service) CheckToken(token string) (*jwt.Token, error) {
-	secret := os.Getenv("JWT_SECRET")
-	issuer := os.Getenv("JWT_ISSUER")
-	service := security.NewJWTService(secret, issuer)
-	t, err := service.ValidateToken(token)
-	if err != nil || !t.Valid {
-		return &jwt.Token{}, authErr.InvalidToken("SRV-1010")
-	}
-	return t, nil
-}
-
-// SendVerifyEmail sends a verification link to user registered email
-func (s *Service) SendVerifyEmail(userID, name, email, role string) error {
-	token, err := s.GetToken(userID, role)
-	if err != nil {
-		return fmt.Errorf("SendVerifyEmail: GenerateToken: %v", err)
-	}
-	security.SendEmail(name, email, token)
 	return nil
 }
 

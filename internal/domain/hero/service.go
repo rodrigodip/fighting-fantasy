@@ -2,20 +2,13 @@ package hero
 
 import (
 	"errors"
-	"fmt"
-	"os"
-
-	"github.com/golang-jwt/jwt/v5"
-	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
-	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
 
 type Service struct {
-	service Repository
 }
 
-func NewHeroService(r Repository) *Service {
-	return &Service{service: r}
+func NewHeroService() *Service {
+	return &Service{}
 }
 
 // ValidateInput check input for incosistence
@@ -35,10 +28,10 @@ func (s *Service) ValidateInput(heroName, potion string) error {
 	return nil
 }
 
-// Save saves a hero on DB
-func (s *Service) Save(h Hero) error {
-	if err := s.service.RegisterHero(h); err != nil {
-		return fmt.Errorf("Save: %v", err)
+// HasHero Check if user has a active hero
+func (s *Service) HasHero(userID string, h Hero) error {
+	if userID == h.UserID {
+		return errors.New("User has a active Hero.")
 	}
 	return nil
 }
@@ -58,14 +51,4 @@ func (s *Service) SelectPotion(hero Hero, potion string) (Hero, error) {
 	default:
 		return Hero{}, errors.New("SelectPotion: invalid potion name")
 	}
-}
-func (s *Service) CheckToken(token string) (*jwt.Token, error) {
-	secret := os.Getenv("JWT_SECRET")
-	issuer := os.Getenv("JWT_ISSUER")
-	service := security.NewJWTService(secret, issuer)
-	t, err := service.ValidateToken(token)
-	if err != nil || !t.Valid {
-		return &jwt.Token{}, authErr.InvalidToken("SRV-1010")
-	}
-	return t, nil
 }

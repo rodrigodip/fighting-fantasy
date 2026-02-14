@@ -18,7 +18,6 @@ type HeroHandler struct {
 func NewHeroHandler(uc *heroapp.HeroUseCase) *HeroHandler {
 	return &HeroHandler{usecase: uc}
 }
-
 func (hh *HeroHandler) RegisterHero(c *gin.Context) {
 	userID, exists := c.Get("userId")
 	if !exists {

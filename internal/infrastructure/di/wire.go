@@ -7,8 +7,8 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
 	heroRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/hero"
 	userRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
-	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/hero"
-	"github.com/rodrigodip/fighting-fantasy/internal/interface/http_handler/user"
+	"github.com/rodrigodip/fighting-fantasy/internal/interface/api/hero"
+	"github.com/rodrigodip/fighting-fantasy/internal/interface/api/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

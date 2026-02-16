@@ -7,6 +7,7 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/api"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/api/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/api/user"
+	webhandler "github.com/rodrigodip/fighting-fantasy/internal/interface/web"
 	docs "github.com/rodrigodip/fighting-fantasy/internal/pkg/swagger/docs"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -22,4 +23,7 @@ func InitUserGroup(r *gin.RouterGroup, app *userhandler.UserHandler, cfg config.
 }
 func InitHeroGroup(r *gin.RouterGroup, app *herohandler.HeroHandler, cfg config.Config) {
 	r.POST("/heroes", interfaces.AuthMiddleware(cfg.JWTSecret, usr.RoleUser), app.RegisterHero)
+}
+func InitWebGroup(r *gin.RouterGroup, view *webhandler.WebHandler) {
+	r.GET("/", view.LoadIndex)
 }

@@ -31,6 +31,8 @@ func main() {
 	di := dependecy.NewDependecyContainer(*db, cfg.JWTSecret, cfg.JWTIssuer)
 
 	router := gin.Default()
+	router.LoadHTMLGlob(cfg.TemplatesPath)
+
 	routes.InitUserGroup(&router.RouterGroup, di.User, *cfg)
 	routes.InitHeroGroup(&router.RouterGroup, di.Hero, *cfg)
 

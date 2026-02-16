@@ -38,3 +38,10 @@ func (uc *HeroUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, 
 	}
 	return &newHero, nil
 }
+func (uc *HeroUseCase) FindByUser(userID string) (*hero.Hero, error) {
+	foundHero, err := uc.repo.FindByOwner(userID)
+	if err != nil {
+		return &hero.Hero{}, fmt.Errorf("FindHeroByUser: %v", err)
+	}
+	return foundHero, nil
+}

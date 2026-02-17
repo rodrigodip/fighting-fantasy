@@ -1,6 +1,8 @@
-<html>
-<h1>
-	{{ .title }}
-</h1>
+{{ define "index.html" }}
+{{ template "error.html"}}
 
-</html>
+{{ template "header.html" }}
+<h1>Teste: {{.title}}</h1>
+{{ template "heroDetails.html"}}
+{{ template "footer.html" }}
+{{end}}

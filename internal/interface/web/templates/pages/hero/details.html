@@ -1,5 +1,21 @@
+{{define "pages/hero/details.html"}}
+<!DOCTYPE html>
 <html>
-<h1>{{.HeroName}}</h1>
-<h2>{{.HP}}</h2>
+
+<head>
+	<title>{{.Title}} - Fighting Fantasy</title>
+</head>
+
+<body>
+	{{template "layouts/header.html" .}}
+
+	<main>
+		<h1>{{.HeroName}}</h1>
+		<p>Health: {{.HPMax}}/{{.HPCurrent}}</p>
+	</main>
+
+	{{template "layouts/footer.html" .}}
+</body>
 
 </html>
+{{end}}

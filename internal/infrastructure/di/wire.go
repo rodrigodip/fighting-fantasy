@@ -9,13 +9,15 @@ import (
 	userRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/api/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/api/user"
+	webhandlers "github.com/rodrigodip/fighting-fantasy/internal/interface/web/handlers"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Container struct {
-	User *userhandler.UserHandler
-	Hero *herohandler.HeroHandler
+	User    *userhandler.UserHandler
+	Hero    *herohandler.HeroHandler
+	WebHero *webhandlers.HeroHandler
 }
 
 // TODO: Must decouple secret and issuer from Dependency constructor
@@ -31,8 +33,14 @@ func NewDependecyContainer(db mongo.Database, secret, issuer string) *Container 
 	heroService := hero.NewHeroService()
 	heroUsecase := heroapp.NewHeroUseCase(heroService, heroRepo)
 	heroHandler := herohandler.NewHeroHandler(heroUsecase)
+	// Web handlers
+	//templateFS := os.DirFS("./templates")
+	//renderer := templates.NewRenderer(templateFS, "*.html")
+	heroWebHandler := webhandlers.NewHeroHandler(heroUsecase)
+
 	return &Container{
-		User: userHandler,
-		Hero: heroHandler,
+		User:    userHandler,
+		Hero:    heroHandler,
+		WebHero: heroWebHandler,
 	}
 }

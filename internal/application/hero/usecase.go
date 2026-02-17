@@ -2,6 +2,7 @@ package heroapp
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 )
@@ -28,6 +29,10 @@ func (uc *HeroUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, 
 	newHero := hero.Hero{
 		UserID:   userID,
 		HeroName: heroName,
+		Stats: hero.Stats{
+			InitialHP: 10,
+			CurrentHP: 6,
+		},
 	}
 	newHero, err := uc.service.SelectPotion(newHero, potion)
 	if err != nil {
@@ -43,5 +48,6 @@ func (uc *HeroUseCase) FindByUser(userID string) (*hero.Hero, error) {
 	if err != nil {
 		return &hero.Hero{}, fmt.Errorf("FindHeroByUser: %v", err)
 	}
+	log.Printf("useCase.FindByUser(): %v", foundHero.HeroName)
 	return foundHero, nil
 }

@@ -16,6 +16,7 @@ func (hr *MongoHeroRepo) RegisterHero(hero hero.Hero) error {
 			InitialDex:  hero.Stats.InitialDex,
 			InitialHP:   hero.Stats.InitialHP,
 			InitialLuck: hero.Stats.InitialLuck,
+			CurrentHP:   hero.Stats.CurrentHP,
 		},
 		Inventory: Inventory{
 			Equipment: hero.Inventory.Equipment,

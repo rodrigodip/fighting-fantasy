@@ -35,7 +35,7 @@ func (r *Renderer) LoadAllTemplates(engine *gin.Engine) error {
 	return nil
 }
 
-// Render is a wrapper around Gin's HTML
+// Render is now just a wrapper around Gin's HTML
 func (r *Renderer) Render(c *gin.Context, code int, name string, data any) {
 	// Gin already has the templates loaded via SetHTMLTemplate
 	c.HTML(code, name, data)

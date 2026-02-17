@@ -16,21 +16,22 @@ func NewMongoHeroRepository(database *mongo.Collection) *MongoHeroRepo {
 type HeroMongoEntity struct {
 	ID              primitive.ObjectID `bson:"_id,omitempty"`
 	UserID          string             `bson:"userId"`
-	HeroName        string             `bson:"hero_name"`
-	CurrentLore     int                `bson:"curnt_lore"`
+	HeroName        string             `bson:"heroName"`
+	CurrentLore     int                `bson:"currentLore"`
 	Stats           Stats              `bson:"stats"`
 	Inventory       Inventory          `bson:"inventory"`
 	Potions         Potions            `bson:"potions"`
 	History         []History          `bson:"history"`
-	MonsterDefeated []string           `bson:"Monster_Defeated"`
+	MonsterDefeated []string           `bson:"monsterDefeated"`
 }
+
 type Stats struct {
-	InitialDex  int `bson:"init_dex"`
-	CurrentDex  int `bson:"curnt_dex"`
-	InitialHP   int `bson:"init_health"`
-	CurrentHP   int `bson:"curnt_health"`
-	InitialLuck int `bson:"init_luck"`
-	CurrentLuck int `bson:"curnt_luck"`
+	InitialDex  int `bson:"initialDex"`
+	CurrentDex  int `bson:"currentDex"`
+	InitialHP   int `bson:"initialHP"`
+	CurrentHP   int `bson:"currentHP"`
+	InitialLuck int `bson:"initialLuck"`
+	CurrentLuck int `bson:"currentLuck"`
 }
 type Inventory struct {
 	Equipment  []string `bson:"equipment"`

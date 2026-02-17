@@ -35,6 +35,7 @@ func main() {
 
 	routes.InitUserGroup(&router.RouterGroup, di.User, *cfg)
 	routes.InitHeroGroup(&router.RouterGroup, di.Hero, *cfg)
+	routes.InitViewGroup(&router.RouterGroup, di)
 
 	err = router.Run(cfg.HTTPPort)
 	if err != nil {

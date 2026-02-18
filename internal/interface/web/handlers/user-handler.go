@@ -21,26 +21,50 @@ func NewUserWebHandler(usecase *userapp.UserUseCase, store sessions.Store) *User
 }
 
 // Show landing page
-func (h *UserWebHandler) LandingPage(c *gin.Context) {
+func (u *UserWebHandler) LandingPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"Title": "Fighting Fantasy",
 	})
 }
 
 // Show the registration form
-func (h *UserWebHandler) ShowRegisterForm(c *gin.Context) {
+func (u *UserWebHandler) ShowRegisterForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "register-form.html", gin.H{
 		"Title": "Register",
 	})
 }
 
+// Hendle User Registration from web
+func (u *UserWebHandler) CreateUserFromWeb(c *gin.Context) {
+	var req struct {
+		Name     string `form:"name" binding:"required,name"`
+		Email    string `form:"email" binding:"required,email"`
+		Password string `form:"password" binding:"required"`
+	}
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		c.HTML(http.StatusBadRequest, "registration-error.html", gin.H{
+			"Error": err.Error(),
+		})
+		return
+	}
+	_, err := u.usecase.
+		CreateUser(req.Name, req.Email, req.Password)
+	if err != nil {
+		c.HTML(http.StatusUnauthorized, "login-error.html", gin.H{
+			"Error": "Invalid credentials",
+		})
+		return
+	}
+}
+
 // Show login form (HTMX partial)
-func (h *UserWebHandler) ShowLoginForm(c *gin.Context) {
+func (u *UserWebHandler) ShowLoginForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "login-form.html", nil)
 }
 
 // Handle login submission
-func (h *UserWebHandler) Login(c *gin.Context) {
+func (u *UserWebHandler) Login(c *gin.Context) {
 	var req struct {
 		Email    string `form:"email" binding:"required,email"`
 		Password string `form:"password" binding:"required"`
@@ -54,7 +78,7 @@ func (h *UserWebHandler) Login(c *gin.Context) {
 	}
 
 	// Call usecase - returns JWT token
-	token, err := h.usecase.Login(req.Email, req.Password)
+	token, err := u.usecase.Login(req.Email, req.Password)
 	if err != nil {
 		c.HTML(http.StatusUnauthorized, "login-error.html", gin.H{
 			"Error": "Invalid credentials",
@@ -63,7 +87,7 @@ func (h *UserWebHandler) Login(c *gin.Context) {
 	}
 
 	// Store token in session
-	session, _ := h.sessionStore.Get(c.Request, "session-name")
+	session, _ := u.sessionStore.Get(c.Request, "session-name")
 	session.Values["token"] = token
 	// You can also decode the JWT to store user_id/role directly:
 	// session.Values["user_id"] = userID
@@ -80,8 +104,8 @@ func (h *UserWebHandler) Login(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func (h *UserWebHandler) Logout(c *gin.Context) {
-	session, _ := h.sessionStore.Get(c.Request, "session-name")
+func (u *UserWebHandler) Logout(c *gin.Context) {
+	session, _ := u.sessionStore.Get(c.Request, "session-name")
 	session.Values["token"] = ""
 	session.Options.MaxAge = -1 // Delete cookie
 	session.Save(c.Request, c.Writer)

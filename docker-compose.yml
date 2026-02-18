@@ -29,6 +29,8 @@ services:
           - MONGO_DB=${MONGO_DB}
           - JWT_SECRET=${JWT_SECRET}
           - JWT_ISSUER=${JWT_ISSUER}
+          - SET_ENVIRONMENT=${SET_ENVIRONMENT}
+          - SESSION_SECRET=${SESSION_SECRET}
           - HTTP_PORT=${HTTP_PORT}
 
           - SMTP_HOST=${SMTP_HOST}

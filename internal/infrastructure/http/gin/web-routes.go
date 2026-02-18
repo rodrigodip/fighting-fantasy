@@ -21,6 +21,6 @@ func InitWebAuthGroup(r *gin.RouterGroup, d *dependecy.Container) {
 	r.GET("/login-form", d.WebUserHandlers.ShowLoginForm)
 	r.POST("/login", d.WebUserHandlers.Login)
 	r.GET("/register-form", d.WebUserHandlers.ShowRegisterForm)
-	r.POST("/register", nil) //d.WebUserHandlers.CreateUserFromWeb)
+	r.POST("/register", d.WebUserHandlers.CreateUserFromWeb)
 	r.GET("/logout", d.WebUserHandlers.Logout)
 }

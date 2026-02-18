@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/config"
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/di"
@@ -27,8 +28,11 @@ func main() {
 		log.Fatalf("Error trying to connect to database, error=%s \n", err.Error())
 		return
 	}
+	// Create cookie store with secret key (use env var in production)
+	sessionStore := sessions.NewCookieStore([]byte(cfg.SessionSecret))
+	sessionStore.Options = cfg.SessionOpt
 
-	di := dependecy.NewDependecyContainer(*db, cfg.JWTSecret, cfg.JWTIssuer)
+	di := dependecy.NewDependecyContainer(*db, sessionStore, cfg.JWTSecret, cfg.JWTIssuer)
 
 	router := gin.Default()
 	router.LoadHTMLGlob(cfg.TemplatesPath)
@@ -36,7 +40,7 @@ func main() {
 	routes.InitUserGroup(&router.RouterGroup, di.ApiUserHandlers, *cfg)
 	routes.InitHeroGroup(&router.RouterGroup, di.ApiHeroHandlers, *cfg)
 
-	routes.InitWebUserGroup(&router.RouterGroup, di)
+	routes.InitWebAuthGroup(&router.RouterGroup, di)
 	routes.InitWebHeroGroup(&router.RouterGroup, di)
 
 	err = router.Run(cfg.HTTPPort)

@@ -1,4 +1,5 @@
 <!-- register-form.html -->
+{{ define "register-form.html" }}
 <form hx-post="/register" hx-target="#response">
 	<input type="text" name="name" placeholder="Name" required />
 	<input type="email" name="email" placeholder="Email" required />
@@ -8,3 +9,4 @@
 	<button type="button" hx-get="/" hx-target="body">Cancel</button>
 </form>
 <div id="response"></div>
+{{ end }}

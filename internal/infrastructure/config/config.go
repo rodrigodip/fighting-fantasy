@@ -3,19 +3,23 @@ package config
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/gorilla/sessions"
 	userRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Config struct {
-	MongoURI  string
-	DBName    string
-	JWTSecret string
-	JWTIssuer string
-	HTTPPort  string
+	MongoURI      string
+	DBName        string
+	JWTSecret     string
+	JWTIssuer     string
+	SessionSecret string
+	SessionOpt    *sessions.Options
+	HTTPPort      string
 
 	SMTPHost     string
 	SMTPPort     string
@@ -28,11 +32,13 @@ type Config struct {
 
 func LoadConfig() *Config {
 	return &Config{
-		MongoURI:  os.Getenv("MONGO_URI"),
-		DBName:    os.Getenv("MONGO_DB"),
-		JWTSecret: os.Getenv("JWT_SECRET"),
-		JWTIssuer: os.Getenv("JWT_ISSUER"),
-		HTTPPort:  getEnv("HTTP_PORT", "8080"),
+		MongoURI:      os.Getenv("MONGO_URI"),
+		DBName:        os.Getenv("MONGO_DB"),
+		JWTSecret:     os.Getenv("JWT_SECRET"),
+		JWTIssuer:     os.Getenv("JWT_ISSUER"),
+		SessionSecret: os.Getenv("SESSION_SECRET"),
+		SessionOpt:    setEnvironment(),
+		HTTPPort:      getEnv("HTTP_PORT", "8080"),
 
 		SMTPHost:      os.Getenv("SMTP_HOST"),
 		SMTPPort:      os.Getenv("SMTP_PORT"),
@@ -48,6 +54,22 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func setEnvironment() *sessions.Options {
+	s := &sessions.Options{
+		Path:     "/",
+		MaxAge:   86400 * 7, // 7 days
+		HttpOnly: true,
+		Secure:   true, // Set true in production with HTTPS
+		SameSite: http.SameSiteLaxMode,
+	}
+	envType := os.Getenv("SET_ENVIRONMENT")
+	if envType == "DEV" {
+		s.Secure = false
+	}
+	log.Printf("=== YOU ARE IN %s ENVIRONMENT ===", envType)
+	return s
 }
 
 func NewMongoDBConnection(ctx context.Context) (*mongo.Database, error) {

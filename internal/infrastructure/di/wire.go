@@ -1,6 +1,7 @@
 package dependecy
 
 import (
+	"github.com/gorilla/sessions"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
@@ -9,6 +10,7 @@ import (
 	userRepository "github.com/rodrigodip/fighting-fantasy/internal/infrastructure/persistence/mongodb/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/api/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/api/user"
+	webmiddleware "github.com/rodrigodip/fighting-fantasy/internal/interface/web"
 	webhandlers "github.com/rodrigodip/fighting-fantasy/internal/interface/web/handlers"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -18,14 +20,14 @@ type Container struct {
 	ApiUserHandlers *userhandler.UserHandler
 	ApiHeroHandlers *herohandler.HeroHandler
 
-	WebUserHandlers *webhandlers.UserWebHandler
-	WebHeroHandlers *webhandlers.HeroWebHandler
+	WebAuthMiddleware *webmiddleware.WebAuthMiddleware
+	WebUserHandlers   *webhandlers.UserWebHandler
+	WebHeroHandlers   *webhandlers.HeroWebHandler
 }
 
 // TODO: Must decouple secret and issuer from Dependency constructor
-func NewDependecyContainer(db mongo.Database, secret, issuer string) *Container {
-
-	// API Dependecies
+func NewDependecyContainer(db mongo.Database, sessionStore sessions.Store, secret, issuer string) *Container {
+	// Aplication Dependecies
 	userRepo := userRepository.NewMongoUserRepository(db.Collection("user"))
 	userService := usr.NewUserService()
 	userAuth := security.NewJWTService(secret, issuer)
@@ -40,7 +42,8 @@ func NewDependecyContainer(db mongo.Database, secret, issuer string) *Container 
 	heroApiHandler := herohandler.NewHeroHandler(heroUsecase)
 
 	// Web Dependecies
-	userWebHandler := webhandlers.NewUserWebHandler(userUsecase)
+	webAuth := webmiddleware.NewWebAuthMiddleware(sessionStore, userAuth)
+	userWebHandler := webhandlers.NewUserWebHandler(userUsecase, sessionStore)
 	heroWebHandler := webhandlers.NewHeroWebHandler(heroUsecase)
 
 	// &Container Serves API and Web handlers to Routes
@@ -48,7 +51,8 @@ func NewDependecyContainer(db mongo.Database, secret, issuer string) *Container 
 		ApiUserHandlers: userApiHandler,
 		ApiHeroHandlers: heroApiHandler,
 
-		WebUserHandlers: userWebHandler,
-		WebHeroHandlers: heroWebHandler,
+		WebAuthMiddleware: webAuth,
+		WebUserHandlers:   userWebHandler,
+		WebHeroHandlers:   heroWebHandler,
 	}
 }

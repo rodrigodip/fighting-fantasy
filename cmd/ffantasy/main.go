@@ -33,9 +33,11 @@ func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob(cfg.TemplatesPath)
 
-	routes.InitUserGroup(&router.RouterGroup, di.User, *cfg)
-	routes.InitHeroGroup(&router.RouterGroup, di.Hero, *cfg)
-	routes.InitViewGroup(&router.RouterGroup, di)
+	routes.InitUserGroup(&router.RouterGroup, di.ApiUserHandlers, *cfg)
+	routes.InitHeroGroup(&router.RouterGroup, di.ApiHeroHandlers, *cfg)
+
+	routes.InitWebUserGroup(&router.RouterGroup, di)
+	routes.InitWebHeroGroup(&router.RouterGroup, di)
 
 	err = router.Run(cfg.HTTPPort)
 	if err != nil {

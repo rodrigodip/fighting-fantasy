@@ -5,7 +5,11 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/di"
 )
 
-func InitViewGroup(r *gin.RouterGroup, d *dependecy.Container) {
-	r.GET("/testhero", d.WebHero.Detail)
-	r.GET("/", d.WebHero.HomePage)
+func InitWebHeroGroup(r *gin.RouterGroup, d *dependecy.Container) {
+	r.GET("/testhero", nil)
+}
+
+func InitWebUserGroup(r *gin.RouterGroup, d *dependecy.Container) {
+	r.GET("/register", d.WebUserHandlers.ShowRegisterForm)
+	r.POST("/register", d.WebUserHandlers.CreateUserFromWeb) // Handle form submission
 }

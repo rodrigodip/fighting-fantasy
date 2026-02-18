@@ -9,17 +9,17 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/web/viewmodels"
 )
 
-type HeroHandler struct {
+type HeroWebHandler struct {
 	heroUseCase *heroapp.HeroUseCase
 }
 
-func NewHeroHandler(heroUseCase *heroapp.HeroUseCase) *HeroHandler {
-	return &HeroHandler{
+func NewHeroWebHandler(heroUseCase *heroapp.HeroUseCase) *HeroWebHandler {
+	return &HeroWebHandler{
 		heroUseCase: heroUseCase,
 	}
 }
 
-func (h *HeroHandler) Detail(c *gin.Context) {
+func (h *HeroWebHandler) Detail(c *gin.Context) {
 	// userID := c.Param("userId")
 	// userID := "3035195610914029568"
 	foundHero, err := h.heroUseCase.FindByUser("7971340423962820608")

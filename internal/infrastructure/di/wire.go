@@ -15,32 +15,40 @@ import (
 )
 
 type Container struct {
-	User    *userhandler.UserHandler
-	Hero    *herohandler.HeroHandler
-	WebHero *webhandlers.HeroHandler
+	ApiUserHandlers *userhandler.UserHandler
+	ApiHeroHandlers *herohandler.HeroHandler
+
+	WebUserHandlers *webhandlers.UserWebHandler
+	WebHeroHandlers *webhandlers.HeroWebHandler
 }
 
 // TODO: Must decouple secret and issuer from Dependency constructor
 func NewDependecyContainer(db mongo.Database, secret, issuer string) *Container {
 
+	// API Dependecies
 	userRepo := userRepository.NewMongoUserRepository(db.Collection("user"))
 	userService := usr.NewUserService()
 	userAuth := security.NewJWTService(secret, issuer)
 	userUsecase := userapp.NewusrUseCase(userService, userRepo, userAuth)
-	userHandler := userhandler.NewUserHandler(userUsecase)
 
 	heroRepo := heroRepository.NewMongoHeroRepository(db.Collection("hero"))
 	heroService := hero.NewHeroService()
 	heroUsecase := heroapp.NewHeroUseCase(heroService, heroRepo)
-	heroHandler := herohandler.NewHeroHandler(heroUsecase)
-	// Web handlers
-	//templateFS := os.DirFS("./templates")
-	//renderer := templates.NewRenderer(templateFS, "*.html")
-	heroWebHandler := webhandlers.NewHeroHandler(heroUsecase)
 
+	// API Dependencies
+	userApiHandler := userhandler.NewUserHandler(userUsecase)
+	heroApiHandler := herohandler.NewHeroHandler(heroUsecase)
+
+	// Web Dependecies
+	userWebHandler := webhandlers.NewUserWebHandler(userUsecase)
+	heroWebHandler := webhandlers.NewHeroWebHandler(heroUsecase)
+
+	// &Container Serves API and Web handlers to Routes
 	return &Container{
-		User:    userHandler,
-		Hero:    heroHandler,
-		WebHero: heroWebHandler,
+		ApiUserHandlers: userApiHandler,
+		ApiHeroHandlers: heroApiHandler,
+
+		WebUserHandlers: userWebHandler,
+		WebHeroHandlers: heroWebHandler,
 	}
 }

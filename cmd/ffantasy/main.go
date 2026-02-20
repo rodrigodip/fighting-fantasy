@@ -28,7 +28,7 @@ func main() {
 		log.Fatalf("Error trying to connect to database, error=%s \n", err.Error())
 		return
 	}
-	// Create cookie store with secret key (use env var in production)
+	// Create cookie store with secret key
 	sessionStore := sessions.NewCookieStore([]byte(cfg.SessionSecret))
 	sessionStore.Options = cfg.SessionOpt
 

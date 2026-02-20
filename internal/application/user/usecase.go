@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/user"
-	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
+	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors/auth_errors"
 	IDgenerator "github.com/rodrigodip/fighting-fantasy/internal/pkg/id_generator"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )

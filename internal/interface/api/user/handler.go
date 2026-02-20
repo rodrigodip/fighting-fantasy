@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
-	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors"
+	authErr "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors/auth_errors"
 )
 
 type UserHandlerRepo interface {

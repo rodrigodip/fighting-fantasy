@@ -1,11 +1,13 @@
 package webhandlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
+	weberrors "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors/web_errors"
 )
 
 type UserWebHandler struct {
@@ -34,25 +36,25 @@ func (u *UserWebHandler) ShowRegisterForm(c *gin.Context) {
 	})
 }
 
-// Hendle User Registration from web
+// Handle User Registration from web
 func (u *UserWebHandler) CreateUserFromWeb(c *gin.Context) {
 	var req struct {
-		Name     string `form:"name" binding:"required,name"`
-		Email    string `form:"email" binding:"required,email"`
-		Password string `form:"password" binding:"required"`
+		Name     string `form:"name"`
+		Email    string `form:"email"`
+		Password string `form:"password"`
 	}
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		c.HTML(http.StatusBadRequest, "registration-error.html", gin.H{
-			"Error": err.Error(),
+		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+
+			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
 	}
 	_, err := u.usecase.
 		CreateUser(req.Name, req.Email, req.Password)
 	if err != nil {
-		c.HTML(http.StatusUnauthorized, "login-error.html", gin.H{
-			"Error": "Invalid credentials",
+		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
 	}
@@ -66,13 +68,14 @@ func (u *UserWebHandler) ShowLoginForm(c *gin.Context) {
 // Handle login submission
 func (u *UserWebHandler) Login(c *gin.Context) {
 	var req struct {
-		Email    string `form:"email" binding:"required,email"`
-		Password string `form:"password" binding:"required"`
+		Email    string `form:"email"`
+		Password string `form:"password"`
 	}
 
 	if err := c.ShouldBind(&req); err != nil {
-		c.HTML(http.StatusBadRequest, "login-error.html", gin.H{
-			"Error": err.Error(),
+		log.Printf("Erro: %v", err.Error())
+		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
 	}
@@ -80,8 +83,9 @@ func (u *UserWebHandler) Login(c *gin.Context) {
 	// Call usecase - returns JWT token
 	token, err := u.usecase.Login(req.Email, req.Password)
 	if err != nil {
-		c.HTML(http.StatusUnauthorized, "login-error.html", gin.H{
-			"Error": "Invalid credentials",
+		log.Printf("Erro: %v", err.Error())
+		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
 	}
@@ -93,7 +97,8 @@ func (u *UserWebHandler) Login(c *gin.Context) {
 	// session.Values["user_id"] = userID
 	// session.Values["role"] = role
 	if err := session.Save(c.Request, c.Writer); err != nil {
-		c.HTML(http.StatusInternalServerError, "login-error.html", gin.H{
+		log.Printf("Erro: %v", err.Error())
+		c.HTML(http.StatusInternalServerError, "auth-error.html", gin.H{
 			"Error": "Failed to create session",
 		})
 		return

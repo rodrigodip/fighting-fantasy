@@ -25,7 +25,7 @@ WORKDIR /
 
 COPY --from=build-production /app/ffantasy ffantasy
 # Copy templates to a known location in the container
-COPY --from=build-production /app/internal/interface/web/templates ./templates
+COPY --from=build-production /app/internal/interface/web/templates templates
 
 EXPOSE 8080
 

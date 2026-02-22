@@ -19,11 +19,28 @@ services:
         networks:
           - mynet
 
+    mongo:
+        image: mongo:8
+        container_name: mongo
+        restart: unless-stopped
+        environment:
+          MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+          MONGO_INITDB_DATABASE: ${MONGO_DB}
+        volumes:
+          - mongo_data:/data/db
+        ports:
+          - "27017:27017" # optional: only if you want to connect from host (e.g. MongoDB Compass)
+        networks:
+          - mynet
+
     app:
         build:
           context: .
           dockerfile: Dockerfile
         container_name: ffantasy
+        depends_on:
+          - mongo
         environment:
           - MONGO_URI=${MONGO_URI}
           - MONGO_DB=${MONGO_DB}
@@ -46,3 +63,4 @@ services:
 
 volumes:
   data:
+  mongo_data:

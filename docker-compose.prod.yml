@@ -2,35 +2,17 @@ networks:
   mynet:
 
 services:
-    mailpit:
-        image: axllent/mailpit
-        container_name: mailpit
-        restart: unless-stopped
-        volumes:
-            - ./data:/data
-        ports:
-            - 8025:8025
-            - 1025:1025
-        environment:
-            MP_MAX_MESSAGES: 5000
-            MP_DATABASE: /data/mailpit.db
-            MP_SMTP_AUTH_ACCEPT_ANY: 1
-            MP_SMTP_AUTH_ALLOW_INSECURE: 1
-        networks:
-          - mynet
-
     mongo:
         image: mongo:8
         container_name: mongo
-        restart: unless-stopped
+        restart: always
         environment:
           MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
           MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
           MONGO_INITDB_DATABASE: ${MONGO_DB}
         volumes:
           - mongo_data:/data/db
-        ports:
-          - "27017:27017" # optional: only if you want to connect from host (e.g. MongoDB Compass)
+        # Sem expose de porta — não precisa ser acessível fora da rede interna
         networks:
           - mynet
 
@@ -38,19 +20,20 @@ services:
         build:
           context: .
           dockerfile: Dockerfile
-          target: dev
-        container_name: ffantasy_dev
+          target: build-production
+        container_name: ffantasy_prod
+        restart: always
         depends_on:
           - mongo
+        # Sem volumes — imagem autossuficiente
         environment:
           - MONGO_URI=${MONGO_URI}
           - MONGO_DB=${MONGO_DB}
           - JWT_SECRET=${JWT_SECRET}
           - JWT_ISSUER=${JWT_ISSUER}
-          - SET_ENVIRONMENT=${SET_ENVIRONMENT}
+          - SET_ENVIRONMENT=production
           - SESSION_SECRET=${SESSION_SECRET}
           - HTTP_PORT=${HTTP_PORT}
-
           - SMTP_HOST=${SMTP_HOST}
           - SMTP_PORT=${SMTP_PORT}
           - SMTP_USERNAME=${SMTP_USERNAME}
@@ -63,5 +46,4 @@ services:
           - mynet
 
 volumes:
-  data:
   mongo_data:

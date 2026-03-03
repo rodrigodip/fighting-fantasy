@@ -1,8 +1,8 @@
-handler_test.go
-_old/
+material-afdd/
+ffantasy-design/
 mongo_credential.txt
-structure.md
 structure02.md
 .env
-WARP.md
 data/
+.dockerignore
+.air.toml

@@ -1,2 +1,11 @@
+#
+#
+#
 README.md
 Dockerfile*
+.env
+.env.*
+.git
+.gitignore
+.air.toml
+tmp

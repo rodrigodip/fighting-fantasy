@@ -40,8 +40,7 @@ func main() {
 	routes.InitUserGroup(&router.RouterGroup, di.ApiUserHandlers, *cfg)
 	routes.InitHeroGroup(&router.RouterGroup, di.ApiHeroHandlers, *cfg)
 
-	routes.InitWebAuthGroup(&router.RouterGroup, di)
-	routes.InitWebHeroGroup(&router.RouterGroup, di)
+	// routes.InitWebAuthGroup(&router.RouterGroup, di)
 
 	err = router.Run(cfg.HTTPPort)
 	if err != nil {

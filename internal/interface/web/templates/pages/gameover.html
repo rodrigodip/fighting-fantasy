@@ -1,0 +1,109 @@
+{{define "content"}}
+<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+	<!-- Background -->
+	<div class="absolute inset-0 z-0">
+		<img src="https://images.unsplash.com/photo-1762119594508-c37996ce131f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3RoaWMlMjBmYW50YXN5JTIwYXJ0d29yayUyMHBhaW50aW5nfGVufDF8fHx8MTc3MjI4MTkzMnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+			alt="Gothic fantasy" class="w-full h-full object-cover" />
+		<div class="absolute inset-0 bg-black/60"></div>
+	</div>
+
+	<!-- Content -->
+	<div class="relative z-10 w-full max-w-2xl">
+		<div class="glass-card p-12 text-center">
+			<!-- Skull Icon -->
+			<svg class="w-24 h-24 mx-auto mb-6 text-destructive animate-pulse"
+				xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+				fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+				stroke-linejoin="round">
+				<circle cx="9" cy="12" r="1" />
+				<circle cx="15" cy="12" r="1" />
+				<path d="M8 20v2h8v-2" />
+				<path d="m12.5 17-.5-1-.5 1h1z" />
+				<path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20" />
+			</svg>
+
+			<h1 class="text-5xl mb-4" style="color: var(--gold);">
+				Your Adventure Ends
+			</h1>
+
+			<div class="mb-8 space-y-4">
+				<p class="text-xl text-muted-foreground">
+					Your hero has fallen in the depths of the Forest of Doom.
+				</p>
+				<p class="text-lg">
+					The darkness claims another brave soul. Your name will be remembered
+					in the annals of those who dared to venture into the cursed woods.
+				</p>
+				<div class="border-t border-b border-border/30 py-4 my-6">
+					<p class="text-sm italic text-muted-foreground">
+						"Not all who wander are lost, but some find their end among the ancient
+						trees..."
+					</p>
+				</div>
+			</div>
+
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+				<a href="/dashboard" class="btn btn-primary flex items-center justify-center gap-2">
+					<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+						viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+						stroke-linecap="round" stroke-linejoin="round">
+						<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+						<path
+							d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+					</svg>
+					Return to Dashboard
+				</a>
+				<a href="/adventure"
+					class="btn btn-outline border-[var(--gold)] flex items-center justify-center gap-2">
+					<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+						viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+						stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+						<path d="M21 3v5h-5" />
+					</svg>
+					Try Again
+				</a>
+			</div>
+
+			<div class="mt-8 pt-8 border-t border-border/30">
+				<h3 class="text-lg mb-4">Your Final Statistics</h3>
+				<div class="grid grid-cols-3 gap-4 text-center">
+					<div class="p-4 bg-muted/20 rounded-lg">
+						<p class="text-2xl mb-1" style="color: var(--gold);">
+							{{.Stats.BattlesWon}}</p>
+						<p class="text-sm text-muted-foreground">Battles Won</p>
+					</div>
+					<div class="p-4 bg-muted/20 rounded-lg">
+						<p class="text-2xl mb-1" style="color: var(--gold);">
+							{{.Stats.GoldCollected}}</p>
+						<p class="text-sm text-muted-foreground">Gold Collected</p>
+					</div>
+					<div class="p-4 bg-muted/20 rounded-lg">
+						<p class="text-2xl mb-1" style="color: var(--gold);">
+							{{.Stats.AreasExplored}}</p>
+						<p class="text-sm text-muted-foreground">Areas Explored</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	@keyframes pulse {
+
+		0%,
+		100% {
+			opacity: 1;
+		}
+
+		50% {
+			opacity: 0.5;
+		}
+	}
+
+	.animate-pulse {
+		animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+</style>
+{{end}}

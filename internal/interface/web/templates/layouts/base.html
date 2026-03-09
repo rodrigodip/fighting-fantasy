@@ -1,0 +1,198 @@
+<!-- base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{.Title}} - The Forest of Doom</title>
+
+	<!-- Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+		rel="stylesheet">
+
+	<!-- Tailwind CSS -->
+	<script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
+	<!-- HTMX -->
+	<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+	<!-- Custom Styles -->
+	<style>
+		@custom-variant dark (&:is(.dark *));
+
+		:root {
+			--font-size: 16px;
+			--font-family: 'Crimson Text', serif;
+			--font-heading: 'Cinzel', serif;
+
+			/* Forest-themed color palette */
+			--background: #0a0e0d;
+			--foreground: #e8e5d8;
+			--card: rgba(18, 28, 23, 0.8);
+			--card-foreground: #e8e5d8;
+			--popover: rgba(18, 28, 23, 0.95);
+			--popover-foreground: #e8e5d8;
+			--primary: #4a7c59;
+			--primary-foreground: #ffffff;
+			--secondary: #2d4a35;
+			--secondary-foreground: #e8e5d8;
+			--muted: #1a2820;
+			--muted-foreground: #8a9688;
+			--accent: #5d9770;
+			--accent-foreground: #ffffff;
+			--destructive: #8b2e2e;
+			--destructive-foreground: #ffffff;
+			--border: rgba(93, 151, 112, 0.2);
+			--input: rgba(93, 151, 112, 0.3);
+			--input-background: rgba(18, 28, 23, 0.6);
+			--switch-background: #2d4a35;
+			--font-weight-medium: 600;
+			--font-weight-normal: 400;
+			--ring: #5d9770;
+			--radius: 0.5rem;
+
+			/* Gold accents for AD&D style */
+			--gold: #d4af37;
+			--gold-dark: #8b7500;
+		}
+
+		body {
+			background-color: var(--background);
+			color: var(--foreground);
+			font-family: var(--font-family);
+			margin: 0;
+			padding: 0;
+		}
+
+		h1,
+		h2,
+		h3,
+		h4 {
+			font-family: var(--font-heading);
+			font-weight: var(--font-weight-medium);
+		}
+
+		h1 {
+			font-size: 2rem;
+			line-height: 1.5;
+		}
+
+		h2 {
+			font-size: 1.5rem;
+			line-height: 1.5;
+		}
+
+		h3 {
+			font-size: 1.25rem;
+			line-height: 1.5;
+		}
+
+		h4 {
+			font-size: 1rem;
+			line-height: 1.5;
+		}
+
+		/* Glassmorphism effect */
+		.glass-card {
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			background-color: rgba(18, 28, 23, 0.8);
+			border: 1px solid rgba(93, 151, 112, 0.5);
+			border-radius: 0.5rem;
+			box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+		}
+
+		/* Button styles */
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: calc(var(--radius) - 2px);
+			font-weight: var(--font-weight-medium);
+			transition: all 0.2s;
+			cursor: pointer;
+			border: none;
+			padding: 0.5rem 1rem;
+		}
+
+		.btn-primary {
+			background-color: var(--primary);
+			color: var(--primary-foreground);
+		}
+
+		.btn-primary:hover {
+			background-color: rgba(74, 124, 89, 0.8);
+		}
+
+		.btn-outline {
+			background-color: transparent;
+			border: 1px solid var(--gold);
+			color: var(--foreground);
+		}
+
+		.btn-outline:hover {
+			background-color: rgba(74, 124, 89, 0.2);
+		}
+
+		.btn-destructive {
+			background-color: var(--destructive);
+			color: var(--destructive-foreground);
+		}
+
+		.btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		/* Input styles */
+		.input {
+			width: 100%;
+			border-radius: calc(var(--radius) - 2px);
+			border: 1px solid var(--input);
+			background-color: var(--input-background);
+			padding: 0.5rem 0.75rem;
+			color: var(--foreground);
+		}
+
+		.input:focus {
+			outline: 2px solid var(--ring);
+			outline-offset: 2px;
+		}
+
+		/* Tab styles */
+		.tab-button {
+			padding: 0.75rem 1.5rem;
+			background-color: transparent;
+			border: none;
+			border-bottom: 2px solid transparent;
+			color: var(--muted-foreground);
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.tab-button:hover {
+			color: var(--foreground);
+		}
+
+		.tab-button.active {
+			color: var(--gold);
+			border-bottom-color: var(--gold);
+		}
+	</style>
+
+	{{block "head" .}}{{end}}
+</head>
+
+<body>
+	{{block "content" .}}{{end}}
+
+	<!-- JavaScript utilities -->
+	<script src="/static/js/app.js"></script>
+	{{block "scripts" .}}{{end}}
+</body>
+
+</html>

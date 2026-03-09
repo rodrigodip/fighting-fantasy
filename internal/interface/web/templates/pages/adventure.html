@@ -1,0 +1,330 @@
+<!-- adventure.html -->
+
+{{define "content"}}
+<div class="min-h-screen p-4 md:p-8 relative overflow-hidden">
+	<!-- Background -->
+	<div class="absolute inset-0 z-0">
+		<img src="https://images.unsplash.com/photo-1768159904119-297a25a08c8e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYXJrJTIwZmFudGFzeSUyMGJvb2slMjBpbGx1c3RyYXRpb258ZW58MXx8fHwxNzcyMjgxOTMyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+			alt="Dark fantasy forest" class="w-full h-full object-cover" />
+		<div class="absolute inset-0 bg-black/45"></div>
+	</div>
+
+	<!-- Content -->
+	<div class="relative z-10 max-w-6xl mx-auto">
+		<!-- Header -->
+		<div class="flex items-center justify-between mb-6">
+			<a href="/dashboard" class="btn btn-outline border-[var(--gold)] flex items-center gap-2">
+				<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+					viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+					stroke-linecap="round" stroke-linejoin="round">
+					<path d="m12 19-7-7 7-7" />
+					<path d="M19 12H5" />
+				</svg>
+				Dashboard
+			</a>
+			<h1 class="text-3xl" style="color: var(--gold);">The Forest of Doom</h1>
+		</div>
+
+		<div class="grid gap-6 lg:grid-cols-3">
+			<!-- Main Content Area -->
+			<div class="lg:col-span-2 space-y-6">
+				<!-- Story Section -->
+				<!-- 
+                    Backend: GET /adventure/page/:pageId
+                    Handler: handlers.AdventurePageHandler
+                    Returns: LoreSection with text, choices, and optional battle data
+                -->
+				<div class="glass-card p-6" id="story-section">
+					<div class="mb-4">
+						<span class="text-sm text-muted-foreground">Page {{.CurrentPage}}</span>
+					</div>
+
+					<div class="text-lg leading-relaxed mb-6">
+						{{.Story.Text}}
+					</div>
+
+					{{if not .Story.Battle}}
+					<!-- Regular Choices -->
+					<div class="space-y-3">
+						{{range .Story.Choices}}
+						<button class="btn btn-primary w-full text-left flex items-center gap-3 p-4"
+							hx-get="/adventure/page/{{.Page}}" hx-target="#story-section"
+							hx-swap="innerHTML">
+							<svg class="w-5 h-5 flex-shrink-0"
+								xmlns="http://www.w3.org/2000/svg" width="24"
+								height="24" viewBox="0 0 24 24" fill="none"
+								stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M5 12h14" />
+								<path d="m12 5 7 7-7 7" />
+							</svg>
+							<span>{{.Text}}</span>
+						</button>
+						{{end}}
+					</div>
+					{{else}}
+					<!-- Battle Mode -->
+					<div id="battle-section" class="space-y-6">
+						<div
+							class="p-6 bg-destructive/10 border-2 border-destructive/30 rounded-lg">
+							<div class="flex items-center gap-3 mb-4">
+								<svg class="w-8 h-8 text-destructive"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<path d="m21 16-4 4-4-4" />
+									<path d="M17 20V4" />
+									<path d="m3 8 4-4 4 4" />
+									<path d="M7 4v16" />
+								</svg>
+								<h3 class="text-2xl text-destructive">Battle:
+									{{.Story.Battle.Enemy}}</h3>
+							</div>
+
+							<div class="grid grid-cols-2 gap-4 mb-4">
+								<div class="p-4 bg-muted/20 rounded">
+									<div class="text-sm text-muted-foreground mb-1">
+										Enemy Strength</div>
+									<div class="text-2xl text-destructive">
+										{{.Story.Battle.Strength}}</div>
+								</div>
+								<div class="p-4 bg-muted/20 rounded">
+									<div class="text-sm text-muted-foreground mb-1">
+										Enemy Dexterity</div>
+									<div class="text-2xl text-primary">
+										{{.Story.Battle.Dexterity}}</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Dice Rolling Area -->
+						<div class="grid md:grid-cols-2 gap-6">
+							<div class="glass-card p-6 text-center">
+								<h4 class="mb-4">Your Roll</h4>
+								{{template "partials/dice.html" (dict "ID" "player"
+								"Sides" 6)}}
+							</div>
+							<div class="glass-card p-6 text-center">
+								<h4 class="mb-4">Enemy Roll</h4>
+								{{template "partials/dice.html" (dict "ID" "enemy"
+								"Sides" 6)}}
+							</div>
+						</div>
+
+						<!-- Battle Log -->
+						<div class="glass-card p-6">
+							<h4 class="mb-4">Battle Log</h4>
+							<div id="battle-log"
+								class="space-y-2 min-h-[100px] max-h-[200px] overflow-y-auto">
+								<p class="text-sm text-muted-foreground italic">Combat
+									begins...</p>
+							</div>
+						</div>
+
+						<!-- Battle Actions -->
+						<!-- 
+                            Backend: POST /adventure/battle/attack
+                            Handler: handlers.BattleAttackHandler
+                            Accepts: playerRoll (int), enemyRoll (int), pageId (int)
+                            Returns: Battle result (damage dealt, damage received, victory/defeat)
+                        -->
+						<button class="btn btn-destructive w-full flex items-center justify-center gap-2"
+							onclick="executeBattleRound()">
+							<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg"
+								width="24" height="24" viewBox="0 0 24 24" fill="none"
+								stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
+								<polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+								<line x1="13" x2="19" y1="19" y2="13" />
+								<line x1="16" x2="20" y1="16" y2="20" />
+								<line x1="19" x2="21" y1="21" y2="19" />
+							</svg>
+							Attack!
+						</button>
+					</div>
+					{{end}}
+				</div>
+			</div>
+
+			<!-- Hero Stats Sidebar -->
+			<!-- 
+                Backend: GET /adventure/hero-stats
+                Handler: handlers.HeroStatsHandler
+                Returns: Current hero stats during adventure
+            -->
+			<div class="space-y-6">
+				<div class="glass-card p-6">
+					<h2 class="text-xl mb-4" style="color: var(--gold);">{{.Hero.Name}}</h2>
+
+					<div class="space-y-4">
+						<!-- Strength -->
+						<div>
+							<div class="flex justify-between mb-2">
+								<span class="flex items-center gap-2 text-sm">
+									<svg class="w-4 h-4 text-destructive"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<polyline
+											points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+										<line x1="13" x2="19" y1="19" y2="13" />
+										<line x1="16" x2="20" y1="16" y2="20" />
+										<line x1="19" x2="21" y1="21" y2="19" />
+									</svg>
+									Strength
+								</span>
+								<span
+									class="text-sm">{{.Hero.CurrentStrength}}/{{.Hero.Strength}}</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="bg-destructive h-2 rounded-full transition-all"
+									style="width: {{divide (multiply .Hero.CurrentStrength 100) .Hero.Strength}}%">
+								</div>
+							</div>
+						</div>
+
+						<!-- Dexterity -->
+						<div>
+							<div class="flex justify-between mb-2">
+								<span class="flex items-center gap-2 text-sm">
+									<svg class="w-4 h-4 text-primary"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<path
+											d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+									</svg>
+									Dexterity
+								</span>
+								<span class="text-sm">{{.Hero.Dexterity}}</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="bg-primary h-2 rounded-full"
+									style="width: {{multiply .Hero.Dexterity 5}}%">
+								</div>
+							</div>
+						</div>
+
+						<!-- Fortune -->
+						<div>
+							<div class="flex justify-between mb-2">
+								<span class="flex items-center gap-2 text-sm">
+									<svg class="w-4 h-4" style="color: var(--gold);"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<path
+											d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+									</svg>
+									Fortune
+								</span>
+								<span class="text-sm">{{.Hero.Fortune}}</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="h-2 rounded-full"
+									style="background-color: var(--gold); width: {{multiply .Hero.Fortune 5}}%">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Inventory -->
+				<div class="glass-card p-6">
+					<h3 class="text-lg mb-4">Quick Inventory</h3>
+					<div class="space-y-3">
+						<div class="flex items-center justify-between p-3 bg-muted/20 rounded">
+							<div class="flex items-center gap-2">
+								<svg class="w-4 h-4 text-destructive"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<path
+										d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+								</svg>
+								<span class="text-sm">Provisions</span>
+							</div>
+							<span class="text-sm">{{.Hero.Provisions}}</span>
+						</div>
+						<div class="flex items-center justify-between p-3 bg-muted/20 rounded">
+							<div class="flex items-center gap-2">
+								<svg class="w-4 h-4" style="color: var(--gold);"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="8" cy="8" r="6" />
+									<path d="M18.09 10.37A6 6 0 1 1 10.34 18" />
+									<path d="M7 6h1v4" />
+									<path d="m16.71 13.88.7.71-2.82 2.82" />
+								</svg>
+								<span class="text-sm">Gold</span>
+							</div>
+							<span class="text-sm">{{.Hero.Gold}}</span>
+						</div>
+						<div class="flex items-center justify-between p-3 bg-muted/20 rounded">
+							<div class="flex items-center gap-2">
+								<svg class="w-4 h-4 text-accent"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<path d="M6 3h12l4 6-10 13L2 9Z" />
+									<path d="M11 3 8 9l4 13 4-13-3-6" />
+								</svg>
+								<span class="text-sm">Jewels</span>
+							</div>
+							<span class="text-sm">{{.Hero.Jewels}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	// Battle system
+	let playerLastRoll = null;
+	let enemyLastRoll = null;
+
+	// Set callback for dice rolls
+	window.onDiceRoll = function (result) {
+		// Store the roll result for battle calculation
+		console.log('Dice rolled:', result);
+	};
+
+	function executeBattleRound() {
+		// In a real implementation, this would:
+		// 1. Get the dice roll values
+		// 2. Calculate attack success based on player/enemy stats
+		// 3. Send to backend for validation
+		// 4. Update hero stats and battle log
+		// 5. Check for victory/defeat
+
+		const battleLog = document.getElementById('battle-log');
+		const logEntry = document.createElement('p');
+		logEntry.className = 'text-sm';
+		logEntry.textContent = 'Roll the dice first to see the results of your attack!';
+		battleLog.appendChild(logEntry);
+
+		// Scroll to bottom of log
+		battleLog.scrollTop = battleLog.scrollHeight;
+
+		// This would be replaced with HTMX post in real implementation:
+		// hx-post="/adventure/battle/attack"
+		// with form data containing dice rolls and current page
+	}
+</script>
+{{end}}

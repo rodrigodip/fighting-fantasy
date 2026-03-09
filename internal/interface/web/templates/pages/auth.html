@@ -1,0 +1,141 @@
+{{define "content"}}
+<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+	<!-- Background Image -->
+	<div class="absolute inset-0 z-0">
+		<img src="https://images.unsplash.com/photo-1597839219216-a773cb2473e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwaWxsdXN0cmF0aW9uJTIwZGFyayUyMGZvcmVzdCUyMHBhaW50aW5nfGVufDF8fHx8MTc3MjI4MTkzMXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+			alt="Dark forest illustration" class="w-full h-full object-cover" />
+		<div class="absolute inset-0 bg-black/30"></div>
+	</div>
+
+	<!-- Content -->
+	<div class="relative z-10 w-full max-w-md">
+		<div class="text-center mb-8">
+			<h1 class="text-5xl mb-2" style="color: var(--gold);">
+				Fighting Fantasy
+			</h1>
+			<p class="text-lg text-muted-foreground">The Forest of Doom</p>
+		</div>
+
+		<div class="glass-card p-8">
+			<!-- Tab Navigation -->
+			<div class="flex border-b border-border/30 mb-6">
+				<button class="tab-button active" onclick="switchTab('login')">
+					<!-- Shield Icon -->
+					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
+						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+						stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path
+							d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+					</svg>
+					Login
+				</button>
+				<button class="tab-button" onclick="switchTab('signup')">
+					<!-- Sword Icon -->
+					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
+						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+						stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+						<line x1="13" x2="19" y1="19" y2="13" />
+						<line x1="16" x2="20" y1="16" y2="20" />
+						<line x1="19" x2="21" y1="21" y2="19" />
+					</svg>
+					Sign Up
+				</button>
+			</div>
+
+			<!-- Login Form -->
+			<!-- 
+                Backend: POST /auth/login
+                Handler: handlers.AuthLoginHandler
+                Accepts: email (string), password (string)
+                Returns: session token, redirects to /dashboard
+            -->
+			<div id="login-tab" class="tab-content">
+				<form hx-post="/auth/login" hx-target="body" hx-swap="outerHTML" class="space-y-4">
+					<div class="space-y-2">
+						<label for="login-email" class="block">E-mail</label>
+						<input id="login-email" name="email" type="email"
+							placeholder="your@email.com" required class="input" />
+					</div>
+					<div class="space-y-2">
+						<label for="login-password" class="block">Password</label>
+						<input id="login-password" name="password" type="password"
+							placeholder="••••••••" required class="input" />
+					</div>
+					<button type="submit" class="btn btn-primary w-full">
+						Enter the Forest
+					</button>
+				</form>
+			</div>
+
+			<!-- Sign Up Form -->
+			<!-- 
+                Backend: POST /auth/signup
+                Handler: handlers.AuthSignUpHandler
+                Accepts: name (string), email (string), password (string)
+                Returns: session token, redirects to /dashboard
+            -->
+			<div id="signup-tab" class="tab-content" style="display: none;">
+				<form hx-post="/auth/signup" hx-target="body" hx-swap="outerHTML" class="space-y-4">
+					<div class="space-y-2">
+						<label for="signup-name" class="block">Name</label>
+						<input id="signup-name" name="name" type="text" placeholder="Your name"
+							required class="input" />
+					</div>
+					<div class="space-y-2">
+						<label for="signup-email" class="block">E-mail</label>
+						<input id="signup-email" name="email" type="email"
+							placeholder="your@email.com" required class="input" />
+					</div>
+					<div class="space-y-2">
+						<label for="signup-password" class="block">Password</label>
+						<input id="signup-password" name="password" type="password"
+							placeholder="••••••••" required class="input" />
+					</div>
+					<button type="submit" class="btn btn-primary w-full">
+						Create Adventurer
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function switchTab(tab) {
+		// Hide all tabs
+		document.querySelectorAll('.tab-content').forEach(content => {
+			content.style.display = 'none';
+		});
+
+		// Remove active class from all buttons
+		document.querySelectorAll('.tab-button').forEach(btn => {
+			btn.classList.remove('active');
+		});
+
+		// Show selected tab
+		document.getElementById(tab + '-tab').style.display = 'block';
+
+		// Add active class to clicked button
+		event.target.closest('.tab-button').classList.add('active');
+	}
+</script>
+{{end}}
+
+{{define "head"}}
+<style>
+	.tab-content {
+		animation: fadeIn 0.3s ease-in;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+
+		to {
+			opacity: 1;
+		}
+	}
+</style>
+{{end}}

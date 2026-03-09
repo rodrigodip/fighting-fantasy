@@ -1,0 +1,509 @@
+{{define "content"}}
+<div class="min-h-screen p-4 md:p-8 relative overflow-hidden">
+	<!-- Background -->
+	<div class="absolute inset-0 z-0">
+		<img src="https://images.unsplash.com/photo-1765606290905-b9d377ea4d5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpZXZhbCUyMGZhbnRhc3klMjBkdW5nZW9uJTIwaWxsdXN0cmF0aW9uJTIwYXJ0fGVufDF8fHx8MTc3MjI4MTkzMnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+			alt="Medieval fantasy dungeon" class="w-full h-full object-cover" />
+		<div class="absolute inset-0 bg-black/40"></div>
+	</div>
+
+	<!-- Content -->
+	<div class="relative z-10 max-w-6xl mx-auto">
+		<div class="flex items-center justify-between mb-8">
+			<h1 class="text-4xl" style="color: var(--gold);">Dashboard</h1>
+			<!-- 
+                Backend: POST /auth/logout
+                Handler: handlers.AuthLogoutHandler
+                Clears session and redirects to /
+            -->
+			<button class="btn btn-outline border-[var(--gold)]" hx-post="/auth/logout" hx-target="body">
+				Sign Out
+			</button>
+		</div>
+
+		<!-- Tab Navigation -->
+		<div class="glass-card p-2 mb-6">
+			<div class="flex gap-2">
+				<button class="tab-button flex-1 active" onclick="switchDashboardTab('create')">
+					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
+						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+						stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+						<line x1="13" x2="19" y1="19" y2="13" />
+						<line x1="16" x2="20" y1="16" y2="20" />
+						<line x1="19" x2="21" y1="21" y2="19" />
+					</svg>
+					{{if .Hero}}Hero{{else}}Create Hero{{end}}
+				</button>
+				<button class="tab-button flex-1" onclick="switchDashboardTab('status')" {{if not
+					.Hero}}disabled{{end}}>
+					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
+						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+						stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path
+							d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+					</svg>
+					Status
+				</button>
+				<button class="tab-button flex-1" onclick="switchDashboardTab('account')">
+					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
+						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+						stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path
+							d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+						<circle cx="12" cy="12" r="3" />
+					</svg>
+					Account
+				</button>
+			</div>
+		</div>
+
+		<!-- Create Hero Tab -->
+		<div id="create-tab" class="tab-content">
+			{{if not .Hero}}
+			<!-- 
+                Backend: POST /hero/create
+                Handler: handlers.HeroCreateHandler
+                Accepts: name (string), potion (string: "Dexterity"|"Strength"|"Fortune")
+                Returns: Created hero object with initial stats
+            -->
+			<div class="glass-card p-8">
+				<h2 class="text-2xl mb-6">Create Your Hero</h2>
+				<form hx-post="/hero/create" hx-target="#dashboard-content" class="space-y-6">
+					<div class="space-y-2">
+						<label for="hero-name" class="block">Hero Name</label>
+						<input id="hero-name" name="name" type="text"
+							placeholder="Enter your hero's name" required class="input" />
+					</div>
+
+					<div class="space-y-4">
+						<label class="block">Choose Your Starting Potion</label>
+						<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+							<div class="potion-option p-6 rounded-lg border-2 border-border hover:border-primary/50 cursor-pointer transition-all"
+								onclick="selectPotion('Dexterity', this)">
+								<svg class="w-8 h-8 mx-auto mb-3"
+									style="color: var(--gold);"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<path
+										d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+								</svg>
+								<h3 class="mb-1 text-center">Dexterity</h3>
+								<p class="text-sm text-muted-foreground text-center">+2
+									Dexterity</p>
+							</div>
+							<div class="potion-option p-6 rounded-lg border-2 border-[var(--gold)] bg-primary/20 cursor-pointer transition-all"
+								onclick="selectPotion('Strength', this)">
+								<svg class="w-8 h-8 mx-auto mb-3"
+									style="color: var(--gold);"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<polyline
+										points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+									<line x1="13" x2="19" y1="19" y2="13" />
+									<line x1="16" x2="20" y1="16" y2="20" />
+									<line x1="19" x2="21" y1="21" y2="19" />
+								</svg>
+								<h3 class="mb-1 text-center">Strength</h3>
+								<p class="text-sm text-muted-foreground text-center">+2
+									Strength</p>
+							</div>
+							<div class="potion-option p-6 rounded-lg border-2 border-border hover:border-primary/50 cursor-pointer transition-all"
+								onclick="selectPotion('Fortune', this)">
+								<svg class="w-8 h-8 mx-auto mb-3"
+									style="color: var(--gold);"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<path
+										d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+								</svg>
+								<h3 class="mb-1 text-center">Fortune</h3>
+								<p class="text-sm text-muted-foreground text-center">+2
+									Fortune</p>
+							</div>
+						</div>
+						<input type="hidden" name="potion" id="selected-potion"
+							value="Strength" />
+					</div>
+
+					<button type="submit" class="btn btn-primary w-full">
+						Create Hero & Begin Adventure
+					</button>
+				</form>
+			</div>
+			{{else}}
+			<!-- Hero Overview -->
+			<div class="grid gap-6 md:grid-cols-2">
+				<div class="glass-card p-6">
+					<h2 class="text-2xl mb-4" style="color: var(--gold);">{{.Hero.Name}}</h2>
+					<div class="space-y-4">
+						<div>
+							<div class="flex items-center justify-between mb-2">
+								<div class="flex items-center gap-2">
+									<svg class="w-5 h-5 text-destructive"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<polyline
+											points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+										<line x1="13" x2="19" y1="19" y2="13" />
+										<line x1="16" x2="20" y1="16" y2="20" />
+										<line x1="19" x2="21" y1="21" y2="19" />
+									</svg>
+									<span>Strength</span>
+								</div>
+								<span class="text-xl">{{.Hero.Strength}}</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="bg-destructive h-2 rounded-full"
+									style="width: {{multiply .Hero.Strength 5}}%">
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="flex items-center justify-between mb-2">
+								<div class="flex items-center gap-2">
+									<svg class="w-5 h-5 text-primary"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<path
+											d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+									</svg>
+									<span>Dexterity</span>
+								</div>
+								<span class="text-xl">{{.Hero.Dexterity}}</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="bg-primary h-2 rounded-full"
+									style="width: {{multiply .Hero.Dexterity 5}}%">
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<div class="flex items-center justify-between mb-2">
+								<div class="flex items-center gap-2">
+									<svg class="w-5 h-5" style="color: var(--gold);"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<path
+											d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+									</svg>
+									<span>Fortune</span>
+								</div>
+								<span class="text-xl">{{.Hero.Fortune}}</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="h-2 rounded-full"
+									style="background-color: var(--gold); width: {{multiply .Hero.Fortune 5}}%">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<a href="/adventure"
+						class="btn btn-primary w-full mt-6 flex items-center justify-center gap-2">
+						<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24"
+							height="24" viewBox="0 0 24 24" fill="none"
+							stroke="currentColor" stroke-width="2" stroke-linecap="round"
+							stroke-linejoin="round">
+							<polygon points="6 3 20 12 6 21 6 3" />
+						</svg>
+						Start Adventure
+					</a>
+				</div>
+
+				<div class="glass-card p-6">
+					<h3 class="text-xl mb-4">Inventory</h3>
+					<div class="space-y-4">
+						<div class="flex items-center justify-between p-3 bg-muted/20 rounded">
+							<div class="flex items-center gap-2">
+								<svg class="w-5 h-5 text-destructive"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<path
+										d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+								</svg>
+								<span>Provisions</span>
+							</div>
+							<span>{{.Hero.Provisions}}</span>
+						</div>
+						<div class="flex items-center justify-between p-3 bg-muted/20 rounded">
+							<div class="flex items-center gap-2">
+								<svg class="w-5 h-5" style="color: var(--gold);"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="8" cy="8" r="6" />
+									<path d="M18.09 10.37A6 6 0 1 1 10.34 18" />
+									<path d="M7 6h1v4" />
+									<path d="m16.71 13.88.7.71-2.82 2.82" />
+								</svg>
+								<span>Gold</span>
+							</div>
+							<span>{{.Hero.Gold}}</span>
+						</div>
+						<div class="flex items-center justify-between p-3 bg-muted/20 rounded">
+							<div class="flex items-center gap-2">
+								<svg class="w-5 h-5 text-accent"
+									xmlns="http://www.w3.org/2000/svg" width="24"
+									height="24" viewBox="0 0 24 24" fill="none"
+									stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<path d="M6 3h12l4 6-10 13L2 9Z" />
+									<path d="M11 3 8 9l4 13 4-13-3-6" />
+								</svg>
+								<span>Jewels</span>
+							</div>
+							<span>{{.Hero.Jewels}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			{{end}}
+		</div>
+
+		<!-- Status Tab -->
+		<!-- 
+            Backend: GET /hero/status
+            Handler: handlers.HeroStatusHandler
+            Returns: Full hero data including equipment and backpack
+        -->
+		<div id="status-tab" class="tab-content" style="display: none;">
+			{{if .Hero}}
+			<div class="grid gap-6 lg:grid-cols-3">
+				<div class="glass-card p-6 lg:col-span-2">
+					<h2 class="text-2xl mb-6">Equipped Items</h2>
+					<div class="grid gap-3">
+						{{range .Hero.Equipped}}
+						<div
+							class="flex items-center gap-3 p-4 bg-muted/20 rounded-lg border border-border/30">
+							<svg class="w-5 h-5" style="color: var(--gold);"
+								xmlns="http://www.w3.org/2000/svg" width="24"
+								height="24" viewBox="0 0 24 24" fill="none"
+								stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+								<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+								<path d="M4 22h16" />
+								<path
+									d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+								<path
+									d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+								<path d="M18 2H6v7a6 6 0 0 0 12 0V2z" />
+							</svg>
+							<span>{{.}}</span>
+						</div>
+						{{end}}
+					</div>
+
+					<h3 class="text-xl mt-8 mb-4">Backpack</h3>
+					<div class="grid gap-3">
+						{{range .Hero.Backpack}}
+						<div
+							class="flex items-center gap-3 p-4 bg-muted/20 rounded-lg border border-border/30">
+							<svg class="w-5 h-5 text-primary"
+								xmlns="http://www.w3.org/2000/svg" width="24"
+								height="24" viewBox="0 0 24 24" fill="none"
+								stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path
+									d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
+								<path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+							</svg>
+							<span>{{.}}</span>
+						</div>
+						{{end}}
+					</div>
+				</div>
+
+				<div class="glass-card p-6">
+					<h2 class="text-2xl mb-6">Hero Stats</h2>
+					<div class="space-y-6">
+						<div>
+							<div class="flex justify-between mb-2">
+								<span class="flex items-center gap-2">
+									<svg class="w-4 h-4 text-destructive"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<polyline
+											points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+										<line x1="13" x2="19" y1="19" y2="13" />
+										<line x1="16" x2="20" y1="16" y2="20" />
+										<line x1="19" x2="21" y1="21" y2="19" />
+									</svg>
+									Strength
+								</span>
+								<span>{{.Hero.Strength}}/20</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="bg-destructive h-2 rounded-full"
+									style="width: {{multiply .Hero.Strength 5}}%">
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="flex justify-between mb-2">
+								<span class="flex items-center gap-2">
+									<svg class="w-4 h-4 text-primary"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<path
+											d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+									</svg>
+									Dexterity
+								</span>
+								<span>{{.Hero.Dexterity}}/20</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="bg-primary h-2 rounded-full"
+									style="width: {{multiply .Hero.Dexterity 5}}%">
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="flex justify-between mb-2">
+								<span class="flex items-center gap-2">
+									<svg class="w-4 h-4" style="color: var(--gold);"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24" height="24"
+										viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round">
+										<path
+											d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+									</svg>
+									Fortune
+								</span>
+								<span>{{.Hero.Fortune}}/20</span>
+							</div>
+							<div class="w-full bg-muted/30 rounded-full h-2">
+								<div class="h-2 rounded-full"
+									style="background-color: var(--gold); width: {{multiply .Hero.Fortune 5}}%">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{{end}}
+		</div>
+
+		<!-- Account Tab -->
+		<div id="account-tab" class="tab-content" style="display: none;">
+			<div class="glass-card p-8 max-w-2xl">
+				<h2 class="text-2xl mb-6">Account Settings</h2>
+
+				<div class="space-y-6">
+					<div class="p-6 bg-muted/20 rounded-lg border border-border/30">
+						<h3 class="text-xl mb-4">Account Information</h3>
+						<div class="space-y-3">
+							<div class="flex justify-between">
+								<span class="text-muted-foreground">Email:</span>
+								<span>{{.User.Email}}</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground">Member Since:</span>
+								<span>{{.User.CreatedAt}}</span>
+							</div>
+						</div>
+					</div>
+
+					{{if .Hero}}
+					<div class="p-6 bg-destructive/10 rounded-lg border border-destructive/30">
+						<h3 class="text-xl mb-4 text-destructive">Danger Zone</h3>
+						<p class="text-sm text-muted-foreground mb-4">
+							Deleting your hero will permanently remove all progress. This
+							action cannot be undone.
+						</p>
+						<!-- 
+                            Backend: DELETE /hero
+                            Handler: handlers.HeroDeleteHandler
+                            Deletes hero and all associated data
+                        -->
+						<button class="btn btn-destructive" hx-delete="/hero"
+							hx-confirm="Are you sure you want to delete your hero? This action cannot be undone."
+							hx-target="#dashboard-content">
+							<svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg"
+								width="24" height="24" viewBox="0 0 24 24" fill="none"
+								stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M3 6h18" />
+								<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+								<path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+							</svg>
+							Delete Hero
+						</button>
+					</div>
+					{{end}}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function switchDashboardTab(tab) {
+		// Hide all tabs
+		document.querySelectorAll('.tab-content').forEach(content => {
+			content.style.display = 'none';
+		});
+
+		// Remove active class from all buttons
+		document.querySelectorAll('.tab-button').forEach(btn => {
+			btn.classList.remove('active');
+		});
+
+		// Show selected tab
+		document.getElementById(tab + '-tab').style.display = 'block';
+
+		// Add active class to clicked button
+		event.target.closest('.tab-button').classList.add('active');
+	}
+
+	function selectPotion(type, element) {
+		// Remove active class from all options
+		document.querySelectorAll('.potion-option').forEach(opt => {
+			opt.classList.remove('border-[var(--gold)]', 'bg-primary/20');
+			opt.classList.add('border-border');
+		});
+
+		// Add active class to selected option
+		element.classList.remove('border-border');
+		element.classList.add('border-[var(--gold)]', 'bg-primary/20');
+
+		// Set hidden input value
+		document.getElementById('selected-potion').value = type;
+	}
+</script>
+{{end}}

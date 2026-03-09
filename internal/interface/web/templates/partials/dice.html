@@ -1,0 +1,67 @@
+<!-- Dice Component - Interactive dice roller -->
+<div class="flex flex-col items-center gap-4">
+	<div id="dice-container-{{.ID}}" class="relative">
+		<div class="w-20 h-20 flex items-center justify-center bg-card border-2 border-[var(--gold)] rounded-lg shadow-lg transition-transform duration-600"
+			id="dice-{{.ID}}">
+			<span id="dice-value-{{.ID}}" class="text-3xl"
+				style="color: var(--gold); display: none;"></span>
+			<!-- Dice icon (using Unicode) -->
+			<svg id="dice-icon-{{.ID}}" class="w-10 h-10" style="color: var(--gold);"
+				xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+				fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+				stroke-linejoin="round">
+				<rect width="12" height="12" x="2" y="10" rx="2" ry="2" />
+				<path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6" />
+				<path d="M6 18h.01" />
+				<path d="M10 14h.01" />
+				<path d="M15 6h.01" />
+				<path d="M18 9h.01" />
+			</svg>
+		</div>
+	</div>
+	<button class="btn btn-primary" onclick="rollDice('{{.ID}}', {{.Sides}})" id="roll-button-{{.ID}}">
+		Roll D{{.Sides}}
+	</button>
+</div>
+
+<script>
+	function rollDice(id, sides) {
+		const diceEl = document.getElementById('dice-' + id);
+		const valueEl = document.getElementById('dice-value-' + id);
+		const iconEl = document.getElementById('dice-icon-' + id);
+		const buttonEl = document.getElementById('roll-button-' + id);
+
+		// Disable button and show rolling state
+		buttonEl.disabled = true;
+		buttonEl.textContent = 'Rolling...';
+
+		// Hide value, show icon
+		valueEl.style.display = 'none';
+		iconEl.style.display = 'block';
+
+		// Add rotation animation
+		diceEl.style.transform = 'rotate(360deg)';
+
+		setTimeout(() => {
+			// Generate random value
+			const result = Math.floor(Math.random() * sides) + 1;
+
+			// Show result
+			valueEl.textContent = result;
+			valueEl.style.display = 'block';
+			iconEl.style.display = 'none';
+
+			// Reset rotation
+			diceEl.style.transform = 'rotate(0deg)';
+
+			// Re-enable button
+			buttonEl.disabled = false;
+			buttonEl.textContent = 'Roll D' + sides;
+
+			// Fire callback if defined
+			if (window.onDiceRoll) {
+				window.onDiceRoll(result);
+			}
+		}, 600);
+	}
+</script>

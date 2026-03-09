@@ -7,5 +7,4 @@ Dockerfile*
 .env.*
 .git
 .gitignore
-.air.toml
 tmp

@@ -1,7 +1,5 @@
 package hero
 
-import "time"
-
 type Hero struct {
 	UserID          string
 	HeroName        string
@@ -9,7 +7,7 @@ type Hero struct {
 	Stats           Stats
 	Inventory       Inventory
 	Potions         Potions
-	History         []History
+	Story           []Story
 	MonsterDefeated []string
 }
 type Stats struct {
@@ -32,8 +30,7 @@ type Potions struct {
 	Strength  bool
 	Fortune   bool
 }
-type History struct {
-	Lore      int
-	Timestamp time.Time
-	Choices   map[string]string
+type Story struct {
+	Lore    int
+	Choices map[string]string
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
-	weberrors "github.com/rodrigodip/fighting-fantasy/internal/pkg/errors/web_errors"
+	"github.com/rodrigodip/fighting-fantasy/internal/pkg/errors/web_errors"
 )
 
 type UserWebHandlerRepo interface {
@@ -56,7 +56,7 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 		return
 	}
 	// Store token in session
-	session, _ := uc.sessionStore.Get(c.Request, "session-name")
+	session, _ := uc.sessionStore.Get(c.Request, "user-session")
 	session.Values["token"] = token
 	// Decode the JWT to store user_id/role directly:
 	// session.Values["user_id"] = userID
@@ -111,7 +111,7 @@ func (uc *UserWebHandler) AuthSignUpHandler(c *gin.Context) {
 // POST /auth/logout
 // Returns: Clears session cookie and redirects to /
 func (uc *UserWebHandler) AuthLogoutHandle(c *gin.Context) {
-	session, _ := uc.sessionStore.Get(c.Request, "session-name")
+	session, _ := uc.sessionStore.Get(c.Request, "user-session")
 	session.Values["token"] = ""
 	session.Options.MaxAge = -1 // Delete cookie
 	session.Save(c.Request, c.Writer)

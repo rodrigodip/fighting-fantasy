@@ -1,49 +1,60 @@
 package webhandlers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
+	"github.com/rodrigodip/fighting-fantasy/internal/application/hero"
+	"github.com/rodrigodip/fighting-fantasy/internal/interface/web/viewmodels"
+	"github.com/rodrigodip/fighting-fantasy/internal/pkg/errors/web_errors"
 )
 
-// PageData represents common data for all pages
-type PageData struct {
-	Title       string
-	User        *User
-	Hero        *Hero
-	CurrentPage int
-	Story       *LoreSection
-	Stats       *GameStats
+type PagesWebHandlerRepo interface {
+	AuthPageHandler(c *gin.Context)
+	DashboardPageHandler(c *gin.Context)
+	AdventurePageHandlerView(c *gin.Context)
+	GameOverPageHandler(c *gin.Context)
 }
 
-// User represents an authenticated user
-type User struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	CreatedAt string `json:"created_at"`
+type PagesWebHandler struct {
+	usecase      *heroapp.HeroUseCase
+	sessionStore sessions.Store
 }
 
-// GameStats represents final adventure statistics
-type GameStats struct {
-	BattlesWon    int `json:"battles_won"`
-	GoldCollected int `json:"gold_collected"`
-	AreasExplored int `json:"areas_explored"`
+func NewPagesWebHandler(uc *heroapp.HeroUseCase, store sessions.Store) *PagesWebHandler {
+	return &PagesWebHandler{
+		usecase:      uc,
+		sessionStore: store,
+	}
 }
 
 // AuthPageHandler renders the authentication page
 // GET /
-func AuthPageHandler(w http.ResponseWriter, r *http.Request) {
+func (uc *PagesWebHandler) AuthPageHandler(c *gin.Context) {
 	// TODO: Render auth.html template
 	// 1. Check if user is already logged in
 	// 2. If logged in, redirect to /dashboard
 	// 3. Otherwise, render login/signup page
+
+	// Check if the user is logged in
+	session, _ := uc.sessionStore.Get(c.Request, "user-session")
+	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+			"Error": weberrors.ParseErrorForWeb("AuthPageHandler: Enable to check if user is logged in"),
+		})
+		return
+	}
 
 	tmpl := template.Must(template.ParseFiles(
 		"internal/interface/web/templates/layouts/base.html",
 		"internal/interface/web/templates/pages/auth.html",
 	))
 
-	data := PageData{
+	// TODO: Use DTO here
+	data := viewmodels.PageData{
 		Title: "Login",
 	}
 
@@ -52,7 +63,7 @@ func AuthPageHandler(w http.ResponseWriter, r *http.Request) {
 
 // DashboardPageHandler renders the dashboard page
 // GET /dashboard
-func DashboardPageHandler(w http.ResponseWriter, r *http.Request) {
+func (uc *PagesWebHandler) DashboardPageHandler(c *gin.Context) {
 	// TODO: Render dashboard.html template
 	// 1. Get user from session (or redirect to / if not logged in)
 	// 2. Fetch user's hero (if exists)
@@ -75,7 +86,7 @@ func DashboardPageHandler(w http.ResponseWriter, r *http.Request) {
 
 // AdventurePageHandlerView renders the adventure page
 // GET /adventure
-func AdventurePageHandlerView(w http.ResponseWriter, r *http.Request) {
+func (uc *PagesWebHandler) AdventurePageHandlerView(c *gin.Context) {
 	// TODO: Render adventure.html template
 	// 1. Get user from session (or redirect to / if not logged in)
 	// 2. Get user's hero (redirect to /dashboard if no hero)
@@ -103,7 +114,7 @@ func AdventurePageHandlerView(w http.ResponseWriter, r *http.Request) {
 
 // GameOverPageHandler renders the game over page
 // GET /gameover
-func GameOverPageHandler(w http.ResponseWriter, r *http.Request) {
+func (uc *PagesWebHandler) GameOverPageHandler(c *gin.Context) {
 	// TODO: Render gameover.html template
 	// 1. Get user from session
 	// 2. Calculate or fetch final statistics

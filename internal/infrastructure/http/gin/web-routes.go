@@ -8,7 +8,7 @@ import (
 // Page routes - render HTML templates
 func InitWebPagesGroup(r *gin.RouterGroup, d *dependecy.Container) {
 	// TODO: Uncomment and implement when handlers are ready
-	// http.HandleFunc("/", handlers.AuthPageHandler)
+	r.GET("/", d.WebPagesHandlers.AuthPageHandler)
 	// http.HandleFunc("/dashboard", handlers.DashboardPageHandler)
 	// http.HandleFunc("/adventure", handlers.AdventurePageHandlerView)
 	// http.HandleFunc("/gameover", handlers.GameOverPageHandler)

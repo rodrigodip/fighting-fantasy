@@ -102,13 +102,86 @@
 						<div class="grid md:grid-cols-2 gap-6">
 							<div class="glass-card p-6 text-center">
 								<h4 class="mb-4">Your Roll</h4>
-								{{template "partials/dice.html" (dict "ID" "player"
-								"Sides" 6)}}
+								<!-- Dice Component - Player -->
+								<div class="flex flex-col items-center gap-4">
+									<div id="dice-container-player"
+										class="relative">
+										<div class="w-20 h-20 flex items-center justify-center bg-card border-2 border-[var(--gold)] rounded-lg shadow-lg transition-transform duration-600"
+											id="dice-player">
+											<span id="dice-value-player"
+												class="text-3xl"
+												style="color: var(--gold); display: none;"></span>
+											<svg id="dice-icon-player"
+												class="w-10 h-10"
+												style="color: var(--gold);"
+												xmlns="http://www.w3.org/2000/svg"
+												width="24" height="24"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round">
+												<rect width="12"
+													height="12"
+													x="2" y="10"
+													rx="2" ry="2" />
+												<path
+													d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6" />
+												<path d="M6 18h.01" />
+												<path d="M10 14h.01" />
+												<path d="M15 6h.01" />
+												<path d="M18 9h.01" />
+											</svg>
+										</div>
+									</div>
+									<button class="btn btn-primary"
+										onclick="rollDice('player', 6)"
+										id="roll-button-player">
+										Roll D6
+									</button>
+								</div>
 							</div>
 							<div class="glass-card p-6 text-center">
 								<h4 class="mb-4">Enemy Roll</h4>
-								{{template "partials/dice.html" (dict "ID" "enemy"
-								"Sides" 6)}}
+								<!-- Dice Component - Enemy -->
+								<div class="flex flex-col items-center gap-4">
+									<div id="dice-container-enemy" class="relative">
+										<div class="w-20 h-20 flex items-center justify-center bg-card border-2 border-[var(--gold)] rounded-lg shadow-lg transition-transform duration-600"
+											id="dice-enemy">
+											<span id="dice-value-enemy"
+												class="text-3xl"
+												style="color: var(--gold); display: none;"></span>
+											<svg id="dice-icon-enemy"
+												class="w-10 h-10"
+												style="color: var(--gold);"
+												xmlns="http://www.w3.org/2000/svg"
+												width="24" height="24"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round">
+												<rect width="12"
+													height="12"
+													x="2" y="10"
+													rx="2" ry="2" />
+												<path
+													d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6" />
+												<path d="M6 18h.01" />
+												<path d="M10 14h.01" />
+												<path d="M15 6h.01" />
+												<path d="M18 9h.01" />
+											</svg>
+										</div>
+									</div>
+									<button class="btn btn-primary"
+										onclick="rollDice('enemy', 6)"
+										id="roll-button-enemy">
+										Roll D6
+									</button>
+								</div>
 							</div>
 						</div>
 
@@ -182,7 +255,7 @@
 							</div>
 							<div class="w-full bg-muted/30 rounded-full h-2">
 								<div class="bg-destructive h-2 rounded-full transition-all"
-									style="width: {{divide (multiply .Hero.CurrentStrength 100) .Hero.Strength}}%">
+									style="width: 30%">
 								</div>
 							</div>
 						</div>
@@ -207,7 +280,7 @@
 							</div>
 							<div class="w-full bg-muted/30 rounded-full h-2">
 								<div class="bg-primary h-2 rounded-full"
-									style="width: {{multiply .Hero.Dexterity 5}}%">
+									style="width: 30%">
 								</div>
 							</div>
 						</div>
@@ -232,7 +305,7 @@
 							</div>
 							<div class="w-full bg-muted/30 rounded-full h-2">
 								<div class="h-2 rounded-full"
-									style="background-color: var(--gold); width: {{multiply .Hero.Fortune 5}}%">
+									style="background-color: var(--gold); width: 30%">
 								</div>
 							</div>
 						</div>
@@ -325,6 +398,49 @@
 		// This would be replaced with HTMX post in real implementation:
 		// hx-post="/adventure/battle/attack"
 		// with form data containing dice rolls and current page
+	}
+
+	function rollDice(target, sides) {
+		const diceContainer = document.getElementById(`dice-container-${target}`);
+		const dice = document.getElementById(`dice-${target}`);
+		const diceValue = document.getElementById(`dice-value-${target}`);
+		const diceIcon = document.getElementById(`dice-icon-${target}`);
+		const rollButton = document.getElementById(`roll-button-${target}`);
+
+		// Disable the roll button
+		rollButton.disabled = true;
+
+		// Animate the dice
+		dice.classList.add('animate-spin');
+
+		// Simulate dice roll
+		const roll = Math.floor(Math.random() * sides) + 1;
+
+		// Set a timeout to update the dice value and icon
+		setTimeout(() => {
+			// Update the dice value
+			diceValue.textContent = roll;
+			diceValue.style.display = 'block';
+
+			// Update the dice icon
+			diceIcon.style.display = 'none';
+
+			// Store the roll result
+			if (target === 'player') {
+				playerLastRoll = roll;
+			} else if (target === 'enemy') {
+				enemyLastRoll = roll;
+			}
+
+			// Re-enable the roll button
+			rollButton.disabled = false;
+
+			// Remove the spin animation
+			dice.classList.remove('animate-spin');
+
+			// Set callback for dice rolls
+			window.onDiceRoll(roll);
+		}, 1000);
 	}
 </script>
 {{end}}

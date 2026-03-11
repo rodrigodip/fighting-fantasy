@@ -1,15 +1,12 @@
 package webhandlers
 
 import (
-	"fmt"
 	"html/template"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/hero"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/web/viewmodels"
-	"github.com/rodrigodip/fighting-fantasy/internal/pkg/errors/web_errors"
 )
 
 type PagesWebHandlerRepo interface {
@@ -40,25 +37,21 @@ func (uc *PagesWebHandler) AuthPageHandler(c *gin.Context) {
 	// 3. Otherwise, render login/signup page
 
 	// Check if the user is logged in
-	session, _ := uc.sessionStore.Get(c.Request, "user-session")
-	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-		c.HTML(http.StatusOK, "auth-error.html", gin.H{
-			"Error": weberrors.ParseErrorForWeb("AuthPageHandler: Enable to check if user is logged in"),
-		})
-		return
-	}
+	// session, _ := uc.sessionStore.Get(c.Request, "user-session")
+	// if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+	// 	c.Header("HX-Redirect", "/dashboard")
+	// 	c.Status(http.StatusOK)
+	// 	return
+	// }
 
-	tmpl := template.Must(template.ParseFiles(
+	tmpl := template.Must(template.New("").Funcs(GetTemplateFunctions()).ParseFiles(
 		"internal/interface/web/templates/layouts/base.html",
 		"internal/interface/web/templates/pages/auth.html",
 	))
-
-	// TODO: Use DTO here
 	data := viewmodels.PageData{
 		Title: "Login",
 	}
-
-	tmpl.ExecuteTemplate(w, "base.html", data)
+	tmpl.ExecuteTemplate(c.Writer, "base.html", data)
 }
 
 // DashboardPageHandler renders the dashboard page
@@ -137,4 +130,41 @@ func (uc *PagesWebHandler) GameOverPageHandler(c *gin.Context) {
 	// }
 	//
 	// tmpl.ExecuteTemplate(w, "base.html", data)
+}
+
+// GetTemplateFunctions returns custom template functions
+func GetTemplateFunctions() template.FuncMap {
+	return template.FuncMap{
+		// dict creates a map from key-value pairs
+		// Usage: {{template "partial" (dict "key1" "value1" "key2" "value2")}}
+		"dict": func(values ...interface{}) (map[string]interface{}, error) {
+			if len(values)%2 != 0 {
+				return nil, nil
+			}
+			dict := make(map[string]interface{}, len(values)/2)
+			for i := 0; i < len(values); i += 2 {
+				key, ok := values[i].(string)
+				if !ok {
+					return nil, nil
+				}
+				dict[key] = values[i+1]
+			}
+			return dict, nil
+		},
+
+		// multiply multiplies two numbers
+		// Usage: {{multiply .Hero.Strength 5}}
+		"multiply": func(a, b int) int {
+			return a * b
+		},
+
+		// divide divides two numbers
+		// Usage: {{divide .Hero.CurrentStrength .Hero.Strength}}
+		"divide": func(a, b int) int {
+			if b == 0 {
+				return 0
+			}
+			return a / b
+		},
+	}
 }

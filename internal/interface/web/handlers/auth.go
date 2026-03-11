@@ -34,20 +34,17 @@ func NewUserWebHandler(uc *userapp.UserUseCase, store sessions.Store) *UserWebHa
 // Accepts form data: email (string), password (string)
 // Returns: Sets session cookie and redirects to /dashboard
 func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
-
 	// TODO: Use DTO here
 	var req struct {
 		Email    string `form:"email"`
 		Password string `form:"password"`
 	}
-
 	if err := c.ShouldBind(&req); err != nil {
 		c.HTML(http.StatusOK, "auth-error.html", gin.H{
 			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
 	}
-
 	token, err := uc.usecase.Login(req.Email, req.Password)
 	if err != nil {
 		c.HTML(http.StatusOK, "auth-error.html", gin.H{
@@ -61,14 +58,12 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 	// Decode the JWT to store user_id/role directly:
 	// session.Values["user_id"] = userID
 	// session.Values["role"] = role
-
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		c.HTML(http.StatusInternalServerError, "auth-error.html", gin.H{
 			"Error": "Failed to create session",
 		})
 		return
 	}
-
 	// Redirect to dashboard or return HTMX response
 	c.Header("HX-Redirect", "/dashboard")
 	c.Status(http.StatusOK)

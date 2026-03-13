@@ -1,3 +1,78 @@
-{{ define "auth-error"}}
-<p>Error partials placeholder</p>
+{{ define "auth-error" }}
+<style>
+	:root {
+		--color-danger: #dc2626;
+		--color-danger-strong: #b91c1c;
+		--color-danger-soft: #fef2f2;
+		--color-danger-subtle: #fecaca;
+		--color-danger-medium: #f87171;
+		--color-fg-danger: #dc2626;
+		--color-fg-danger-strong: #991b1b;
+	}
+
+	.bg-danger-soft {
+		background-color: var(--color-danger-soft);
+	}
+
+	.bg-danger {
+		background-color: var(--color-danger);
+	}
+
+	.bg-danger-strong {
+		background-color: var(--color-danger-strong);
+	}
+
+	.border-danger-subtle {
+		border-color: var(--color-danger-subtle);
+	}
+
+	.border-danger {
+		border-color: var(--color-danger);
+	}
+
+	.border-danger-strong {
+		border-color: var(--color-danger-strong);
+	}
+
+	.text-fg-danger-strong {
+		color: var(--color-fg-danger-strong);
+	}
+
+	.text-fg-danger {
+		color: var(--color-fg-danger);
+	}
+
+	.focus\:ring-danger-medium:focus {
+		--tw-ring-color: var(--color-danger-medium);
+	}
+
+	.rounded-base {
+		border-radius: 0.375rem;
+	}
+</style>
+
+{{ if .Error }}
+<div id="toast-danger" role="alert" aria-live="assertive"
+	class="w-full max-w-xs p-4 mb-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft border border-danger-subtle transition-all duration-300 ease-out">
+	<h3 class="font-semibold">Whoops! Something went wrong</h3>
+	<div class="mt-2 mb-4">{{ .Error }}</div>
+	<div class="flex items-center space-x-3">
+		<button type="button" onclick="this.closest('form') && this.closest('form').reset(); 
+			document.getElementById('toast-danger').remove();"
+			class="inline-flex items-center text-white bg-danger box-border border border-transparent hover:bg-danger-strong focus:ring-4 focus:ring-danger-medium shadow-xs font-medium leading-5 rounded-base text-xs px-3 py-1.5 focus:outline-none">
+			<svg class="w-3.5 h-3.5 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+				height="24" fill="none" viewBox="0 0 24 24">
+				<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+					stroke-width="2"
+					d="M12 5v9m-5 0H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2M8 9l4-5 4 5m1 8h.01" />
+			</svg>
+			Try again
+		</button>
+		<button type="button" data-dismiss-target="#toast-danger"
+			class="inline-flex items-center text-fg-danger bg-transparent box-border border border-danger hover:bg-danger-strong hover:border-danger-strong hover:text-white focus:ring-4 focus:ring-danger-medium shadow-xs font-medium leading-5 rounded-base text-xs px-3 py-1.5 focus:outline-none">
+			Close
+		</button>
+	</div>
+</div>
+{{ end }}
 {{end}}

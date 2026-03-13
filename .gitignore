@@ -7,4 +7,6 @@ data/
 .dockerignore
 .air.toml
 .aider*
-.CONVENTIONS.md
+CONVENTIONS.md
+FRONT-END.md
+SKETCH.md

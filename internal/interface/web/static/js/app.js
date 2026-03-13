@@ -211,3 +211,39 @@ if (typeof htmx !== 'undefined') {
         console.log('Request to:', event.detail.path);
     });
 }
+
+// Toast: dismiss button + auto-dismiss
+function initToast() {
+  const toast = document.getElementById('toast-danger');
+  if (!toast) return;
+
+  // Enter animation: start hidden, then reveal
+  toast.classList.add('opacity-0', 'translate-y-2');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { // double rAF forces a paint between add and remove
+      toast.classList.remove('opacity-0', 'translate-y-2');
+    });
+  });
+
+  // Dismiss buttons
+  toast.querySelectorAll('[data-dismiss-target]').forEach(btn => {
+    btn.addEventListener('click', () => dismissToast(toast));
+  });
+
+  // Auto-dismiss
+  setTimeout(() => dismissToast(toast), 6000);
+}
+
+function dismissToast(el) {
+  if (!el) return;
+  el.classList.add('opacity-0', 'translate-y-2');
+  el.addEventListener('transitionend', () => el.remove(), { once: true });
+}
+
+document.addEventListener('htmx:afterSwap', (e) => {
+  if (e.detail.target.id === 'auth-error-container') {
+    initToast();
+  }
+});
+
+document.addEventListener('DOMContentLoaded', initToast);

@@ -41,6 +41,9 @@ dev-down:
 dev-logs:
 	docker compose logs -f app
 
+dev-db:
+	docker exec -it mongo mongosh -u admin -p yourpassword --authenticationDatabase admin
+
 # ==================================================================================
 # PROD
 # ==================================================================================

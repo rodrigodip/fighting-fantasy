@@ -8,6 +8,7 @@ type PageData struct {
 	CurrentPage int
 	Story       *Story
 	Stats       *GameStats
+	Error       string
 }
 
 // User represents an authenticated user

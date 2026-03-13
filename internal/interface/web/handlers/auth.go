@@ -1,11 +1,13 @@
 package webhandlers
 
 import (
+	"html/template"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
+	"github.com/rodrigodip/fighting-fantasy/internal/interface/web/viewmodels"
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/errors/web_errors"
 )
 
@@ -32,7 +34,7 @@ func NewUserWebHandler(uc *userapp.UserUseCase, store sessions.Store) *UserWebHa
 // AuthLoginHandler handles user login
 // POST /auth/login
 // Accepts form data: email (string), password (string)
-// Returns: Sets session cookie and redirects to /dashboard
+// Returns: Sets session cookie, redirects to /dashboard or retunrs a error
 func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 	// TODO: Use DTO here
 	var req struct {
@@ -40,16 +42,20 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 		Password string `form:"password"`
 	}
 	if err := c.ShouldBind(&req); err != nil {
-		c.HTML(http.StatusOK, "auth-error", gin.H{
-			"Error": weberrors.ParseErrorForWeb(err.Error()),
-		})
+		tmpl := template.Must(template.New("").ParseFiles(
+			"internal/interface/web/templates/partials/auth-error.html",
+		))
+		data := viewmodels.PageData{Error: "Invalid email or password"}
+		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
 		return
 	}
 	token, err := uc.usecase.Login(req.Email, req.Password)
 	if err != nil {
-		c.HTML(http.StatusOK, "auth-error", gin.H{
-			"Error": weberrors.ParseErrorForWeb(err.Error()),
-		})
+		tmpl := template.Must(template.New("").ParseFiles(
+			"internal/interface/web/templates/partials/auth-error.html",
+		))
+		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
+		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
 		return
 	}
 	// Store token in session
@@ -59,9 +65,11 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 	// session.Values["user_id"] = userID
 	// session.Values["role"] = role
 	if err := session.Save(c.Request, c.Writer); err != nil {
-		c.HTML(http.StatusInternalServerError, "auth-error", gin.H{
-			"Error": "Failed to create session",
-		})
+		tmpl := template.Must(template.New("").ParseFiles(
+			"internal/interface/web/templates/partials/auth-error.html",
+		))
+		data := viewmodels.PageData{Error: "Invalid email or password"}
+		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
 		return
 	}
 	// Redirect to dashboard or return HTMX response
@@ -139,4 +147,3 @@ func (uc *UserWebHandler) AuthVerifyEmailHandler(c *gin.Context) {
 	c.Header("HX-Redirect", "/")
 	c.Status(http.StatusOK)
 }
-

@@ -36,6 +36,7 @@ func main() {
 
 	router := gin.Default()
 	router.LoadHTMLGlob(cfg.TemplatesPath)
+	router.Static("/static", cfg.StaticPath)
 
 	routes.InitUserGroup(&router.RouterGroup, di.ApiUserHandlers, *cfg)
 	routes.InitHeroGroup(&router.RouterGroup, di.ApiHeroHandlers, *cfg)

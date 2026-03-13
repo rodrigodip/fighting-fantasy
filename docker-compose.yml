@@ -57,6 +57,7 @@ services:
           - SMTP_PASSWORD=${SMTP_PASSWORD}
           - SMTP_FROM=${SMTP_FROM}
           - WEB_TEMPLATE_PATH=${WEB_TEMPLATE_PATH}
+          - WEB_STATIC_PATH=${WEB_STATIC_PATH}
         ports:
           - "8080:8080"
         networks:

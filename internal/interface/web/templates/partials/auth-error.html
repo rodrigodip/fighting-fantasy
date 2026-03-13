@@ -1,0 +1,8 @@
+{{ define "auth-error" }}
+{{if .Error}}
+<div class="error-container mb-4 p-3 rounded"
+	style="background-color: var(--destructive); color: var(--destructive-foreground);">
+	<p>{{.Error}}</p>
+</div>
+{{end}}
+{{ end }}

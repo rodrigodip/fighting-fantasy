@@ -1,4 +1,4 @@
-{{define "content"}}
+{{define "auth-page"}}
 <div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
 	<!-- Background Image -->
 	<div class="absolute inset-0 z-0">
@@ -42,7 +42,6 @@
 					Sign Up
 				</button>
 			</div>
-
 			<!-- Login Form -->
 			<!-- 
                 Backend: POST /auth/login
@@ -51,7 +50,8 @@
                 Returns: session token, redirects to /dashboard
             -->
 			<div id="login-tab" class="tab-content">
-				<form hx-post="/auth/login" hx-target="body" hx-swap="outerHTML" class="space-y-4">
+				<form hx-post="/auth/login" hx-target="#auth-error-container" hx-swap="innerHTML"
+					class="space-y-4">
 					<div class="space-y-2">
 						<label for="login-email" class="block">E-mail</label>
 						<input id="login-email" name="email" type="email"
@@ -68,6 +68,11 @@
 				</form>
 			</div>
 
+			<!-- Auth Error Partial -->
+			<div id="auth-error-container">
+				<p>ERRO AQUI</p>
+			</div>
+
 			<!-- Sign Up Form -->
 			<!-- 
                 Backend: POST /auth/signup
@@ -76,7 +81,8 @@
                 Returns: session token, redirects to /dashboard
             -->
 			<div id="signup-tab" class="tab-content" style="display: none;">
-				<form hx-post="/auth/signup" hx-target="body" hx-swap="outerHTML" class="space-y-4">
+				<form hx-post="/auth/signup" hx-target="#auth-error-container" hx-swap="innerHTML"
+					class="space-y-4">
 					<div class="space-y-2">
 						<label for="signup-name" class="block">Name</label>
 						<input id="signup-name" name="name" type="text" placeholder="Your name"

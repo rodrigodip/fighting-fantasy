@@ -27,6 +27,7 @@ type Config struct {
 	SMTPPassword string
 	SMTPFrom     string
 
+	StaticPath    string
 	TemplatesPath string
 }
 
@@ -40,11 +41,13 @@ func LoadConfig() *Config {
 		SessionOpt:    setEnvironment(),
 		HTTPPort:      getEnv("HTTP_PORT", "8080"),
 
-		SMTPHost:      os.Getenv("SMTP_HOST"),
-		SMTPPort:      os.Getenv("SMTP_PORT"),
-		SMTPUsername:  os.Getenv("SMTP_USERNAME"),
-		SMTPPassword:  os.Getenv("SMTP_PASSWORD"),
-		SMTPFrom:      os.Getenv("SMTP_FROM"),
+		SMTPHost:     os.Getenv("SMTP_HOST"),
+		SMTPPort:     os.Getenv("SMTP_PORT"),
+		SMTPUsername: os.Getenv("SMTP_USERNAME"),
+		SMTPPassword: os.Getenv("SMTP_PASSWORD"),
+		SMTPFrom:     os.Getenv("SMTP_FROM"),
+
+		StaticPath:    os.Getenv("WEB_STATIC_PATH"),
 		TemplatesPath: os.Getenv("WEB_TEMPLATE_PATH"),
 	}
 }

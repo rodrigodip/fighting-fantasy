@@ -40,14 +40,14 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 		Password string `form:"password"`
 	}
 	if err := c.ShouldBind(&req); err != nil {
-		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+		c.HTML(http.StatusOK, "auth-error", gin.H{
 			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
 	}
 	token, err := uc.usecase.Login(req.Email, req.Password)
 	if err != nil {
-		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+		c.HTML(http.StatusOK, "auth-error", gin.H{
 			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
@@ -59,7 +59,7 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 	// session.Values["user_id"] = userID
 	// session.Values["role"] = role
 	if err := session.Save(c.Request, c.Writer); err != nil {
-		c.HTML(http.StatusInternalServerError, "auth-error.html", gin.H{
+		c.HTML(http.StatusInternalServerError, "auth-error", gin.H{
 			"Error": "Failed to create session",
 		})
 		return
@@ -82,8 +82,7 @@ func (uc *UserWebHandler) AuthSignUpHandler(c *gin.Context) {
 		Password string `form:"password"`
 	}
 	if err := c.ShouldBind(&req); err != nil {
-		c.HTML(http.StatusOK, "auth-error.html", gin.H{
-
+		c.HTML(http.StatusOK, "auth-error", gin.H{
 			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
@@ -91,7 +90,7 @@ func (uc *UserWebHandler) AuthSignUpHandler(c *gin.Context) {
 	_, err := uc.usecase.
 		CreateUser(req.Name, req.Email, req.Password)
 	if err != nil {
-		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+		c.HTML(http.StatusOK, "auth-error", gin.H{
 			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
@@ -120,14 +119,14 @@ func (uc *UserWebHandler) AuthLogoutHandle(c *gin.Context) {
 func (uc *UserWebHandler) AuthVerifyEmailHandler(c *gin.Context) {
 	token := c.Query("token")
 	if token == "" {
-		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+		c.HTML(http.StatusOK, "auth-error", gin.H{
 			"Error": weberrors.ParseErrorForWeb("missing token"),
 		})
 		return
 	}
 	err := uc.usecase.VerifyEmail(token)
 	if err != nil {
-		c.HTML(http.StatusOK, "auth-error.html", gin.H{
+		c.HTML(http.StatusOK, "auth-error", gin.H{
 			"Error": weberrors.ParseErrorForWeb(err.Error()),
 		})
 		return
@@ -140,3 +139,4 @@ func (uc *UserWebHandler) AuthVerifyEmailHandler(c *gin.Context) {
 	c.Header("HX-Redirect", "/")
 	c.Status(http.StatusOK)
 }
+

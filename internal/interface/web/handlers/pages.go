@@ -2,7 +2,7 @@ package webhandlers
 
 import (
 	"html/template"
-	"net/http"
+	//"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -45,19 +45,19 @@ func (uc *PagesWebHandler) AuthPageHandler(c *gin.Context) {
 	// 	return
 	// }
 
-	c.HTML(http.StatusOK, "base.html", viewmodels.PageData{
-		Title: "Login",
-	})
-
-	// tmpl := template.Must(template.New("").Funcs(GetTemplateFunctions()).ParseFiles(
-	// 	"internal/interface/web/templates/layouts/base.html",
-	// 	"internal/interface/web/templates/pages/auth.html",
-	// 	"internal/interface/web/templates/partials/auth-error.html",
-	// ))
-	// data := viewmodels.PageData{
+	// c.HTML(http.StatusOK, "base.html", viewmodels.PageData{
 	// 	Title: "Login",
-	// }
-	// tmpl.ExecuteTemplate(c.Writer, "base.html", data)
+	// })
+
+	tmpl := template.Must(template.New("").ParseFiles(
+		"internal/interface/web/templates/layouts/base.html",
+		"internal/interface/web/templates/pages/auth.html",
+		"internal/interface/web/templates/partials/auth-error.html",
+	))
+	data := viewmodels.PageData{
+		Title: "Login",
+	}
+	tmpl.ExecuteTemplate(c.Writer, "base.html", data)
 }
 
 // DashboardPageHandler renders the dashboard page

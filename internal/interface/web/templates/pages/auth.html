@@ -68,11 +68,6 @@
 				</form>
 			</div>
 
-			<!-- Auth Error Partial -->
-			<div id="auth-error-container">
-				<p>ERRO AQUI</p>
-			</div>
-
 			<!-- Sign Up Form -->
 			<!-- 
                 Backend: POST /auth/signup
@@ -103,6 +98,11 @@
 					</button>
 				</form>
 			</div>
+		</div>
+
+		<!-- Auth Error Partial -->
+		<div id="auth-error-container">
+			{{ block "auth-error" .}} <p> Auth page placeholder</p>{{end}}
 		</div>
 	</div>
 </div>

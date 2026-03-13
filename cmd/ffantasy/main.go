@@ -35,7 +35,7 @@ func main() {
 	di := dependecy.NewDependecyContainer(*db, sessionStore, cfg.JWTSecret, cfg.JWTIssuer)
 
 	router := gin.Default()
-	router.LoadHTMLGlob(cfg.TemplatesPath)
+	// router.LoadHTMLGlob(cfg.TemplatesPath)
 	router.Static("/static", cfg.StaticPath)
 
 	routes.InitUserGroup(&router.RouterGroup, di.ApiUserHandlers, *cfg)

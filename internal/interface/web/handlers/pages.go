@@ -45,10 +45,6 @@ func (uc *PagesWebHandler) AuthPageHandler(c *gin.Context) {
 	// 	return
 	// }
 
-	// c.HTML(http.StatusOK, "base.html", viewmodels.PageData{
-	// 	Title: "Login",
-	// })
-
 	tmpl := template.Must(template.New("").ParseFiles(
 		"internal/interface/web/templates/layouts/base.html",
 		"internal/interface/web/templates/pages/auth.html",

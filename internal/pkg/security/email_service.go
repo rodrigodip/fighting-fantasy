@@ -84,7 +84,7 @@ func SendEmail(name, email, token string) error {
 		</html>
 		`
 	//TODO: REFACTOR: Learn and use package Template
-	verifyLink := fmt.Sprintf("http://localhost:8080/verify?token=%s", token)
+	verifyLink := fmt.Sprintf("http://localhost:8080/auth/verify?token=%s", token)
 	htmlContent := strings.Replace(templateHTML, "{{.Subject}}", "Your Journey Awaits!", -1)
 	htmlContent = strings.Replace(htmlContent, "{{.User}}", name, -2)
 	htmlContent = strings.Replace(htmlContent, "{{.Link}}", verifyLink, -1)

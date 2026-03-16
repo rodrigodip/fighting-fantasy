@@ -56,6 +56,7 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 		))
 		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
 		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
+
 		return
 	}
 	// Store token in session
@@ -90,18 +91,23 @@ func (uc *UserWebHandler) AuthSignUpHandler(c *gin.Context) {
 		Password string `form:"password"`
 	}
 	if err := c.ShouldBind(&req); err != nil {
-		c.HTML(http.StatusOK, "auth-error", gin.H{
-			"Error": weberrors.ParseErrorForWeb(err.Error()),
-		})
+		tmpl := template.Must(template.New("").ParseFiles(
+			"internal/interface/web/templates/partials/auth-error.html",
+		))
+		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
+		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
 		return
 	}
 	_, err := uc.usecase.
 		CreateUser(req.Name, req.Email, req.Password)
 	if err != nil {
-		c.HTML(http.StatusOK, "auth-error", gin.H{
-			"Error": weberrors.ParseErrorForWeb(err.Error()),
-		})
+		tmpl := template.Must(template.New("").ParseFiles(
+			"internal/interface/web/templates/partials/auth-error.html",
+		))
+		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
+		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
 		return
+
 	}
 	// Redirect to Login or return HTMX response
 	// TODO: Create Verify page
@@ -127,23 +133,27 @@ func (uc *UserWebHandler) AuthLogoutHandle(c *gin.Context) {
 func (uc *UserWebHandler) AuthVerifyEmailHandler(c *gin.Context) {
 	token := c.Query("token")
 	if token == "" {
-		c.HTML(http.StatusOK, "auth-error", gin.H{
-			"Error": weberrors.ParseErrorForWeb("missing token"),
-		})
+		tmpl := template.Must(template.New("").ParseFiles(
+			"internal/interface/web/templates/partials/auth-error.html",
+		))
+		data := viewmodels.PageData{Error: "missing token"}
+		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
 		return
 	}
 	err := uc.usecase.VerifyEmail(token)
 	if err != nil {
-		c.HTML(http.StatusOK, "auth-error", gin.H{
-			"Error": weberrors.ParseErrorForWeb(err.Error()),
-		})
+		tmpl := template.Must(template.New("").ParseFiles(
+			"internal/interface/web/templates/partials/auth-error.html",
+		))
+		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
+		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
 		return
 	}
-
-	// c.HTML(http.StatusOK, "index.html", gin.H{
-	// 	"Title": "Fighting Fantasy",
-	// })
-
-	c.Header("HX-Redirect", "/")
-	c.Status(http.StatusOK)
+	tmpl := template.Must(template.New("").ParseFiles(
+		"internal/interface/web/templates/partials/auth-error.html",
+	))
+	data := map[string]string{"Success": "Account created successfully! Welcome to the forest."}
+	tmpl.ExecuteTemplate(c.Writer, "auth-success", data)
+	// c.Header("HX-Redirect", "/")
+	// c.Status(http.StatusOK)
 }

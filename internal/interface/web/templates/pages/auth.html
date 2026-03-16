@@ -70,11 +70,11 @@
 
 			<!-- Sign Up Form -->
 			<!-- 
-                Backend: POST /auth/signup
-                Handler: handlers.AuthSignUpHandler
-                Accepts: name (string), email (string), password (string)
-                Returns: session token, redirects to /dashboard
-            -->
+	                Backend: POST /auth/signup
+        	        Handler: handlers.AuthSignUpHandler
+                	Accepts: name (string), email (string), password (string)
+                	Returns: session token, redirects to /dashboard
+            		-->
 			<div id="signup-tab" class="tab-content" style="display: none;">
 				<form hx-post="/auth/signup" hx-target="#auth-error-container" hx-swap="innerHTML"
 					class="space-y-4">

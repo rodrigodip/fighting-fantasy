@@ -241,7 +241,7 @@ function dismissToast(el) {
 }
 
 document.addEventListener('htmx:afterSwap', (e) => {
-  if (e.detail.target.id === 'auth-error-container') {
+  if (e.detail.target.id === 'auth-feedback-container') {
     initToast();
   }
 });

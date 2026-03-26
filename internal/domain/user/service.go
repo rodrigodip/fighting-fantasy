@@ -44,22 +44,22 @@ func (s *Service) ValidadeUserInput(name, email, password string) error {
 // ValidatePassword checks if a password rules
 func (s *Service) ValidatePassword(password string) error {
 	if len(password) < 8 {
-		return errors.New("Password Validation Error: Must be at least 8 characters long")
+		return errors.New("Password Error: Must be at least 8 characters long")
 	}
 	if !regexp.MustCompile(`[a-z]`).MatchString(password) {
-		return errors.New("Password Validation Error: Must contain at least one lowercase letter")
+		return errors.New("Password Error: Must contain at least one lowercase letter")
 	}
 
 	if !regexp.MustCompile(`[A-Z]`).MatchString(password) {
-		return errors.New("Password Validation Error: Must contain at least one uppercase letter")
+		return errors.New("Password Error: Must contain at least one uppercase letter")
 	}
 
 	if !regexp.MustCompile(`\d`).MatchString(password) {
-		return errors.New("Password Validation Error: Must contain at least one digit")
+		return errors.New("Password Error: Must contain at least one digit")
 	}
 
 	if !regexp.MustCompile(`[@$!%*?&]`).MatchString(password) {
-		return errors.New("Password Validation Error: Must contain at least one special character (@$!%*?&)")
+		return errors.New("Password Error: Must contain at least one special character (@$!%*?&)")
 	}
 	return nil
 }

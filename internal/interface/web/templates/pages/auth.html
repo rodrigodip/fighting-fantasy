@@ -50,7 +50,7 @@
                 Returns: session token, redirects to /dashboard
             -->
 			<div id="login-tab" class="tab-content">
-				<form hx-post="/auth/login" hx-target="#auth-error-container" hx-swap="innerHTML"
+				<form hx-post="/auth/login" hx-target="#auth-feedback-container" hx-swap="innerHTML"
 					class="space-y-4">
 					<div class="space-y-2">
 						<label for="login-email" class="block">E-mail</label>
@@ -76,7 +76,7 @@
                 	Returns: session token, redirects to /dashboard
             		-->
 			<div id="signup-tab" class="tab-content" style="display: none;">
-				<form hx-post="/auth/signup" hx-target="#auth-error-container" hx-swap="innerHTML"
+				<form hx-post="/auth/signup" hx-target="#auth-feedback-container" hx-swap="innerHTML"
 					class="space-y-4">
 					<div class="space-y-2">
 						<label for="signup-name" class="block">Name</label>
@@ -100,9 +100,9 @@
 			</div>
 		</div>
 
-		<!-- Auth Error Partial -->
-		<div id="auth-error-container">
-			{{ template "auth-error" .}}
+		<!-- Auth FeedBack Partial -->
+		<div id="auth-feedback-container">
+			{{ template "auth-feedback" .}}
 		</div>
 	</div>
 </div>

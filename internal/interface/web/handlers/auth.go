@@ -43,19 +43,21 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 	}
 	if err := c.ShouldBind(&req); err != nil {
 		tmpl := template.Must(template.New("").ParseFiles(
-			"internal/interface/web/templates/partials/auth-error.html",
+			"internal/interface/web/templates/partials/auth-feedback.html",
 		))
-		data := viewmodels.PageData{Error: "Invalid email or password"}
-		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
+		data := viewmodels.PageData{
+			FeedBack: &viewmodels.Message{Error: "Invalid email or password"}}
+		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 	}
 	token, err := uc.usecase.Login(req.Email, req.Password)
 	if err != nil {
 		tmpl := template.Must(template.New("").ParseFiles(
-			"internal/interface/web/templates/partials/auth-error.html",
+			"internal/interface/web/templates/partials/auth-feedback.html",
 		))
-		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
-		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
+		data := viewmodels.PageData{
+			FeedBack: &viewmodels.Message{Error: weberrors.ParseErrorForWeb(err.Error())}}
+		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 
 		return
 	}
@@ -67,10 +69,11 @@ func (uc *UserWebHandler) AuthLoginHandler(c *gin.Context) {
 	// session.Values["role"] = role
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		tmpl := template.Must(template.New("").ParseFiles(
-			"internal/interface/web/templates/partials/auth-error.html",
+			"internal/interface/web/templates/partials/auth-feedback.html",
 		))
-		data := viewmodels.PageData{Error: "Invalid email or password"}
-		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
+		data := viewmodels.PageData{
+			FeedBack: &viewmodels.Message{Error: "Invalid email or password"}}
+		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 	}
 	// Redirect to dashboard or return HTMX response
@@ -92,27 +95,34 @@ func (uc *UserWebHandler) AuthSignUpHandler(c *gin.Context) {
 	}
 	if err := c.ShouldBind(&req); err != nil {
 		tmpl := template.Must(template.New("").ParseFiles(
-			"internal/interface/web/templates/partials/auth-error.html",
+			"internal/interface/web/templates/partials/auth-feedback.html",
 		))
-		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
-		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
+		data := viewmodels.PageData{
+			FeedBack: &viewmodels.Message{Error: weberrors.ParseErrorForWeb(err.Error())}}
+		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 	}
 	_, err := uc.usecase.
 		CreateUser(req.Name, req.Email, req.Password)
 	if err != nil {
 		tmpl := template.Must(template.New("").ParseFiles(
-			"internal/interface/web/templates/partials/auth-error.html",
+			"internal/interface/web/templates/partials/auth-feedback.html",
 		))
-		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
-		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
+		data := viewmodels.PageData{
+			FeedBack: &viewmodels.Message{Error: weberrors.ParseErrorForWeb(err.Error())}}
+		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 
 	}
+	tmpl := template.Must(template.New("").ParseFiles(
+		"internal/interface/web/templates/partials/auth-feedback.html",
+	))
+	data := viewmodels.PageData{FeedBack: &viewmodels.Message{Success: "success"}}
+	tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 	// Redirect to Login or return HTMX response
 	// TODO: Create Verify page
-	c.Header("HX-Redirect", "/auth/verify")
-	c.Status(http.StatusOK)
+	// c.Header("HX-Redirect", "/auth/verify")
+	// c.Status(http.StatusOK)
 }
 
 // AuthLogoutHandler handles user logout
@@ -134,26 +144,28 @@ func (uc *UserWebHandler) AuthVerifyEmailHandler(c *gin.Context) {
 	token := c.Query("token")
 	if token == "" {
 		tmpl := template.Must(template.New("").ParseFiles(
-			"internal/interface/web/templates/partials/auth-error.html",
+			"internal/interface/web/templates/partials/auth-feedback.html",
 		))
-		data := viewmodels.PageData{Error: "missing token"}
-		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
+		data := viewmodels.PageData{
+			FeedBack: &viewmodels.Message{Error: weberrors.ParseErrorForWeb("missing token")}}
+		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 	}
 	err := uc.usecase.VerifyEmail(token)
 	if err != nil {
 		tmpl := template.Must(template.New("").ParseFiles(
-			"internal/interface/web/templates/partials/auth-error.html",
+			"internal/interface/web/templates/partials/auth-feedback.html",
 		))
-		data := viewmodels.PageData{Error: weberrors.ParseErrorForWeb(err.Error())}
-		tmpl.ExecuteTemplate(c.Writer, "auth-error", data)
+		data := viewmodels.PageData{
+			FeedBack: &viewmodels.Message{Error: weberrors.ParseErrorForWeb(err.Error())}}
+		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 	}
 	tmpl := template.Must(template.New("").ParseFiles(
-		"internal/interface/web/templates/partials/auth-error.html",
+		"internal/interface/web/templates/partials/auth-feedback.html",
 	))
-	data := map[string]string{"Success": "Account created successfully! Welcome to the forest."}
-	tmpl.ExecuteTemplate(c.Writer, "auth-success", data)
+	data := viewmodels.PageData{FeedBack: &viewmodels.Message{Success: "success"}}
+	tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 	// c.Header("HX-Redirect", "/")
 	// c.Status(http.StatusOK)
 }

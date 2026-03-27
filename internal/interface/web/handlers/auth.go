@@ -112,17 +112,13 @@ func (uc *UserWebHandler) AuthSignUpHandler(c *gin.Context) {
 			FeedBack: &viewmodels.Message{Error: weberrors.ParseErrorForWeb(err.Error())}}
 		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
-
 	}
 	tmpl := template.Must(template.New("").ParseFiles(
 		"internal/interface/web/templates/partials/auth-feedback.html",
 	))
-	data := viewmodels.PageData{FeedBack: &viewmodels.Message{Success: "success"}}
+	data := viewmodels.PageData{
+		FeedBack: &viewmodels.Message{Success: "Your account has been successfully created"}}
 	tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
-	// Redirect to Login or return HTMX response
-	// TODO: Create Verify page
-	// c.Header("HX-Redirect", "/auth/verify")
-	// c.Status(http.StatusOK)
 }
 
 // AuthLogoutHandler handles user logout
@@ -161,11 +157,14 @@ func (uc *UserWebHandler) AuthVerifyEmailHandler(c *gin.Context) {
 		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 	}
-	tmpl := template.Must(template.New("").ParseFiles(
-		"internal/interface/web/templates/partials/auth-feedback.html",
-	))
-	data := viewmodels.PageData{FeedBack: &viewmodels.Message{Success: "success"}}
-	tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
-	// c.Header("HX-Redirect", "/")
-	// c.Status(http.StatusOK)
+	// tmpl := template.Must(template.New("").ParseFiles(
+	// 	"internal/interface/web/templates/layouts/base.html",
+	// 	"internal/interface/web/templates/pages/verify.html",
+	// ))
+	// data := viewmodels.PageData{
+	// 	Title: "Verified!",
+	// }
+	// tmpl.ExecuteTemplate(c.Writer, "base.html", data)
+
+	c.Redirect(http.StatusFound, "/verify")
 }

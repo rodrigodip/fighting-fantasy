@@ -13,13 +13,13 @@ import (
 )
 
 func InitUserGroup(r *gin.RouterGroup, app *userhandler.UserHandler, cfg config.Config) {
-	r.POST("/users", app.RegisterUser)
+	r.POST("/api/users", app.RegisterUser)
 	//r.POST("/login", app.Login)
-	r.GET("/verify", app.VerifyEmail)
+	r.GET("/api/verify", app.VerifyEmail)
 
 	docs.SwaggerInfo.BasePath = "/"
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
 func InitHeroGroup(r *gin.RouterGroup, app *herohandler.HeroHandler, cfg config.Config) {
-	r.POST("/heroes", interfaces.AuthMiddleware(cfg.JWTSecret, usr.RoleUser), app.RegisterHero)
+	r.POST("/api/heroes", interfaces.AuthMiddleware(cfg.JWTSecret, usr.RoleUser), app.RegisterHero)
 }

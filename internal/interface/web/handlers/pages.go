@@ -2,7 +2,6 @@ package webhandlers
 
 import (
 	"html/template"
-	//"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -12,6 +11,7 @@ import (
 
 type PagesWebHandlerRepo interface {
 	AuthPageHandler(c *gin.Context)
+	EmailVerifyPageHandler(c *gin.Context)
 	DashboardPageHandler(c *gin.Context)
 	AdventurePageHandlerView(c *gin.Context)
 	GameOverPageHandler(c *gin.Context)
@@ -52,6 +52,20 @@ func (uc *PagesWebHandler) AuthPageHandler(c *gin.Context) {
 	))
 	data := viewmodels.PageData{
 		Title: "Login",
+	}
+	tmpl.ExecuteTemplate(c.Writer, "base.html", data)
+}
+
+func (uc *PagesWebHandler) EmailVerifyPageHandler(c *gin.Context) {
+	tmpl := template.Must(template.New("").ParseFiles(
+		"internal/interface/web/templates/layouts/base.html",
+		"internal/interface/web/templates/pages/auth.html",
+		"internal/interface/web/templates/partials/auth-feedback.html",
+	))
+	data := viewmodels.PageData{
+		Title: "Verified!",
+		FeedBack: &viewmodels.Message{
+			Success: "Your account has been successfully verified"},
 	}
 	tmpl.ExecuteTemplate(c.Writer, "base.html", data)
 }

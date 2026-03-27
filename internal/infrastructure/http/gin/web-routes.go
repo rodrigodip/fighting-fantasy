@@ -9,6 +9,7 @@ import (
 func InitWebPagesGroup(r *gin.RouterGroup, d *dependecy.Container) {
 	// TODO: Uncomment and implement when handlers are ready
 	r.GET("/", d.WebPagesHandlers.AuthPageHandler)
+	r.GET("/verify", d.WebPagesHandlers.EmailVerifyPageHandler)
 	// http.HandleFunc("/dashboard", handlers.DashboardPageHandler)
 	// http.HandleFunc("/adventure", handlers.AdventurePageHandlerView)
 	// http.HandleFunc("/gameover", handlers.GameOverPageHandler)

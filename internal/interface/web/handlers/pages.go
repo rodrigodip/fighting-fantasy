@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rodrigodip/fighting-fantasy/internal/application/hero"
+	"github.com/rodrigodip/fighting-fantasy/internal/application/user"
 	"github.com/rodrigodip/fighting-fantasy/internal/interface/web/viewmodels"
 )
 
@@ -18,13 +19,15 @@ type PagesWebHandlerRepo interface {
 }
 
 type PagesWebHandler struct {
-	usecase      *heroapp.HeroUseCase
+	herousecase  *heroapp.HeroUseCase
+	userusecase  *userapp.UserUseCase
 	sessionStore sessions.Store
 }
 
-func NewPagesWebHandler(uc *heroapp.HeroUseCase, store sessions.Store) *PagesWebHandler {
+func NewPagesWebHandler(huc *heroapp.HeroUseCase, uuc *userapp.UserUseCase, store sessions.Store) *PagesWebHandler {
 	return &PagesWebHandler{
-		usecase:      uc,
+		herousecase:  huc,
+		userusecase:  uuc,
 		sessionStore: store,
 	}
 }
@@ -44,14 +47,21 @@ func (uc *PagesWebHandler) AuthPageHandler(c *gin.Context) {
 	// 	c.Status(http.StatusOK)
 	// 	return
 	// }
+	var errFeedback *viewmodels.Message
 
+	// Reads ?error=login_required, ?error=session_expired, etc from middleware
+	if errParam := c.Query("error"); errParam != "" {
+		msg := errParam
+		errFeedback = &viewmodels.Message{Error: msg}
+	}
 	tmpl := template.Must(template.New("").ParseFiles(
 		"internal/interface/web/templates/layouts/base.html",
 		"internal/interface/web/templates/pages/auth.html",
 		"internal/interface/web/templates/partials/auth-feedback.html",
 	))
 	data := viewmodels.PageData{
-		Title: "Login",
+		Title:    "Login",
+		FeedBack: errFeedback,
 	}
 	tmpl.ExecuteTemplate(c.Writer, "base.html", data)
 }
@@ -73,24 +83,49 @@ func (uc *PagesWebHandler) EmailVerifyPageHandler(c *gin.Context) {
 // DashboardPageHandler renders the dashboard page
 // GET /dashboard
 func (uc *PagesWebHandler) DashboardPageHandler(c *gin.Context) {
-	// TODO: Render dashboard.html template
-	// 1. Get user from session (or redirect to / if not logged in)
-	// 2. Fetch user's hero (if exists)
-	// 3. Render dashboard with user and hero data
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.Redirect(303, "/")
+		return
+	}
 
-	// Example rendering:
-	// tmpl := template.Must(template.ParseFiles(
-	// 	"internal/interface/web/templates/layouts/base.html",
-	// 	"internal/interface/web/templates/pages/dashboard.html",
-	// ))
-	//
-	// data := PageData{
-	// 	Title: "Dashboard",
-	// 	User:  currentUser,
-	// 	Hero:  userHero, // nil if no hero created yet
-	// }
-	//
-	// tmpl.ExecuteTemplate(w, "base.html", data)
+	foundUser, err := uc.userusecase.FindById(userID.(string))
+	if err != nil {
+		c.Redirect(303, "/")
+		return
+	}
+
+	currentUser := viewmodels.User{
+		ID:    foundUser.UserID,
+		Name:  foundUser.Name,
+		Email: foundUser.Email,
+	}
+
+	// Hero is optional — new users won't have one yet
+	var userHero *viewmodels.HeroViewModel
+	foundHero, err := uc.herousecase.FindByUser(foundUser.UserID)
+	if err == nil {
+		userHero = &viewmodels.HeroViewModel{
+			HeroName:    foundHero.HeroName,
+			InitialHP:   foundHero.Stats.InitialHP,
+			CurrentHP:   foundHero.Stats.CurrentHP,
+			CurrentDex:  foundHero.Stats.CurrentDex,
+			CurrentLuck: foundHero.Stats.CurrentLuck,
+		}
+	}
+
+	tmpl := template.Must(template.ParseFiles(
+		"internal/interface/web/templates/layouts/base.html",
+		"internal/interface/web/templates/pages/dashboard.html",
+	))
+
+	data := viewmodels.PageData{
+		Title: "Dashboard",
+		User:  &currentUser,
+		Hero:  userHero, // nil if no hero exists yet
+	}
+
+	tmpl.ExecuteTemplate(c.Writer, "base.html", data)
 }
 
 // AdventurePageHandlerView renders the adventure page
@@ -128,7 +163,6 @@ func (uc *PagesWebHandler) GameOverPageHandler(c *gin.Context) {
 	// 1. Get user from session
 	// 2. Calculate or fetch final statistics
 	// 3. Render game over page with stats
-
 	// Example rendering:
 	// tmpl := template.Must(template.ParseFiles(
 	// 	"internal/interface/web/templates/layouts/base.html",

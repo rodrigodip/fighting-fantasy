@@ -16,10 +16,10 @@ type Message struct {
 
 // User represents an authenticated user
 type User struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	CreatedAt string `json:"created_at"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	// CreatedAt string `json:"created_at"`
 }
 
 // GameStats represents final adventure statistics

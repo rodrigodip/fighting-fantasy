@@ -18,6 +18,9 @@ type UserUseCase struct {
 func NewusrUseCase(s *usr.Service, r UserRepository, a Authentication) *UserUseCase {
 	return &UserUseCase{service: s, repo: r, auth: a}
 }
+func (uc *UserUseCase) FindById(id string) (*usr.User, error) {
+	return uc.repo.FindById(id)
+}
 
 func (uc *UserUseCase) CreateUser(name, email, password string) (*usr.User, error) {
 	if err := uc.service.ValidadeUserInput(name, email, password); err != nil {

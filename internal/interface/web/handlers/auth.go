@@ -157,14 +157,6 @@ func (uc *UserWebHandler) AuthVerifyEmailHandler(c *gin.Context) {
 		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 	}
-	// tmpl := template.Must(template.New("").ParseFiles(
-	// 	"internal/interface/web/templates/layouts/base.html",
-	// 	"internal/interface/web/templates/pages/verify.html",
-	// ))
-	// data := viewmodels.PageData{
-	// 	Title: "Verified!",
-	// }
-	// tmpl.ExecuteTemplate(c.Writer, "base.html", data)
 
 	c.Redirect(http.StatusFound, "/verify")
 }

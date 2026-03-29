@@ -44,7 +44,7 @@ func NewDependecyContainer(db mongo.Database, sessionStore sessions.Store, secre
 	// Web Dependecies
 	webAuth := webmiddleware.NewWebAuthMiddleware(sessionStore, userAuth)
 	userWebHandler := webhandlers.NewUserWebHandler(userUsecase, sessionStore)
-	pagesWebHandler := webhandlers.NewPagesWebHandler(heroUsecase, sessionStore)
+	pagesWebHandler := webhandlers.NewPagesWebHandler(heroUsecase, userUsecase, sessionStore)
 
 	// &Container Serves API and Web handlers to Routes
 	return &Container{

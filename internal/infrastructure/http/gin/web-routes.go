@@ -5,18 +5,23 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/infrastructure/di"
 )
 
-// Page routes - render HTML templates
 func InitWebPagesGroup(r *gin.RouterGroup, d *dependecy.Container) {
-	// TODO: Uncomment and implement when handlers are ready
+	// Public pages — no auth required
 	r.GET("/", d.WebPagesHandlers.AuthPageHandler)
 	r.GET("/verify", d.WebPagesHandlers.EmailVerifyPageHandler)
-	// http.HandleFunc("/dashboard", handlers.DashboardPageHandler)
-	// http.HandleFunc("/adventure", handlers.AdventurePageHandlerView)
-	// http.HandleFunc("/gameover", handlers.GameOverPageHandler)
+
+	// Protected pages — session required
+	protected := r.Group("/")
+	protected.Use(d.WebAuthMiddleware.RequireAuth())
+	{
+		protected.GET("/dashboard", d.WebPagesHandlers.DashboardPageHandler)
+		// protected.GET("/adventure", d.WebPagesHandlers.AdventurePageHandler)
+		// protected.GET("/gameover",  d.WebPagesHandlers.GameOverPageHandler)
+	}
 }
 
 func InitWebAuthGroup(r *gin.RouterGroup, d *dependecy.Container) {
-	// Public routes - no auth required
+	// All public — no auth required
 	r.POST("/auth/login", d.WebUserHandlers.AuthLoginHandler)
 	r.POST("/auth/signup", d.WebUserHandlers.AuthSignUpHandler)
 	r.POST("/auth/logout", d.WebUserHandlers.AuthLogoutHandle)

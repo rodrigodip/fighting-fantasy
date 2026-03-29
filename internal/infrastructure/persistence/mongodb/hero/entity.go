@@ -38,7 +38,7 @@ type Inventory struct {
 	Backpack   []string `bson:"backpack"`
 	Provisions int      `bson:"provisions"`
 	Gold       int      `bson:"gold"`
-	Jewels     int      `bson:"jewls"`
+	Jewels     int      `bson:"jewels"`
 }
 type Potions struct {
 	Dexterity bool `bson:"dexterity"`

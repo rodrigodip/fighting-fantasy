@@ -2,7 +2,6 @@ package heroapp
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/rodrigodip/fighting-fantasy/internal/domain/hero"
 )
@@ -48,6 +47,5 @@ func (uc *HeroUseCase) FindByUser(userID string) (*hero.Hero, error) {
 	if err != nil {
 		return &hero.Hero{}, fmt.Errorf("FindHeroByUser: %v", err)
 	}
-	log.Printf("useCase.FindByUser(): %v", foundHero.HeroName)
 	return foundHero, nil
 }

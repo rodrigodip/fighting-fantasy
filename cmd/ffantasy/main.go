@@ -43,6 +43,7 @@ func main() {
 
 	routes.InitWebAuthGroup(&router.RouterGroup, di)
 	routes.InitWebPagesGroup(&router.RouterGroup, di)
+	routes.InitWebHeroGroup(&router.RouterGroup, di)
 
 	err = router.Run(cfg.HTTPPort)
 	if err != nil {

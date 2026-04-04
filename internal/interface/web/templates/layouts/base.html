@@ -189,11 +189,9 @@
 
 <body>
 
-	{{block "content" .}}{{end}}
-
+	{{ template "content" .}}
 	<!-- JavaScript utilities -->
-	<script src="./internal/interface/web/static/js/app.js"></script>
-	{{block "scripts" .}}{{end}}
+	<script src="/static/js/app.js"></script>
 </body>
 
 </html>

@@ -8,7 +8,7 @@
 	</div>
 
 	<!-- Content -->
-	<div class="relative z-10 max-w-6xl mx-auto">
+	<div class="relative z-10 max-w-6xl mx-auto" id="dashboard-content">
 		<div class="flex items-center justify-between mb-8">
 			<h1 class="text-4xl" style="color: var(--gold);">Dashboard</h1>
 			<!-- 
@@ -24,7 +24,7 @@
 		<!-- Tab Navigation -->
 		<div class="glass-card p-2 mb-6">
 			<div class="flex gap-2">
-				<button class="tab-button flex-1 active" onclick="switchDashboardTab('create')">
+				<button class="tab-button flex-1 active" onclick="switchDashboardTab('create', event)">
 					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
 						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 						stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -35,7 +35,7 @@
 					</svg>
 					{{if .Hero}}Hero{{else}}Create Hero{{end}}
 				</button>
-				<button class="tab-button flex-1" onclick="switchDashboardTab('status')" {{if not
+				<button class="tab-button flex-1" onclick="switchDashboardTab('status', event)" {{if not
 					.Hero}}disabled{{end}}>
 					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
 						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -45,7 +45,7 @@
 					</svg>
 					Status
 				</button>
-				<button class="tab-button flex-1" onclick="switchDashboardTab('account')">
+				<button class="tab-button flex-1" onclick="switchDashboardTab('account', event)">
 					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
 						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 						stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -69,7 +69,8 @@
             -->
 			<div class="glass-card p-8">
 				<h2 class="text-2xl mb-6">Create Your Hero</h2>
-				<form hx-post="/hero/create" hx-target="#dashboard-content" class="space-y-6">
+				<form hx-post="/hero/create" hx-target="#dashboard-content" hx-swap="innerHTML"
+					class="space-y-6">
 					<div class="space-y-2">
 						<label for="hero-name" class="block">Hero Name</label>
 						<input id="hero-name" name="name" type="text"
@@ -80,7 +81,7 @@
 						<label class="block">Choose Your Starting Potion</label>
 						<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 							<div class="potion-option p-6 rounded-lg border-2 border-border hover:border-primary/50 cursor-pointer transition-all"
-								onclick="selectPotion('Dexterity', this)">
+								onclick="selectPotion('dexterity', this)">
 								<svg class="w-8 h-8 mx-auto mb-3"
 									style="color: var(--gold);"
 									xmlns="http://www.w3.org/2000/svg" width="24"
@@ -95,7 +96,7 @@
 									Dexterity</p>
 							</div>
 							<div class="potion-option p-6 rounded-lg border-2 border-[var(--gold)] bg-primary/20 cursor-pointer transition-all"
-								onclick="selectPotion('Strength', this)">
+								onclick="selectPotion('strength', this)">
 								<svg class="w-8 h-8 mx-auto mb-3"
 									style="color: var(--gold);"
 									xmlns="http://www.w3.org/2000/svg" width="24"
@@ -113,7 +114,7 @@
 									Strength</p>
 							</div>
 							<div class="potion-option p-6 rounded-lg border-2 border-border hover:border-primary/50 cursor-pointer transition-all"
-								onclick="selectPotion('Fortune', this)">
+								onclick="selectPotion('fortune', this)">
 								<svg class="w-8 h-8 mx-auto mb-3"
 									style="color: var(--gold);"
 									xmlns="http://www.w3.org/2000/svg" width="24"
@@ -129,7 +130,7 @@
 							</div>
 						</div>
 						<input type="hidden" name="potion" id="selected-potion"
-							value="Strength" />
+							value="strength" />
 					</div>
 
 					<button type="submit" class="btn btn-primary w-full">
@@ -434,7 +435,7 @@
 							</div>
 							<div class="flex justify-between">
 								<span class="text-muted-foreground">Member Since:</span>
-								<span>{{.User.CreatedAt}}</span>
+								<span>N/A</span>
 							</div>
 						</div>
 					</div>
@@ -471,39 +472,4 @@
 		</div>
 	</div>
 </div>
-
-<script>
-	function switchDashboardTab(tab) {
-		// Hide all tabs
-		document.querySelectorAll('.tab-content').forEach(content => {
-			content.style.display = 'none';
-		});
-
-		// Remove active class from all buttons
-		document.querySelectorAll('.tab-button').forEach(btn => {
-			btn.classList.remove('active');
-		});
-
-		// Show selected tab
-		document.getElementById(tab + '-tab').style.display = 'block';
-
-		// Add active class to clicked button
-		event.target.closest('.tab-button').classList.add('active');
-	}
-
-	function selectPotion(type, element) {
-		// Remove active class from all options
-		document.querySelectorAll('.potion-option').forEach(opt => {
-			opt.classList.remove('border-[var(--gold)]', 'bg-primary/20');
-			opt.classList.add('border-border');
-		});
-
-		// Add active class to selected option
-		element.classList.remove('border-border');
-		element.classList.add('border-[var(--gold)]', 'bg-primary/20');
-
-		// Set hidden input value
-		document.getElementById('selected-potion').value = type;
-	}
-</script>
-{{end}}
+{{ end }}

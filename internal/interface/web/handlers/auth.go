@@ -16,7 +16,6 @@ type UserWebHandlerRepo interface {
 	AuthSignUpHandler(c *gin.Context)
 	AuthLogoutHandle(c *gin.Context)
 	AuthVerifyEmailHandler(c *gin.Context)
-	// FindByEmail(c *gin.Context)
 }
 
 type UserWebHandler struct {
@@ -130,7 +129,7 @@ func (uc *UserWebHandler) AuthLogoutHandle(c *gin.Context) {
 	session.Options.MaxAge = -1 // Delete cookie
 	session.Save(c.Request, c.Writer)
 
-	c.Redirect(http.StatusOK, "/")
+	c.Redirect(303, "/")
 }
 
 // AuthLogoutHandler handles user logout
@@ -157,6 +156,5 @@ func (uc *UserWebHandler) AuthVerifyEmailHandler(c *gin.Context) {
 		tmpl.ExecuteTemplate(c.Writer, "auth-feedback", data)
 		return
 	}
-
 	c.Redirect(http.StatusFound, "/verify")
 }

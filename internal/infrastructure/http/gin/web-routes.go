@@ -27,3 +27,11 @@ func InitWebAuthGroup(r *gin.RouterGroup, d *dependecy.Container) {
 	r.POST("/auth/logout", d.WebUserHandlers.AuthLogoutHandle)
 	r.GET("/auth/verify", d.WebUserHandlers.AuthVerifyEmailHandler)
 }
+
+func InitWebHeroGroup(r *gin.RouterGroup, d *dependecy.Container) {
+	protected := r.Group("/hero")
+	protected.Use(d.WebAuthMiddleware.RequireAuth())
+	{
+		protected.POST("/create", d.WebHeroHandlers.HeroCreateHandler)
+	}
+}

@@ -5,7 +5,7 @@
  * Tab switching utility
  * Used in auth and dashboard pages
  */
-function switchTab(tabName) {
+function switchTab(tabName, event) {
     const allTabs = document.querySelectorAll('.tab-content');
     const allButtons = document.querySelectorAll('.tab-button');
     
@@ -180,8 +180,8 @@ function addBattleLogEntry(message, type = 'info') {
 /**
  * Dashboard tab switching
  */
-function switchDashboardTab(tabName) {
-    switchTab(tabName);
+function switchDashboardTab(tabName, event) {
+    switchTab(tabName, event);
 }
 
 /**
@@ -190,25 +190,20 @@ function switchDashboardTab(tabName) {
  */
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Fighting Fantasy - The Forest of Doom initialized');
-    
-    // Initialize any default states
     window.lastPlayerRoll = null;
     window.lastEnemyRoll = null;
+    initToast();
 });
-
 /**
  * HTMX event listeners
  * These fire when HTMX loads content
  */
 if (typeof htmx !== 'undefined') {
-    // After HTMX swaps content
-    document.body.addEventListener('htmx:afterSwap', function(event) {
-        console.log('Content swapped:', event.detail.target);
-    });
-    
-    // Before HTMX sends request
-    document.body.addEventListener('htmx:configRequest', function(event) {
-        console.log('Request to:', event.detail.path);
+    document.body.addEventListener('htmx:afterSwap', function(e) {
+        console.log('Content swapped:', e.detail.target);
+        if (e.detail.target.id === 'auth-feedback-container') {
+            initToast();
+        }
     });
 }
 
@@ -225,25 +220,20 @@ function initToast() {
     });
   });
 
-  // Dismiss buttons
+// Dismiss buttons
   toast.querySelectorAll('[data-dismiss-target]').forEach(btn => {
     btn.addEventListener('click', () => dismissToast(toast));
   });
 
-  // Auto-dismiss
+// Auto-dismiss
   setTimeout(() => dismissToast(toast), 6000);
 }
 
 function dismissToast(el) {
-  if (!el) return;
-  el.classList.add('opacity-0', 'translate-y-2');
-  el.addEventListener('transitionend', () => el.remove(), { once: true });
+    if (!el) return;
+    el.classList.add('opacity-0', 'translate-y-2');
+    // Fallback in case transitionend never fires
+    const cleanup = () => el.remove();
+    el.addEventListener('transitionend', cleanup, { once: true });
+    setTimeout(cleanup, 500); // ← safety net
 }
-
-document.addEventListener('htmx:afterSwap', (e) => {
-  if (e.detail.target.id === 'auth-feedback-container') {
-    initToast();
-  }
-});
-
-document.addEventListener('DOMContentLoaded', initToast);

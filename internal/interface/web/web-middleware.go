@@ -1,7 +1,6 @@
 package webmiddleware
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,24 +28,20 @@ func (m *WebAuthMiddleware) RequireAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := m.sessionStore.Get(c.Request, sessionName)
 		if err != nil {
-			log.Printf("DEBUG session get err: %v", err)
 			c.Redirect(http.StatusSeeOther, "/?error=session_error")
 			c.Abort()
 			return
 		}
 
 		token, ok := session.Values["token"].(string)
-		log.Printf("DEBUG token ok: %v | token empty: %v", ok, token == "")
 
 		if !ok || token == "" {
-			log.Printf("DEBUG no token in session — redirecting")
 			c.Redirect(http.StatusSeeOther, "/?error=login_required")
 			c.Abort()
 			return
 		}
 
 		claims, err := m.jwtService.ValidateTokenWithClaims(token)
-		log.Printf("DEBUG validate err: %v | claims: %+v", err, claims)
 
 		if err != nil {
 			session.Values["token"] = ""

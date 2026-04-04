@@ -19,7 +19,7 @@
 		<div class="glass-card p-8">
 			<!-- Tab Navigation -->
 			<div class="flex border-b border-border/30 mb-6">
-				<button class="tab-button active" onclick="switchTab('login')">
+				<button class="tab-button active" onclick="switchTab('login', event)">
 					<!-- Shield Icon -->
 					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
 						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -29,7 +29,7 @@
 					</svg>
 					Login
 				</button>
-				<button class="tab-button" onclick="switchTab('signup')">
+				<button class="tab-button" onclick="switchTab('signup', event)">
 					<!-- Sword Icon -->
 					<svg class="w-4 h-4 inline mr-2" xmlns="http://www.w3.org/2000/svg" width="24"
 						height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -106,26 +106,6 @@
 		</div>
 	</div>
 </div>
-
-<script>
-	function switchTab(tab) {
-		// Hide all tabs
-		document.querySelectorAll('.tab-content').forEach(content => {
-			content.style.display = 'none';
-		});
-
-		// Remove active class from all buttons
-		document.querySelectorAll('.tab-button').forEach(btn => {
-			btn.classList.remove('active');
-		});
-
-		// Show selected tab
-		document.getElementById(tab + '-tab').style.display = 'block';
-
-		// Add active class to clicked button
-		event.target.closest('.tab-button').classList.add('active');
-	}
-</script>
 {{end}}
 
 {{define "head"}}

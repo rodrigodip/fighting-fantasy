@@ -23,6 +23,7 @@ type Container struct {
 	WebAuthMiddleware *webmiddleware.WebAuthMiddleware
 	WebUserHandlers   *webhandlers.UserWebHandler
 	WebPagesHandlers  *webhandlers.PagesWebHandler
+	WebHeroHandlers   *webhandlers.HeroWebHandler
 }
 
 // TODO: Must decouple secret and issuer from Dependency constructor
@@ -45,6 +46,7 @@ func NewDependecyContainer(db mongo.Database, sessionStore sessions.Store, secre
 	webAuth := webmiddleware.NewWebAuthMiddleware(sessionStore, userAuth)
 	userWebHandler := webhandlers.NewUserWebHandler(userUsecase, sessionStore)
 	pagesWebHandler := webhandlers.NewPagesWebHandler(heroUsecase, userUsecase, sessionStore)
+	heroWebHandler := webhandlers.NewHeroWebHandler(heroUsecase, sessionStore)
 
 	// &Container Serves API and Web handlers to Routes
 	return &Container{
@@ -54,5 +56,6 @@ func NewDependecyContainer(db mongo.Database, sessionStore sessions.Store, secre
 		WebAuthMiddleware: webAuth,
 		WebUserHandlers:   userWebHandler,
 		WebPagesHandlers:  pagesWebHandler,
+		WebHeroHandlers:   heroWebHandler,
 	}
 }

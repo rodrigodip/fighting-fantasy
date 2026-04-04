@@ -1,7 +1,9 @@
 package webhandlers
 
 import (
+	"bytes"
 	"html/template"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -35,12 +37,7 @@ func NewPagesWebHandler(huc *heroapp.HeroUseCase, uuc *userapp.UserUseCase, stor
 // AuthPageHandler renders the authentication page
 // GET /
 func (uc *PagesWebHandler) AuthPageHandler(c *gin.Context) {
-	// TODO: Render auth.html template
-	// 1. Check if user is already logged in
-	// 2. If logged in, redirect to /dashboard
-	// 3. Otherwise, render login/signup page
-
-	// Check if the user is logged in
+	// TODO: Check if the user is logged in
 	// session, _ := uc.sessionStore.Get(c.Request, "user-session")
 	// if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
 	// 	c.Header("HX-Redirect", "/dashboard")
@@ -88,44 +85,45 @@ func (uc *PagesWebHandler) DashboardPageHandler(c *gin.Context) {
 		c.Redirect(303, "/")
 		return
 	}
-
 	foundUser, err := uc.userusecase.FindById(userID.(string))
 	if err != nil {
 		c.Redirect(303, "/")
 		return
 	}
-
 	currentUser := viewmodels.User{
 		ID:    foundUser.UserID,
 		Name:  foundUser.Name,
 		Email: foundUser.Email,
 	}
-
 	// Hero is optional — new users won't have one yet
 	var userHero *viewmodels.HeroViewModel
 	foundHero, err := uc.herousecase.FindByUser(foundUser.UserID)
-	if err == nil {
+	if err == nil { // se der erro, não exite hero // se não der erro, exite hero
 		userHero = &viewmodels.HeroViewModel{
-			HeroName:    foundHero.HeroName,
-			InitialHP:   foundHero.Stats.InitialHP,
-			CurrentHP:   foundHero.Stats.CurrentHP,
-			CurrentDex:  foundHero.Stats.CurrentDex,
-			CurrentLuck: foundHero.Stats.CurrentLuck,
+			Name:      foundHero.HeroName,
+			Strength:  foundHero.Stats.InitialHP,
+			Dexterity: foundHero.Stats.CurrentDex,
+			Fortune:   foundHero.Stats.CurrentLuck,
 		}
 	}
 
-	tmpl := template.Must(template.ParseFiles(
+	tmpl := template.Must(template.New("base.html").ParseFiles(
 		"internal/interface/web/templates/layouts/base.html",
 		"internal/interface/web/templates/pages/dashboard.html",
 	))
-
 	data := viewmodels.PageData{
 		Title: "Dashboard",
 		User:  &currentUser,
 		Hero:  userHero, // nil if no hero exists yet
 	}
 
-	tmpl.ExecuteTemplate(c.Writer, "base.html", data)
+	var buf bytes.Buffer
+	if err := tmpl.ExecuteTemplate(&buf, "base.html", data); err != nil {
+		log.Println("template error:", err)
+		c.Status(500)
+		return
+	}
+	c.Data(200, "text/html; charset=utf-8", buf.Bytes())
 }
 
 // AdventurePageHandlerView renders the adventure page

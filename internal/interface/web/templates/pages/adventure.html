@@ -1,5 +1,3 @@
-<!-- adventure.html -->
-
 {{define "content"}}
 <div class="min-h-screen p-4 md:p-8 relative overflow-hidden">
 	<!-- Background -->
@@ -366,81 +364,4 @@
 		</div>
 	</div>
 </div>
-
-<script>
-	// Battle system
-	let playerLastRoll = null;
-	let enemyLastRoll = null;
-
-	// Set callback for dice rolls
-	window.onDiceRoll = function (result) {
-		// Store the roll result for battle calculation
-		console.log('Dice rolled:', result);
-	};
-
-	function executeBattleRound() {
-		// In a real implementation, this would:
-		// 1. Get the dice roll values
-		// 2. Calculate attack success based on player/enemy stats
-		// 3. Send to backend for validation
-		// 4. Update hero stats and battle log
-		// 5. Check for victory/defeat
-
-		const battleLog = document.getElementById('battle-log');
-		const logEntry = document.createElement('p');
-		logEntry.className = 'text-sm';
-		logEntry.textContent = 'Roll the dice first to see the results of your attack!';
-		battleLog.appendChild(logEntry);
-
-		// Scroll to bottom of log
-		battleLog.scrollTop = battleLog.scrollHeight;
-
-		// This would be replaced with HTMX post in real implementation:
-		// hx-post="/adventure/battle/attack"
-		// with form data containing dice rolls and current page
-	}
-
-	function rollDice(target, sides) {
-		const diceContainer = document.getElementById(`dice-container-${target}`);
-		const dice = document.getElementById(`dice-${target}`);
-		const diceValue = document.getElementById(`dice-value-${target}`);
-		const diceIcon = document.getElementById(`dice-icon-${target}`);
-		const rollButton = document.getElementById(`roll-button-${target}`);
-
-		// Disable the roll button
-		rollButton.disabled = true;
-
-		// Animate the dice
-		dice.classList.add('animate-spin');
-
-		// Simulate dice roll
-		const roll = Math.floor(Math.random() * sides) + 1;
-
-		// Set a timeout to update the dice value and icon
-		setTimeout(() => {
-			// Update the dice value
-			diceValue.textContent = roll;
-			diceValue.style.display = 'block';
-
-			// Update the dice icon
-			diceIcon.style.display = 'none';
-
-			// Store the roll result
-			if (target === 'player') {
-				playerLastRoll = roll;
-			} else if (target === 'enemy') {
-				enemyLastRoll = roll;
-			}
-
-			// Re-enable the roll button
-			rollButton.disabled = false;
-
-			// Remove the spin animation
-			dice.classList.remove('animate-spin');
-
-			// Set callback for dice rolls
-			window.onDiceRoll(roll);
-		}, 1000);
-	}
-</script>
 {{end}}

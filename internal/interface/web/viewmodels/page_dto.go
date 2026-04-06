@@ -6,7 +6,7 @@ type PageData struct {
 	User        *User
 	Hero        *HeroViewModel
 	CurrentPage int
-	Story       *Story
+	Story       *StoryViewModel
 	Stats       *GameStats
 	FeedBack    *Message
 }

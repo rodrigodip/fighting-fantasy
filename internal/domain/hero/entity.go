@@ -1,14 +1,12 @@
 package hero
 
 type Hero struct {
-	UserID          string
-	HeroName        string
-	CurrentLore     int
-	Stats           Stats
-	Inventory       Inventory
-	Potions         Potions
-	Story           []Story
-	MonsterDefeated []string
+	UserID      string
+	HeroName    string
+	CurrentLore int
+	Stats       Stats
+	Inventory   Inventory
+	Potions     Potions
 }
 type Stats struct {
 	InitialDex  int
@@ -19,18 +17,17 @@ type Stats struct {
 	CurrentLuck int
 }
 type Inventory struct {
-	Equipment  []string
-	Backpack   []string
+	Equipment []string
+	Backpack  *Backpack
+}
+type Backpack struct {
 	Provisions int
 	Gold       int
 	Jewels     int
+	Itens      []string
 }
 type Potions struct {
 	Dexterity bool
 	Strength  bool
 	Fortune   bool
-}
-type Story struct {
-	Lore    int
-	Choices map[string]string
 }

@@ -26,11 +26,31 @@ func (uc *HeroUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, 
 		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
 	}
 	newHero := hero.Hero{
-		UserID:   userID,
-		HeroName: heroName,
+		UserID:      userID,
+		HeroName:    heroName,
+		CurrentLore: 1,
 		Stats: hero.Stats{
-			InitialHP: 10,
-			CurrentHP: 6,
+			InitialDex:  10,
+			CurrentDex:  7,
+			InitialHP:   10,
+			CurrentHP:   6,
+			InitialLuck: 10,
+			CurrentLuck: 5,
+		},
+		Inventory: hero.Inventory{
+			Equipment: []string{
+				"Espada",
+				"Armadura de Couro",
+				"Mochila",
+			},
+			Backpack: &hero.Backpack{
+				Provisions: 10,
+				Gold:       30,
+				Jewels:     0,
+				Itens: []string{
+					"Mapa para casa de Yaztronomo",
+				},
+			},
 		},
 	}
 	newHero, err := uc.service.SelectPotion(newHero, potion)

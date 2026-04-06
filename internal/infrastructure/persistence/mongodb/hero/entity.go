@@ -34,11 +34,14 @@ type Stats struct {
 	CurrentLuck int `bson:"currentLuck"`
 }
 type Inventory struct {
-	Equipment  []string `bson:"equipment"`
-	Backpack   []string `bson:"backpack"`
+	Equipment []string `bson:"equipment"`
+	Backpack  Backpack `bson:"backpack"`
+}
+type Backpack struct {
 	Provisions int      `bson:"provisions"`
 	Gold       int      `bson:"gold"`
 	Jewels     int      `bson:"jewels"`
+	Itens      []string `bson:"itens"`
 }
 type Potions struct {
 	Dexterity bool `bson:"dexterity"`

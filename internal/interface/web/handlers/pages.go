@@ -119,7 +119,6 @@ func (uc *PagesWebHandler) DashboardPageHandler(c *gin.Context) {
 
 	var buf bytes.Buffer
 	if err := tmpl.ExecuteTemplate(&buf, "base.html", data); err != nil {
-		log.Println("template error:", err)
 		c.Status(500)
 		return
 	}
@@ -128,7 +127,7 @@ func (uc *PagesWebHandler) DashboardPageHandler(c *gin.Context) {
 
 // AdventurePageHandlerView renders the adventure page
 // GET /adventure
-func (uc *PagesWebHandler) AdventurePageHandlerView(c *gin.Context) {
+func (uc *PagesWebHandler) AdventurePageHandler(c *gin.Context) {
 	// TODO: Render adventure.html template
 	// 1. Get user from session (or redirect to / if not logged in)
 	// 2. Get user's hero (redirect to /dashboard if no hero)
@@ -136,22 +135,54 @@ func (uc *PagesWebHandler) AdventurePageHandlerView(c *gin.Context) {
 	// 4. Fetch story content for current page
 	// 5. Render adventure template with hero stats and story
 
-	// Example rendering:
-	// tmpl := template.Must(template.ParseFiles(
-	// 	"internal/interface/web/templates/layouts/base.html",
-	// 	"internal/interface/web/templates/pages/adventure.html",
-	// 	"internal/interface/web/templates/partials/dice.html",
-	// ))
-	//
-	// data := PageData{
-	// 	Title:       "Adventure",
-	// 	User:        currentUser,
-	// 	Hero:        userHero,
-	// 	CurrentPage: currentPageNumber,
-	// 	Story:       loreSection,
-	// }
-	//
-	// tmpl.ExecuteTemplate(w, "base.html", data)
+	userID, exists := c.Get("user_id")
+	if !exists {
+		log.Println("Page Handler: token error")
+		c.Redirect(303, "/")
+		return
+	}
+	foundUser, err := uc.userusecase.FindById(userID.(string))
+	if err != nil {
+		log.Printf("FindById: %v", err)
+		c.Redirect(303, "/")
+		return
+	}
+	var userHero *viewmodels.HeroViewModel
+	foundHero, err := uc.herousecase.FindByUser(foundUser.UserID)
+	if err != nil {
+		log.Printf("FindByUser: %v", err)
+		c.Redirect(303, "/")
+		return
+
+	}
+	userHero = &viewmodels.HeroViewModel{
+		Name:      foundHero.HeroName,
+		Strength:  foundHero.Stats.InitialHP,
+		Dexterity: foundHero.Stats.CurrentDex,
+		Fortune:   foundHero.Stats.CurrentLuck,
+	}
+	tmpl := template.Must(template.ParseFiles(
+		"internal/interface/web/templates/layouts/base.html",
+		"internal/interface/web/templates/pages/adventure.html",
+		"internal/interface/web/templates/partials/dice.html",
+	))
+
+	data := viewmodels.PageData{
+		Title:       "Adventure",
+		Hero:        userHero,
+		CurrentPage: 1,
+		//TODO: Must create Story DB >> using MOCK here
+		Story: &viewmodels.StoryViewModel{
+			Text: "You enter the dark forest...",
+			Choices: []viewmodels.ChoiceViewModel{
+				{Text: "Go left", Page: 2},
+				{Text: "Go right", Page: 3},
+			},
+			Battle: nil, // or a *BattleViewModel if this page has combat
+		},
+	}
+
+	tmpl.ExecuteTemplate(c.Writer, "base.html", data)
 }
 
 // GameOverPageHandler renders the game over page

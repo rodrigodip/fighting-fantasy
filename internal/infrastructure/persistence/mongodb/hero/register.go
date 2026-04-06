@@ -16,11 +16,18 @@ func (hr *MongoHeroRepo) RegisterHero(hero hero.Hero) error {
 			InitialDex:  hero.Stats.InitialDex,
 			InitialHP:   hero.Stats.InitialHP,
 			InitialLuck: hero.Stats.InitialLuck,
+			CurrentDex:  hero.Stats.CurrentDex,
 			CurrentHP:   hero.Stats.CurrentHP,
+			CurrentLuck: hero.Stats.CurrentLuck,
 		},
 		Inventory: Inventory{
 			Equipment: hero.Inventory.Equipment,
-			Gold:      hero.Inventory.Gold,
+			Backpack: Backpack{
+				Provisions: hero.Inventory.Backpack.Provisions,
+				Gold:       hero.Inventory.Backpack.Gold,
+				Jewels:     hero.Inventory.Backpack.Jewels,
+				Itens:      hero.Inventory.Backpack.Itens,
+			},
 		},
 		Potions: Potions{
 			Dexterity: hero.Potions.Dexterity,

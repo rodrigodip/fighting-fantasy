@@ -15,7 +15,7 @@ func InitWebPagesGroup(r *gin.RouterGroup, d *dependecy.Container) {
 	protected.Use(d.WebAuthMiddleware.RequireAuth())
 	{
 		protected.GET("/dashboard", d.WebPagesHandlers.DashboardPageHandler)
-		// protected.GET("/adventure", d.WebPagesHandlers.AdventurePageHandler)
+		protected.GET("/adventure", d.WebPagesHandlers.AdventurePageHandler)
 		// protected.GET("/gameover",  d.WebPagesHandlers.GameOverPageHandler)
 	}
 }

@@ -6,7 +6,3 @@ structure02.md
 data/
 .dockerignore
 .air.toml
-.aider*
-CONVENTIONS.md
-FRONT-END.md
-SKETCH.md

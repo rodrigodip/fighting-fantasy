@@ -9,6 +9,22 @@ import (
 	"github.com/rodrigodip/fighting-fantasy/internal/pkg/security"
 )
 
+type UserRepository interface {
+	RegisterUser(u usr.User) error
+	FindByEmail(email string) (*usr.User, error)
+	FindById(id string) (*usr.User, error)
+	Update(id, field, newData string) error
+
+	//TODO:
+	//ResendVeriyEmail()
+	//FindHero(userID string) (*Hero, error)
+}
+
+type Authentication interface {
+	GenerateToken(userID, role string) (string, error)
+	ValidateToken(token string) (string, error)
+}
+
 type UserUseCase struct {
 	service *usr.Service
 	repo    UserRepository

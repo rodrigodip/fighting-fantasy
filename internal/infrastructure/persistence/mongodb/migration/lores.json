@@ -1,0 +1,110 @@
+[
+  {
+    "lore_id": 1,
+    "text": "Sua caminhada até a casa de Yaztromo leva um pouco mais da metade de um dia, e você chega à torre de pedra onde ele habita sujo e com fome. Como a torre fica afastada na periferia de Darkwood, a uns cinqüenta metros de distância da trilha que você estava seguindo, não é fácil encontrá-la. Finalmente, você chega junto à imensa porta de carvalho, de certa forma aliviado por descobrir que de fato a torre existe, e que Perna Grande não estava falando loucuras em seu delírio. Um grande sino de metal e um gongo pendem do arco de pedra. Ao tocar o sino, um calafrio percorre a sua espinha, e você se dá conta de que o som alto invade um silêncio profundo no qual você não tinha reparado antes. Não se ouvem ruídos de animais ou pássaros. Você espera ansiosamente junto à porta e ouve passadas lentas que descem escadas vindas da torre acima. Uma pequena portinhola de madeira se abre, e dois olhos aparecem, examinando você. * “Bem, quem é você?” - pergunta uma voz aborrecida através do orifício. Você responde que é um aventureiro em busca do poderoso mago Yaztromo, tendo a intenção de adquirir alguns artigos mágicos dele para combater as criaturas da Floresta de Darkwood. * “Ah, bem, nesse caso, se você está interessado em comprar algumas mercadorias minhas, é melhor subir. Eu sou Yaztromo.” Ele então se volta e sobe lentamente os degraus de pedra.",
+    "type": "navigation",
+    "options": [
+      { "text": "Subirá as escadas atrás dele?", "target": 261 },
+      { "text": "Desembainhará sua espada para atacá-lo?", "target": 54 }
+    ]
+  },
+  {
+    "lore_id": 2,
+    "text": "Sua aventura termina aqui, quando sua carne fresca e saborosa está prestes a se tornar um apetitoso festim para o vitorioso Ghoul.",
+    "type": "death"
+  },
+  {
+    "lore_id": 3,
+    "text": "Você segue mais cinco setas até o tronco de uma velha árvore já morta, mas ainda enraizada no solo. Você vê que o tronco é oco, e que o buraco continua pelo chão adentro, formando um túnel. Está escuro no buraco, e você não consegue ver a que distância está o fundo. Você tem um Anel de Luz? Se tiver, vá para 322. Caso não possua este artigo, vá para 120.",
+    "type": "item_condition",
+    "condition": {
+      "item": "Anel de Luz",
+      "has_item_target": 322,
+      "no_item_target": 120
+    }
+  },
+  {
+    "lore_id": 4,
+    "text": "Você perde 4 pontos de ENERGIA. Se ainda estiver vivo, consegue arrancar a flecha de seu ombro, ainda que a dor cause grande agonia. Se ainda desejar entrar na caverna, vá para 49. Se preferir se arrastar de volta para a encruzilhada, vá para 93.",
+    "type": "direct_effect",
+    "effects": [
+      { "type": "stamina", "operation": "subtract", "value": 4 }
+    ],
+    "options": [
+      { "text": "Entrar na caverna", "target": 49 },
+      { "text": "Arrastar de volta para a encruzilhada", "target": 93 }
+    ]
+  },
+  {
+    "lore_id": 5,
+    "text": "Sentado no trono ornamentado, você se sente estranhamente desconfortável. Os Dois Guerreiros-Clones rastejam no chão à sua frente em completa subserviência. Será que eles esperam que você se torne o novo senhor deles? Se você quiser colocar a coroa de ouro sobre sua cabeça, vá para 333. Se preferir sair do nicho e subir o restante dos degraus até o teto da caverna, vá para 249.",
+    "type": "navigation",
+    "options": [
+      { "text": "Colocar a coroa de ouro sobre sua cabeça", "target": 333 },
+      { "text": "Subir o restante dos degraus até o teto da caverna", "target": 249 }
+    ]
+  },
+  {
+    "lore_id": 6,
+    "text": "Quando você passa andando pelo Goblin, ele rosna de uma maneira que você jamais havia ouvido antes, um rosnado que você não esperaria que viesse de um Goblin. Sentindo-se um pouco nervoso, você segue rapidamente para o norte. Vá para 148.",
+    "type": "navigation",
+    "target": 148
+  },
+  {
+    "lore_id": 7,
+    "text": "Você puxa sua espada e se prepara para enfrentar os agressores de corpos listrados em preto e amarelo. São ABELHAS ASSASSINAS. Elas atacarão em enxames separados, cada enxame contando como uma única criatura. Primeiras ABELHAS ASSASSINAS 7 3 Segundas ABELHAS ASSASSINAS 8 4 Terceiras ABELHAS ASSASSINAS 7 4 Se você vencer, vá para 23.",
+    "type": "multiple_combat",
+    "enemies": [
+      { "name": "Primeiras ABELHAS ASSASSINAS", "skill": 7, "stamina": 3 },
+      { "name": "Segundas ABELHAS ASSASSINAS", "skill": 8, "stamina": 4 },
+      { "name": "Terceiras ABELHAS ASSASSINAS", "skill": 7, "stamina": 4 }
+    ],
+    "win_target": 23
+  },
+  {
+    "lore_id": 8,
+    "text": "Seguindo ao longo da trilha, você ouve passos e vozes que discutem adiante. Se quiser ir de encontro aos donos das vozes, vá para 317. Se preferir se esconder no mato para deixar que eles passem, vá para 392.",
+    "type": "navigation",
+    "options": [
+      { "text": "Ir de encontro aos donos das vozes", "target": 317 },
+      { "text": "Esconder-se no mato para deixar que eles passem", "target": 392 }
+    ]
+  },
+  {
+    "lore_id": 9,
+    "text": "Você destranca a porta e dá um passo atrás, desembainhando sua espada caso o Goblin tente lhe atacar. Ele apanha um banco de madeira e, brandindo o objeto no ar, abre a porta com um pontapé e avança sobre você aos gritos. Você terá que lutar. GOBLIN HABILIDADE 5 ENERGIA 4 Se você vencer, vá para 176.",
+    "type": "standard_combat",
+    "enemy": { "name": "GOBLIN", "skill": 5, "stamina": 4 },
+    "win_target": 176
+  },
+  {
+    "lore_id": 10,
+    "text": "Você apanha uma pedra de bom tamanho do chão e faz pontaria. Em seguida, lança a pedra com toda a sua força no Ogro, mas fica decepcionado ao vê-la passar voando por sobre sua cabeça e se espatifar contra a parede do outro lado da caverna. Você solta um palavrão, mas resolve, ainda assim, avançar pela caverna para atacar o Ogro (vá para 290).",
+    "type": "navigation",
+    "target": 290
+  },
+  {
+    "lore_id": 11,
+    "text": "Você começa a perder o equilíbrio, à medida que a ilusão vai distorcendo sua mente. Você fecha os olhos e segura a cabeça nas mãos, mas não adianta nada. Você gira às cegas pelo aposento e depois cai no chão inconsciente. Vá para 353.",
+    "type": "navigation",
+    "target": 353
+  },
+  {
+    "lore_id": 12,
+    "text": "Você diz ao Gnomo que talvez tenha sido um pouco precipitado ao desembainhar a espada, mas tinha de estar preparado para tudo nos limites da cruel Floresta de Darkwood. Ele replica que isso não é desculpa para puxar uma arma diante de um velho indefeso, e que, se você quiser sua espada de volta, isso custará 10 Peças de Ouro ou dois artigos do tesouro da sua mochila. Você paga a ele o que preferir e, para seu alívio, sua espada adorada é devolvida. Se quiser continuar a conversa com ele, vá para 271. Se achar que já basta de Gnomo e preferir seguir pela trilha para o oeste, vá para 67.",
+    "type": "navigation",
+    "options": [
+      { "text": "Continuar a conversa com ele", "target": 271 },
+      { "text": "Seguir pela trilha para o oeste", "target": 67 }
+    ]
+  },
+  {
+    "lore_id": 13,
+    "text": "As vibrações atingem seu corpo como ondas de choque que o martelassem. Suas pernas parecem chumbo, e você não consegue mexê-las. De repente, a cabana desaba e vem ao chão. O céu escurece, um vento começa a uivar à sua volta. Venta cada vez mais forte, chegando a atingir a força de uma tempestade e acabando por derrubar você ao chão. Você se agarra na varanda e protege o rosto da sujeira e dos detritos que a tempestade faz voar pelo ar. Mais alto do que o ruído ensurdecedor do vento, você ouve uma risada, seguida por uma voz profunda que exulta: - “Estou livre! Estou livre”! Você libertou um ELEMENTAL DA TERRA no mundo - e perde, por isso, 3 pontos de SORTE. Gradualmente, o vento uivante vai morrendo, e o céu clareia. Levantando-se em meio aos destroços, você caminha lentamente de volta à trilha para prosseguir rumo ao norte. Vá para 149.",
+    "type": "direct_effect",
+    "effects": [
+      { "type": "luck", "operation": "subtract", "value": 3 }
+    ],
+    "target": 149
+  }
+]

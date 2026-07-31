@@ -111,7 +111,7 @@ func SendEmail(name, email, token string) error {
 		message,
 	)
 	if err != nil {
-		fmt.Printf("Erro no teste de email: %v", err)
+		return err
 	}
 	return nil
 }

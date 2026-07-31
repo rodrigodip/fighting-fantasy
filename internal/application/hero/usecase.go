@@ -20,9 +20,11 @@ func NewHeroUseCase(s *hero.Service, r Repository) *HeroUseCase {
 }
 
 func (uc *HeroUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, error) {
-	foundHero, _ := uc.repo.FindByOwner(userID)
-	if err := uc.service.HasHero(userID, *foundHero); err != nil {
-		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
+	foundHero, err := uc.repo.FindByOwner(userID)
+	if err == nil {
+		if err := uc.service.HasHero(userID, *foundHero); err != nil {
+			return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
+		}
 	}
 	if err := uc.service.ValidateInput(
 		heroName, potion,
@@ -57,7 +59,7 @@ func (uc *HeroUseCase) CreateHero(userID, heroName, potion string) (*hero.Hero, 
 			},
 		},
 	}
-	newHero, err := uc.service.SelectPotion(newHero, potion)
+	newHero, err = uc.service.SelectPotion(newHero, potion)
 	if err != nil {
 		return &hero.Hero{}, fmt.Errorf("CreateHero: %v", err)
 	}
